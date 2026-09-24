@@ -8,7 +8,7 @@
 paper_final/
 ├── data/        CDC NHSN 周度流感住院原始数据（24 MB CSV，50 州 + 华盛顿特区，2020-08 至 2026-09）
 ├── simulations/ 全部计算脚本与统计量输出
-│   ├── run_theory_simulations.py            图1：理论命题蒙特卡洛验证（50,000 次，种子 20260924）
+│   ├── run_theory_simulations.py            图1：理论命题蒙特卡洛验证（50,000 次，种子 20260923）
 │   ├── run_detection_simulations.py         图2：增长判定检验功效（30,000 次，种子 20260924）
 │   ├── run_forecasting_crossover_simulations.py  图3：更新过程预测误差（150 轨迹×26 起点，种子 20260925）
 │   ├── run_empirical_flu_analysis.py        图4 + 全部实证统计量（含仿射 FGLS、cluster bootstrap、误差预算分解、滚动交叉点）
@@ -17,7 +17,7 @@ paper_final/
 ├── figures/     fig1–fig4（PDF 投稿版 + PNG 预览版）
 └── paper/       论文正文（LaTeX 为权威版本；docx 为按学报模板派生的交付件，修订时以 main.tex 为准）
     ├── main.tex           LaTeX 源（Tectonic 编译，xelatex 兼容）— 权威版本
-    ├── main.pdf           编译产物（20 页）
+    ├── main.pdf           编译产物（22 页；从 paper/ 目录执行 tectonic main.tex）
     ├── main_docx.docx     按学报模板重写的 Word 版（含 OMML 公式、原生表格、3 图）
     ├── references.bib     11 条参考文献
     └── build_docx.py      docx 生成脚本（officecli batch，可重跑）

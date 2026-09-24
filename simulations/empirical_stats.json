@@ -2643,6 +2643,25 @@
     "mean_loss": 0.10405563707745126,
     "overall_mean_loss": 0.1812847661884968
   },
+  "period1_subsegments": {
+    "early_high_coverage": {
+      "N": 2627,
+      "coverage_mean": 87.75119527978683,
+      "g_std": 0.6277727456683279,
+      "g_skew": 3.107380812989617
+    },
+    "statutory_mandatory": {
+      "N": 3382,
+      "coverage_mean": 93.72711413364873,
+      "g_std": 0.6203659227814954,
+      "g_skew": 3.4547091055129386
+    }
+  },
+  "m_x_rolling_lagged_baseline": {
+    "n_windows": 249,
+    "flu_median": 19.73734062605492,
+    "offseason_median": 47.94900109970595
+  },
   "early_vs_peak": [
     {
       "bin": "[5, 20)",

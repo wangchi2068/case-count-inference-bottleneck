@@ -85,9 +85,9 @@ def run_renewal_forecasting_experiments():
                 g_stat = C_t / hist_pressure
                 growth_errs.append((g_stat - R_bar)**2)
                 
-        valid_growth = [e for e in growth_errs if e < 5.0]
-        mean_growth = np.mean(valid_growth)
-        se_growth = np.std(valid_growth) / np.sqrt(len(valid_growth))
+        # 无数据依赖截尾：保留全部活跃周（D_t>0）观测，与正文披露口径一致
+        mean_growth = np.mean(growth_errs)
+        se_growth = np.std(growth_errs) / np.sqrt(len(growth_errs))
         
         # Point-by-point algebraic identity: rel_forecast_err = growth_err / R_bar^2
         mean_forecast = mean_growth / (R_bar**2)

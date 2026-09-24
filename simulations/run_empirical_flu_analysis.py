@@ -502,6 +502,48 @@ def main():
         'mean_loss': float((((ms_end['g_ratio'] - r_early) / r_early) ** 2).mean()),
         'overall_mean_loss': float((((early['g_ratio'] - r_early) / r_early) ** 2).mean())}
 
+
+    # ---- R8/R9 审稿轮新增：制度子段统计量 + 滞后基准滚动 ----
+    p1 = panel[panel['period'] == 'period1_mandatory']
+    p1a = p1[p1['week_end'] < pd.Timestamp('2022-10-01')]
+    p1b = p1[p1['week_end'] >= pd.Timestamp('2022-10-01')]
+    stats['period1_subsegments'] = {
+        'early_high_coverage': {'N': int(len(p1a)), 'coverage_mean': float(p1a['coverage'].mean()),
+                                'g_std': float(p1a['g_ratio'].std()), 'g_skew': float(p1a['g_ratio'].skew())},
+        'statutory_mandatory': {'N': int(len(p1b)), 'coverage_mean': float(p1b['coverage'].mean()),
+                                'g_std': float(p1b['g_ratio'].std()), 'g_skew': float(p1b['g_ratio'].skew())},
+    }
+
+    # 滞后基准滚动（前一窗口均值作基准）
+    lag_rows = []
+    prev_sub = None
+    for i in range(WIN, len(weeks) + 1):
+        ww = weeks[i - WIN:i]
+        sub = panel_sorted[panel_sorted['week_end'].isin(ww)]
+        if len(sub) < 200 or sub['state'].nunique() < 10:
+            prev_sub = sub if len(sub) >= 100 else prev_sub
+            continue
+        if prev_sub is None or len(prev_sub) < 100:
+            prev_sub = sub
+            continue
+        r_lag = prev_sub['g_ratio'].mean()
+        a_w, b_w = fgls_affine(1.0 / sub['D_t'].values,
+                               (((sub['g_ratio'] - r_lag) / r_lag) ** 2).values)
+        if a_w > 0 and b_w > 0:
+            lag_rows.append({'mid_week': str(pd.Timestamp(ww[len(ww) // 2]).date()),
+                             'm': int(pd.Timestamp(ww[len(ww) // 2]).month),
+                             'mx': float(b_w / a_w)})
+        prev_sub = sub
+    if lag_rows:
+        mxl = np.array([r['mx'] for r in lag_rows])
+        flu_l = np.array([r['m'] in (10, 11, 12, 1, 2, 3) for r in lag_rows])
+        stats['m_x_rolling_lagged_baseline'] = {
+            'n_windows': int(len(lag_rows)),
+            'flu_median': float(np.median(mxl[flu_l])),
+            'offseason_median': float(np.median(mxl[~flu_l])),
+        }
+    print('[R9固化] period1_subsegments / m_x_rolling_lagged_baseline 已写入 JSON')
+
     print('[审稿固化] stage_scale_audit / rolling_origin / iv_check / realized_large_scale 已写入 JSON')
 
     if roll_rows:
@@ -659,8 +701,8 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
     ax.errorbar(x, means, yerr=[1.96 * s for s in sems], fmt='o-', color='#1a558a',
                 lw=2.2, ms=7, capsize=4, label='Mean RelMSE (95% CI)')
     ax.plot(x, meds, 's--', color='#e66101', lw=1.8, ms=6, label='Median RelMSE')
-    ax.axvline(2, color='gray', ls='--', lw=1.2, alpha=0.7)
-    ax.text(2.1, max(means) * 0.88, 'diminishing returns\nbeyond ~50 cases/week',
+    ax.axvline(1.72, color='gray', ls='--', lw=1.2, alpha=0.7)  # 经验交叉点 22.6 落在 [20,50) 箱内（x=1.72 按对数箱宽近似）
+    ax.text(1.85, max(means) * 0.88, 'empirical crossover\nat ~22.6 cases/week',
             fontsize=8.5, color='#333333')
     ax.set_xticks(x)
     ax.set_xticklabels(SCALE_LABELS, **xt)
@@ -694,7 +736,8 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
     ax = axes[1, 1]
     pdata = [panel[panel['period'] == p]['g_ratio'].dropna().values
              for p in ['period1_mandatory', 'period2_voluntary', 'period3_remandated']]
-    bp = ax.boxplot(pdata, patch_artist=True, showfliers=False, widths=0.55,
+    bp = ax.boxplot(pdata, patch_artist=True, showfliers=True, widths=0.55,
+                    flierprops=dict(marker='o', markersize=3, alpha=0.4),
                     medianprops=dict(color='black', lw=1.8))
     for patch, c in zip(bp['boxes'], ['#74add1', '#f46d43', '#8073ac']):
         patch.set_facecolor(c)
@@ -707,8 +750,9 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
         labels_d.append(f'{nm}\n(cov {panel[panel["period"]==p]["coverage"].mean():.0f}%)\n'
                         f'SD {g.std():.2f} | skew {g.skew():.1f}')
     ax.set_xticklabels(labels_d, fontsize=8.5)
-    ax.set_ylabel('Observed growth ratio $G_{t+1}=C_{t+1}/D_t$')
-    ax.set_title('(d) Dispersion across reporting regimes', fontsize=12, fontweight='bold')
+    ax.set_yscale('log')
+    ax.set_ylabel('Observed growth ratio $G_{t+1}=C_{t+1}/D_t$ (log scale)')
+    ax.set_title('(d) Tail dispersion across reporting regimes', fontsize=12, fontweight='bold')
     ax.grid(True, alpha=0.3, ls=':')
 
     plt.tight_layout()

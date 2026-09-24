@@ -101,6 +101,15 @@ def run_detection_experiments():
     
     return size_results, m_dense, n_dense
 
+
+def enumerate_m80(n_max, k, rho, delta, alpha=0.05, target=0.80):
+    """自 n=1 起以步长 1 枚举，取首次满足功效 >= target 的最小整数 n（处理 c_alpha 非单调）。"""
+    for n in range(1, n_max + 1):
+        c = compute_exact_critical_value(n, k, rho, alpha)
+        if compute_exact_power(c, n, k, rho, delta) >= target:
+            return n
+    return None
+
 def plot_fig2_detection(size_results, m_dense, n_dense):
     fig, axes = plt.subplots(1, 3, figsize=(16, 4.6), dpi=300)
     rho = 0.25
@@ -129,11 +138,11 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     # Panel 2: Power curves across delta (at fixed k = 0.35)
     ax = axes[1]
     k_fixed = 0.35
-    delta_styles = {
-        0.15: ('darkorange', 'solid', r"$\delta=0.15$ ($m_{80\%}=518$)"),
-        0.30: ('purple', 'solid', r"$\delta=0.30$ ($m_{80\%}=142$)"),
-        0.50: ('forestgreen', 'solid', r"$\delta=0.50$ ($m_{80\%}=57$)")
-    }
+    delta_styles = {}
+    for delta, (col, ls) in zip([0.15, 0.30, 0.50], [('darkorange','solid'),('purple','solid'),('forestgreen','solid')]):
+        n80 = enumerate_m80(20000, k_fixed, rho, delta)
+        m80 = round(n80 * rho, 1)
+        delta_styles[delta] = (col, ls, rf"$\delta={delta}$ ($m_{{80\%}}={m80:.0f}$, first-crossing $n={n80}$)")
     
     for delta, (col, ls, lbl) in delta_styles.items():
         p_ex = [compute_exact_power(compute_exact_critical_value(n, k_fixed, rho, alpha), n, k_fixed, rho, delta) for n in n_dense]
@@ -153,11 +162,11 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     # Panel 3: Power curves across k (at fixed delta = 0.25)
     ax = axes[2]
     delta_fixed = 0.25
-    k_styles = {
-        0.1: ('crimson', r"$k=0.10$ ($m_{80\%}=415$)"),
-        0.35: ('navy', r"$k=0.35$ ($m_{80\%}=198$)"),
-        1.0: ('teal', r"$k=1.00$ ($m_{80\%}=142$)")
-    }
+    k_styles = {}
+    for k_val, col in zip([0.1, 0.35, 1.0], ['crimson', 'navy', 'teal']):
+        n80 = enumerate_m80(20000, k_val, rho, delta_fixed)
+        m80 = round(n80 * rho, 1)
+        k_styles[k_val] = (col, rf"$k={k_val:.2f}$ ($m_{{80\%}}={m80:.0f}$, first-crossing $n={n80}$)")
     
     for k_val, (col, lbl) in k_styles.items():
         p_ex = [compute_exact_power(compute_exact_critical_value(n, k_val, rho, alpha), n, k_val, rho, delta_fixed) for n in n_dense]
