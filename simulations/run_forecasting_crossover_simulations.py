@@ -183,7 +183,7 @@ def plot_fig3_forecasting(df_res, m_times, v_R, A, R_bar):
                 fontsize=8, fontweight='bold', color='purple')
     
     ax.set_xscale('log')
-    ax.set_ylim(0, 58)
+    ax.set_ylim(0, 80)
     ax.set_xlabel(r"Reported Case Scale $m$ (Log Scale)", fontsize=10.5)
     ax.set_ylabel(r"Relative Error Reduction (%) per Doubling", fontsize=10.5)
     ax.set_title(r"(c) Diminishing Benefit per Case Doubling", fontsize=11.5, fontweight='bold')

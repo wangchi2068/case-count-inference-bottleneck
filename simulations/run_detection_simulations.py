@@ -133,7 +133,7 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     ax.set_ylabel(r"Empirical Type I Error Rate $\widehat{\alpha}$", fontsize=11)
     ax.set_title(r"(a) Type I Error Control: Exact vs Asymptotic", fontsize=12, fontweight='bold')
     ax.grid(True, ls=":", alpha=0.5)
-    ax.legend(fontsize=7.5, loc='upper right', ncol=2)
+    ax.legend(fontsize=6.5, loc='center right', ncol=1)
     
     # Panel 2: Power curves across delta (at fixed k = 0.35)
     ax = axes[1]

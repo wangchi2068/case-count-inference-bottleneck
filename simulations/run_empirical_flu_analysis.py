@@ -681,13 +681,13 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
     ax2.set_ylim(0, 105)
     ax.axvspan(pd.Timestamp('2024-05-01'), pd.Timestamp('2024-11-01'),
                color='#ffdddd', alpha=0.6)
-    ax.text(pd.Timestamp('2023-03-01'), ax.get_ylim()[1] * 0.92,
+    ax.text(pd.Timestamp('2022-11-01'), ax.get_ylim()[1] * 0.92,
             'P1 Mandatory\n(coverage ~91%)', fontsize=8.5,
             bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.85))
     ax.text(pd.Timestamp('2024-07-15'), ax.get_ylim()[1] * 0.92,
             'P2 Voluntary\n(~55%)', fontsize=8.5, color='#990000', fontweight='bold',
             bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.85))
-    ax.text(pd.Timestamp('2025-06-01'), ax.get_ylim()[1] * 0.92,
+    ax.text(pd.Timestamp('2025-04-01'), ax.get_ylim()[1] * 0.78,
             'P3 Re-mandated\n(coverage ~92%)', fontsize=8.5,
             bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.85))
     ax.set_title('(a) National admissions & reporting coverage', fontsize=12, fontweight='bold')
