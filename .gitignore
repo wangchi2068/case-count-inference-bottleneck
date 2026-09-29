@@ -8,3 +8,4 @@ __pycache__/
 *.xdv
 _batch.json
 review.md
+.*.savetmp*

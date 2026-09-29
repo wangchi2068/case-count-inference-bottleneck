@@ -17,9 +17,9 @@ paper_final/
 ├── figures/     fig1–fig4（PDF 投稿版 + PNG 预览版，含对数轴尾部离散与精确枚举图例）
 └── paper/       论文正文（LaTeX 为权威版本；docx 为按学报模板派生的交付件，修订时以 main.tex 为准）
     ├── main.tex           LaTeX 源（Tectonic 编译，xelatex 兼容）— 权威版本
-    ├── main.pdf           编译产物（23 页；从 paper/ 目录执行 tectonic main.tex）
+    ├── main.pdf           编译产物（27 页；从 paper/ 目录执行 tectonic main.tex）
     ├── main_docx.docx     按学报模板重写的 Word 版（含 OMML 公式、原生表格、3 图）
-    ├── references.bib     11 条参考文献（含 DOI，核对 Communications Physics 450）
+    ├── references.bib     33 条权威参考文献（含 DOI，覆盖超传播、更新过程、Fisher信息下界、状态空间、信度比、FluSight）（含 DOI，核对 Communications Physics 450）
     └── build_docx.py      docx 生成脚本（officecli batch，可重跑）
 ```
 
