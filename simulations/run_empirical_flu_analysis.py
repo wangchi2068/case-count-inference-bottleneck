@@ -544,6 +544,142 @@ def main():
         }
     print('[R9固化] period1_subsegments / m_x_rolling_lagged_baseline 已写入 JSON')
 
+    # ---- 任务1: 竞争预测基准对照 (Cori 滑动更新过程 & 朴素平移) ----
+    def _add_baselines(grp):
+        c = grp['c_curr'].values
+        d = grp['D_t'].values
+        c_next = grp['c_next'].values
+        n = len(c)
+        r_c1 = np.full(n, np.nan)
+        r_c2 = np.full(n, np.nan)
+        r_c3 = np.full(n, np.nan)
+        for i in range(n):
+            if i >= 1 and d[i-1] >= 5: r_c1[i] = c[i] / d[i-1]
+            if i >= 2 and (d[i-1] + d[i-2]) >= 5: r_c2[i] = (c[i] + c[i-1]) / (d[i-1] + d[i-2])
+            if i >= 3 and (d[i-1] + d[i-2] + d[i-3]) >= 5: r_c3[i] = (c[i] + c[i-1] + c[i-2]) / (d[i-1] + d[i-2] + d[i-3])
+        grp = grp.copy()
+        grp['R_cori_1'] = r_c1
+        grp['R_cori_2'] = r_c2
+        grp['R_cori_3'] = r_c3
+        grp['g_ratio'] = c_next / d
+        return grp
+
+    # 构建带基线的 early 观测
+    records_base = []
+    for st in states:
+        sub = df[df['Geographic aggregation']==st].sort_values('week_end').reset_index(drop=True)
+        cs = sub['Total Influenza Admissions'].fillna(0).values
+        dts = sub['week_end'].values
+        if len(cs) < 10: continue
+        for tt in range(2, len(cs)-1):
+            dt_val = W[0]*cs[tt] + W[1]*cs[tt-1] + W[2]*cs[tt-2]
+            records_base.append({
+                'state': st, 'week_end': pd.Timestamp(dts[tt]),
+                'c_curr': cs[tt], 'c_next': cs[tt+1], 'D_t': dt_val
+            })
+    df_pbase = pd.DataFrame(records_base)
+    df_pbase = df_pbase.groupby('state', group_keys=False).apply(_add_baselines)
+    df_pbase_early = df_pbase[(df_pbase['D_t'] >= 5) & df_pbase['week_end'].isin(early['week_end'])].copy()
+    
+    df_pbase_early['loss_phase'] = ((df_pbase_early['g_ratio'] - r_early) / r_early) ** 2
+    df_pbase_early['loss_cori_1'] = np.where(df_pbase_early['R_cori_1'] > 0, ((df_pbase_early['g_ratio'] - df_pbase_early['R_cori_1']) / df_pbase_early['R_cori_1']) ** 2, np.nan)
+    df_pbase_early['loss_cori_2'] = np.where(df_pbase_early['R_cori_2'] > 0, ((df_pbase_early['g_ratio'] - df_pbase_early['R_cori_2']) / df_pbase_early['R_cori_2']) ** 2, np.nan)
+    df_pbase_early['loss_cori_3'] = np.where(df_pbase_early['R_cori_3'] > 0, ((df_pbase_early['g_ratio'] - df_pbase_early['R_cori_3']) / df_pbase_early['R_cori_3']) ** 2, np.nan)
+    df_pbase_early['loss_naive']  = np.where(df_pbase_early['c_curr'] > 0, ((df_pbase_early['c_next'] - df_pbase_early['c_curr']) / df_pbase_early['c_curr']) ** 2, np.nan)
+    df_pbase_early['bin'] = pd.cut(df_pbase_early['D_t'], bins=SCALE_BINS, labels=SCALE_LABELS, right=False)
+
+    bins_comp = []
+    for b in SCALE_LABELS:
+        sub_b = df_pbase_early[df_pbase_early['bin'] == b]
+        bins_comp.append({
+            'bin': b, 'N': int(len(sub_b)),
+            'phase_mean': float(sub_b['loss_phase'].mean()),
+            'cori_2w': float(sub_b['loss_cori_2'].mean()),
+            'cori_3w': float(sub_b['loss_cori_3'].mean()),
+            'naive': float(sub_b['loss_naive'].mean())
+        })
+
+    sub_c2 = df_pbase_early.dropna(subset=['loss_cori_2'])
+    a_c2, b_c2 = fgls_affine(1.0 / sub_c2['D_t'].values, sub_c2['loss_cori_2'].values)
+    sub_c3 = df_pbase_early.dropna(subset=['loss_cori_3'])
+    a_c3, b_c3 = fgls_affine(1.0 / sub_c3['D_t'].values, sub_c3['loss_cori_3'].values)
+
+    stats['competing_baselines'] = {
+        'overall': {
+            'phase_mean': {'mean': float(df_pbase_early['loss_phase'].mean()), 'median': float(df_pbase_early['loss_phase'].median())},
+            'cori_1w': {'mean': float(df_pbase_early['loss_cori_1'].mean()), 'median': float(df_pbase_early['loss_cori_1'].median()), 'N': int(df_pbase_early['loss_cori_1'].notna().sum())},
+            'cori_2w': {'mean': float(df_pbase_early['loss_cori_2'].mean()), 'median': float(df_pbase_early['loss_cori_2'].median()), 'N': int(df_pbase_early['loss_cori_2'].notna().sum())},
+            'cori_3w': {'mean': float(df_pbase_early['loss_cori_3'].mean()), 'median': float(df_pbase_early['loss_cori_3'].median()), 'N': int(df_pbase_early['loss_cori_3'].notna().sum())},
+            'naive': {'mean': float(df_pbase_early['loss_naive'].mean()), 'median': float(df_pbase_early['loss_naive'].median())}
+        },
+        'bins': bins_comp,
+        'affine_cori_2w': {'a': float(a_c2), 'b': float(b_c2), 'm_x': float(b_c2 / a_c2)},
+        'affine_cori_3w': {'a': float(a_c3), 'b': float(b_c3), 'm_x': float(b_c3 / a_c3)}
+    }
+
+    # ---- 任务2: 预测偏差项与条件方差项分解 ----
+    early_clean_dec = df_pbase_early.dropna(subset=['R_cori_2']).copy()
+    diff_var = (early_clean_dec['g_ratio'] - early_clean_dec['R_cori_2']) / r_early
+    diff_bias = (early_clean_dec['R_cori_2'] - r_early) / r_early
+    loss_tot = ((early_clean_dec['g_ratio'] - r_early) / r_early) ** 2
+    term_var = diff_var ** 2
+    term_bias = diff_bias ** 2
+    term_cross = 2 * diff_var * diff_bias
+    inv_D_dec = 1.0 / early_clean_dec['D_t'].values
+
+    a_tot_dec, b_tot_dec = fgls_affine(inv_D_dec, loss_tot.values)
+    a_var_dec, b_var_dec = fgls_affine(inv_D_dec, term_var.values)
+    a_bias_dec, b_bias_dec = fgls_affine(inv_D_dec, term_bias.values)
+
+    stats['predictive_bias_decomposition'] = {
+        'N': int(len(early_clean_dec)),
+        'total_loss_mean': float(loss_tot.mean()),
+        'term_var_mean': float(term_var.mean()),
+        'term_bias_mean': float(term_bias.mean()),
+        'term_cross_mean': float(term_cross.mean()),
+        'var_share_pct': float(term_var.mean() / loss_tot.mean() * 100),
+        'bias_share_pct': float(term_bias.mean() / loss_tot.mean() * 100),
+        'affine_total': {'a': float(a_tot_dec), 'b': float(b_tot_dec), 'm_x': float(b_tot_dec / a_tot_dec)},
+        'affine_var': {'a': float(a_var_dec), 'b': float(b_var_dec), 'm_x': float(b_var_dec / a_var_dec)},
+        'affine_bias': {'a': float(a_bias_dec), 'b': float(b_bias_dec)}
+    }
+
+    # ---- 任务3: 季节内/波段内独立 IV 回归结果 ----
+    seasons_dict = {
+        '2022-23': ('2022-10-08','2022-11-26'),
+        '2023-24': ('2023-10-14','2023-12-16'),
+        '2024-25': ('2024-11-09','2025-01-18')
+    }
+    def _run_2sls_season(sub_s, r_bar_s):
+        y_s = (((sub_s['g'] - r_bar_s) / r_bar_s) ** 2).values
+        x_inv_s = 1.0 / sub_s['D_t'].values
+        z_inv_s = 1.0 / sub_s['D_iv'].values
+        Z_s = np.column_stack([np.ones(len(z_inv_s)), z_inv_s])
+        gamma_s = np.linalg.lstsq(Z_s, x_inv_s, rcond=None)[0]
+        x_inv_hat_s = Z_s @ gamma_s
+        res_1s = x_inv_s - x_inv_hat_s
+        ss_reg_s = np.sum((x_inv_hat_s - np.mean(x_inv_s))**2)
+        f_stat_s = (ss_reg_s / 1) / (np.sum(res_1s**2) / (len(x_inv_s) - 2))
+        X_hat_s = np.column_stack([np.ones(len(x_inv_hat_s)), x_inv_hat_s])
+        beta_s = np.linalg.lstsq(X_hat_s, y_s, rcond=None)[0]
+        X_raw_s = np.column_stack([np.ones(len(x_inv_s)), x_inv_s])
+        beta_ols_s = np.linalg.lstsq(X_raw_s, y_s, rcond=None)[0]
+        return {
+            'N': int(len(sub_s)), 'F_stat': float(f_stat_s),
+            'a_iv': float(beta_s[0]), 'b_iv': float(beta_s[1]),
+            'm_x_iv': float(beta_s[1] / beta_s[0]) if beta_s[0] > 0 else np.nan,
+            'a_ols': float(beta_ols_s[0]), 'b_ols': float(beta_ols_s[1])
+        }
+
+    stats['seasonal_subsample_iv'] = {}
+    for s_name, (d_start, d_end) in seasons_dict.items():
+        s_data = piv[(piv['wk'] >= pd.Timestamp(d_start)) & (piv['wk'] <= pd.Timestamp(d_end))].copy()
+        r_seas = s_data['g'].mean()
+        stats['seasonal_subsample_iv'][s_name] = _run_2sls_season(s_data, r_seas)
+
+    stats['seasonal_subsample_iv']['pooled_within_phase'] = _run_2sls_season(eiv, r_early)
+
+
     print('[审稿固化] stage_scale_audit / rolling_origin / iv_check / realized_large_scale 已写入 JSON')
 
     if roll_rows:
