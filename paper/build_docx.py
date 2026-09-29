@@ -111,6 +111,7 @@ h2('3.4预算约束下的监测维度权衡')
 body('命题4：在理想化重复采样设计（T个观测期、每期风险集n_T=B/(ρT)、总预算B=T·m）下：若各期环境扰动跨期独立，样本均值估计量的方差为v_R/T+A/B——总预算固定时拉长期数T严格单调降低方差；若环境扰动服从AR(1)自相关Cov(R_t,R_{t+s})=v_R r^{|s|}，有限期精确方差为')
 eq(r'Var(\bar{\hat{R}}_T)=\frac{v_R}{T}\left[\frac{1+r}{1-r}-\frac{2r(1-r^T)}{T(1-r)^2}\right]+\frac{A}{B}')
 body('大期数下可近似为有效独立期数T_eff=T(1-r)/(1+r)。当要求各期风险集为正整数且精确用尽预算时，可行设计集合为{T:B/(ρT)∈N_+}，即B/ρ的正整数因子集合。')
+body('推论1（成本与预算约束下的最优监测规模）：设每期固定运转成本为c_0>0，每上报一例边际成本为c_1>0，在总成本C=T(c_0+c_1 m)约束下最小化方差Var(R̄_T)，一阶导给出的唯一最优规模为m*=sqrt((c_0/c_1)·m_×)。这表明方差交叉点m_×是监测资源优化配置的充分统计量。')
 h2('3.5增长判定检验与预测方差分解')
 body('命题5：基准模型下负二项族关于充分统计量C_t具有单调似然比，拒绝域{C_t≥c_α}的非随机化上尾检验在复合原假设H_0:R_t≤1下严格控水平α，离散临界值c_α=min{c:P_{R_t=1}(C_t≥c)≤α}；对备择R_t=1+δ，检出功效由负二项累积分布精确给出。命题6：基于报告信息集F_t^C，未来报告病例的预测方差严格分解为二项抽稀项与感染过程方差项的加权和：Var(C_{t+1}|F_t^C)=ρ(1-ρ)E[I_{t+1}|F_t^C]+ρ²Var(I_{t+1}|F_t^C)。')
 
@@ -139,10 +140,10 @@ table(
      ['[250,600)', '152', '0.1032', '0.0460', '0.0097', '0.0133', '[0.0771,0.1293]'],
      ['[600,5000)', '92', '0.1054', '0.0735', '0.0109', '0.0146', '[0.0769,0.1340]']],
     '表1 流行初期波段单步前瞻预测误差随周捕获规模的分组统计')
-body('针对D_t与C_{t+1}共享报告噪声导致的变量误差问题，我们进一步以滞后3–5周报告序列构造的工具规模D_t^iv做两阶段最小二乘对照。在全初期波段汇集样本（有效样本N=1,051）中，第一阶段F统计量达1147.1（强工具），第二阶段b估计为2.8501（a=0.0807），高于基准OLS的1.4581。更将2SLS限定在各流感季初期波段内部独立运行：2022–23季（N=273）第一阶段F=277.4，b_iv=3.2787（OLS: 1.8865）；2023–24季（N=358）第一阶段F=464.8，b_iv=2.1867（OLS: 1.6760）；2024–25季（N=420）第一阶段F=503.3，b_iv=3.6131（OLS: 1.8295）。在每个独立季节内部，第一阶段F统计量均远超临界值（均高于270），且每个季节的2SLS规模斜率均显著为正并高于对应OLS斜率，与经典测量误差导致的衰减偏倚修正方向一致。')
+body('针对D_t与C_{t+1}共享报告噪声导致的变量误差问题，我们进一步以滞后3–5周报告序列构造的工具规模D_t^iv做两阶段最小二乘对照。在全初期波段汇集样本（有效样本N=1,051）中，以全阶段均值R̄_early=1.6706归一化时，第二阶段b估计为2.5305（a=0.0812），高于同一样本OLS的1.3525；若以该子样本自身均值（1.6266）归一化则给出b=2.8501（a=0.0807，对应OLS为1.4581）。第一阶段未聚类F统计量达1147.1，按州聚类稳健F统计量为312.9（强工具）。更将2SLS限定在各流感季初期波段内部独立运行：2022–23季（N=273）未聚类F=277.4（聚类稳健F=94.5），b_iv=3.2787（OLS: 1.8865）；2023–24季（N=358）未聚类F=464.8（聚类稳健F=119.4），b_iv=2.1867（OLS: 1.6760）；2024–25季（N=420）未聚类F=503.3（聚类稳健F=76.8），b_iv=3.6131（OLS: 1.8295）。在每个独立季节内部，第一阶段稳健F统计量均大于75（排除弱工具假设）；按州聚类bootstrap检验下各季节b_iv>0均保持显著，但差值CI跨越零，该对照定位为说明规模效应正向存在的稳健性证据。')
 body('过度离散结构Var(L)/E[L]²从[5,20)箱的5.32单调降至[600,5000)箱的0.99，与理论形状一致。')
-body('预测偏差项与机制隐含斜率的分解检验：依更新过程展开式，总相对预测方差严格分解为条件方差项与预测偏差项。若以2周滑动窗口估计量作为局部期望比的经验代理，实测偏差项在全波段均值为0.1252，仿射拟合得到其斜率b_bias=0.3416；而扣除偏差项后的纯条件方差项斜率依然高达b_var=3.3553（a_var=0.1109）。这直接澄清了经验估计b=2.24高于单代静态模型参数空间隐含值（约0.6–0.8）的机制来源：在动态更新卷积与分母1/D_t²随机重加权下，时间序列更新过程固有地放大了经验规模斜率，但规模相关项的主导贡献依然来自纯条件方差，而非单纯的趋势预测偏差。')
-body('与时变更新过程及时间序列基准的竞争预测性能对照：我们进一步构建了两类具备竞争性的事前预测基线：其一是基于Cori等(2013)滑动窗口更新过程的时变再生数预测（分别取1周、2周与3周滑动窗）；其二是经典时间序列朴素平移基准C_{t+1}=C_t。在流行初期波段上，各基准的事前单步相对预测均方误差见表2。结果表明：(1)全体均值上，2周窗与3周窗Cori基线的RelMSE分别为0.2876与0.2490，中位数为0.0658与0.0626，性能远优于朴素平移基准（均值0.6367，中位数0.1732）；(2)关键在于分规模表现：在所有更新过程基准中，预测误差均随每周病例规模D_t单调显著下降；(3)在大规模段（D_t≥100），2周与3周Cori基线的平均相对均方误差（约0.087–0.098）甚至略低于常数阶段均值（0.103–0.112），原因在于时变参数能更好适应局部流行波动的拐点；但在小规模段（[5,20)），滑动窗口估计R_t自身引入了显著的有限样本小计数估计方差。对2周与3周Cori基线误差进行仿射拟合，分别给出b=6.0637（m_x=74.7）与b=4.9836（m_x=65.3）。无论采用回顾性阶段基准还是事前时变更新过程基准，预测方差随规模衰减是内在的结构性特征。')
+body('预测偏差项与机制隐含斜率的分解检验：依更新过程展开式，总相对预测方差严格分解为条件方差项与预测偏差项。若以2周滑动窗口估计量作为局部期望比的经验代理，实测偏差项在全波段均值为0.1252（占总损失70.3%），纯条件方差项均值为0.2230（占125.2%），交叉项为-0.1702（占-95.6%）。经验代理自身包含小计数采样波动，未满足零交叉项正交假定；但纯条件方差项斜率依然高达b_var=3.3553（b_bias=0.3416），定性显示时间序列更新过程中的规模敏感性主导来自条件方差，而非单纯的趋势预测偏差。')
+body('与时变更新过程及时间序列基准的竞争预测性能对照：我们进一步构建了两类具备竞争性的事前预测基线：其一是基于Cori等(2013)滑动窗口更新过程的时变再生数预测（分别取1周、2周与3周滑动窗）；其二是经典时间序列朴素平移基准C_{t+1}=C_t。在流行初期波段上，各基准的事前单步相对预测均方误差见表2。结果表明：(1)全体均值上，2周窗与3周窗Cori基线的RelMSE分别为0.2876与0.2490，中位数为0.0658与0.0626，性能远优于朴素平移基准（均值0.6367，中位数0.1732）；(2)关键在于分规模表现：在所有更新过程基准中，预测误差在D_t≤100内随每周病例规模快速下降，越过百例量级后趋于平缓（约0.087–0.098），进入收益放缓的经验底板平台；(3)在大规模段（D_t≥100），2周与3周Cori基线的平均相对均方误差（约0.087–0.098）甚至略低于常数阶段均值（0.103–0.112），原因在于时变参数能更好适应局部流行波动的拐点；但在小规模段（[5,20)），滑动窗口估计R_t自身引入了显著的有限样本小计数估计方差。对2周与3周Cori基线误差进行仿射拟合，分别给出b=6.0637（m_x=74.7）与b=4.9836（m_x=65.3）。无论采用回顾性阶段基准还是事前时变更新过程基准，预测方差随规模在中小规模段呈现快速衰减并在越过百例后进入收益平缓区是内在的结构性特征。')
 table(
     ['每周有效规模D_t', '样本数N', '阶段均值基准', 'Cori 2周窗基线', 'Cori 3周窗基线', '朴素平移基线'],
     [['[5,20)', '319', '0.3292', '0.6576', '0.5606', '1.2563'],
@@ -153,7 +154,7 @@ table(
      ['[600,5000)', '92', '0.1054', '0.0983', '0.0982', '0.1360'],
      ['全体样本均值', '1267', '0.1813', '0.2876', '0.2490', '0.6367'],
      ['全体样本中位数', '1267', '0.0653', '0.0658', '0.0626', '0.1732']],
-    '表2 不同预测基准在流行初期波段单步相对均方误差（RelMSE）的规模分箱对照')
+    '表2 不同预测基准在流行初期波段单步相对均方误差（RelMSE）的规模分箱对照（注：Cori 2周/3周窗有效样本量分别为1244与1251）')
 body('口径声明：本节主分析以阶段均值为基准，属回顾性的阶段条件误差分析，目的是在受控同等基准下检验误差随规模的衰减形态。严格滚动起点核验（每个t仅用其前数据估计基准）：全部历史扩张窗得b=9.1579（聚类bootstrap 95%CI[5.8376,12.8819]，b/a=22.5）；26周滚动池得b=9.4562（CI[6.7612,12.4767]，b/a=42.7）；逐州扩张窗得b=13.2666（CI[9.1385,18.2948]，b/a=38.9）。三种事前口径下误差水平抬升（回顾性基准偏乐观），但规模项均显著为正、分箱单调下降，大规模端实际观测的误差水平稳定低于全体平均。误差预算分解：初期平均相对均方误差0.181中，与规模无关拟合项贡献54.6%，规模相关项贡献45.1%，模型外残差不足0.3%。作为对照，样本中实际处于大规模端（D_t≥250，共244个观测）的组内平均相对均方误差为0.104——与拟合截距a=0.0991一致，即经验数据中已实现的大规模观测误差约为全体平均的六成；过半误差份额落在与规模无关的拟合项上，提示环境协变量采集与多期平滑是值得进一步评估的互补路径。达峰期条件方差口径下的分解结构类似（46.7%对55.6%）。这组份额结构给本文核心问题提供了可操作的参照：规模收益真实存在，但过半误差份额与规模无关，监测资源的配置取决于当前所处份额结构。')
 h2('5.3检验二：达峰期——失效的是平稳基准而非病例规模')
 body('反证口径：用流行初期估计的平稳基准R̄_early=1.6706预测全部阶段。达峰与回落期（各季全国达峰周及其后7周，N=1220，平均增长率0.8075）的总误差在所有规模组恒定处于0.292—0.312，看似不再随规模下降。但分解显示：在达峰期总体样本的均值—方差分解中，基准偏移项为0.2669，占总体损失88.9%；按各箱自身均值计算的偏差占比从[5,20)箱的59.5%升至[600,5000)箱的94.8%，总体份额不代表各箱结构，"总误差不随规模下降"并不能否定规模的作用。改用达峰期自身均值作基准后，仿射拟合给出a=0.0665（95%CI[0.0467,0.0897]）、b=7.9272（95%CI[5.4239,11.2248]）：达峰期内部规模相关项显著为正。但阶段间b比较必须统一损失尺度：该b以R̄_peak=0.8075归一化，而初期以R̄_early=1.6706归一化，两者不同分母。三口径比较：未归一化损失下初期b=6.2611、达峰期b=5.1690；共同分母（R̄_early）口径下初期b=2.2434、达峰期b=1.8521；各自归一化口径（原稿）下为2.2434对7.9272——统一尺度后达峰期b点估计低于初期，共同尺度交互项-0.9183（聚类bootstrap 95%CI[-2.2702,0.6261]），阶段差异不显著——支持"未发现达峰期斜率增强"，不支持断言"达峰期低于初期"。交互项与分别拟合的点估计差（-0.3913）不同，因联合回归使用共同参数化与全样本FGLS权重并吸收阶段主效应。两者均刻画阶段斜率差，但分别拟合与联合FGLS所使用的迭代权重及估计程序不同，故点估计不必相等。原稿"达峰期规模项绝对量更高"是归一化分母差异的伪象。')
@@ -175,42 +176,46 @@ body('为确保科学结论的严谨性与审慎性，本文对全部论断实�
 h2('6.3结论')
 body('本文建立了一个分层随机推断框架，系统界定了疫情监测中病例规模何时不再是主要推断瓶颈的理论与实证边界。数理分析证明推断跨期基准水平时存在由环境方差决定的平滑交叉点，揭示了报告率与样本基数的非对称杠杆效应；全美CDC NHSN六年周度流感住院大数据的系统检验与反证分析为该理论机制提供了坚实的经验佐证。研究证实规模收益真实存在但过半误差份额与规模无关，为走出盲目堆砌病例数量的“样本量迷思”、推动监测资源向环境协变量采集与多期时空平滑配置提供了量化理论判据。未来研究可进一步结合显式气象行为数据与非对称损失函数，拓展动态状态空间滤波下的实时监测优化设计。')
 
+h1('数据与代码可用性声明')
+body('本文实证所用的全美各州周度流感住院监测数据来源于美国疾病控制与预防中心国家医疗保健安全网（CDC NHSN）公开数据库，访问日期为2026年9月5日。本研究全部仿真模拟脚本、计量实证分析代码与原始固化数据均已开源共享，访问地址为：https://github.com/wangchi2068/case-count-inference-bottleneck。')
+
 # ============ 参考文献 ============
 h1('参考文献')
 refs = [
-    'Lloyd-Smith J O, Schreiber S J, Kopp P E, et al. Superspreading and the effect of individual variation on disease emergence. Nature, 2005, 438(7066): 355-359. DOI: 10.1038/nature04153.',
-    'Endo A, Abbott S, Kucharski A J, et al. Estimating the overdispersion in COVID-19 transmission using outbreak sizes outside China. Wellcome Open Research, 2020, 5: 67. DOI: 10.12688/wellcomeopenres.15842.3.',
-    'Kucharski A J, Russell T W, Diamond C, et al. Early dynamics of transmission and control of COVID-19: a mathematical modelling study. The Lancet Infectious Diseases, 2020, 20(5): 553-560. DOI: 10.1016/S1473-3099(20)30144-4.',
+    'Lloyd-Smith J O, Schreiber S J, Kopp P E, Getz W M. Superspreading and the effect of individual variation on disease emergence. Nature, 2005, 438(7066): 355-359. DOI: 10.1038/nature04153.',
+    'Endo A, Abbott S, Kucharski A J, Funk S. Estimating the overdispersion in COVID-19 transmission using outbreak sizes outside China. Wellcome Open Research, 2020, 5: 67. DOI: 10.12688/wellcomeopenres.15842.3.',
+    'Kucharski A J, Russell T W, Diamond C, et al. Early dynamics of transmission and control of COVID-19: a mathematical modelling study. The Lancet Infectious Diseases, 2020, 20(5): 553-558. DOI: 10.1016/S1473-3099(20)30144-4.',
     'Wallinga J, Teunis P. Different epidemic curves for severe acute respiratory syndrome reveal similar impacts of control measures. American Journal of Epidemiology, 2004, 160(6): 509-516. DOI: 10.1093/aje/kwh255.',
     'Fraser C. Estimating individual and household reproduction numbers in an emerging epidemic. PLOS ONE, 2007, 2(8): e758. DOI: 10.1371/journal.pone.0000758.',
-    'Cori A, Ferguson N M, Fraser C, et al. A new framework and software to estimate time-varying reproduction numbers during epidemics. American Journal of Epidemiology, 2013, 178(9): 1505-1512. DOI: 10.1093/aje/kwt133.',
+    'Cori A, Ferguson N M, Fraser C, Cauchemez S. A new framework and software to estimate time-varying reproduction numbers during epidemics. American Journal of Epidemiology, 2013, 178(9): 1505-1512. DOI: 10.1093/aje/kwt133.',
     'Thompson R N, Stockwin J E, van Gaalen R D, et al. Improved inference of time-varying reproduction numbers during infectious disease outbreaks. Epidemics, 2019, 29: 100356. DOI: 10.1016/j.epidem.2019.100356.',
     'Gostic K M, McGough L, Baskerville E B, et al. Practical considerations for measuring the effective reproductive number, Rt. PLOS Computational Biology, 2020, 16(12): e1008409. DOI: 10.1371/journal.pcbi.1008409.',
     'Parag K V, Donnelly C A. Fundamental limits on inferring epidemic resurgence in real time using effective reproduction numbers. PLOS Computational Biology, 2022, 18(4): e1010004. DOI: 10.1371/journal.pcbi.1010004.',
     'Parag K V, Donnelly C A, Zarebski A E. Quantifying the information in noisy epidemic curves. Nature Computational Science, 2022, 2(9): 584-594. DOI: 10.1038/s43588-022-00313-1.',
     'Parag K V, Lambert B, Donnelly C A, Beregi S. Asymmetric limits on timely interventions from noisy epidemic data. Communications Physics, 2025, 8: 450. DOI: 10.1038/s42005-025-02358-w.',
-    'Bosse N I, Abbott S, Cori A, et al. Scoring epidemiological forecasts on transformed scales. PLOS Computational Biology, 2023, 19(8): e1011393. DOI: 10.1371/journal.pcbi.1011393.',
-    'Bracher J, Held L. A marginal moment matching approach for fitting endemic-epidemic models to underreported disease surveillance counts. Biometrics, 2021, 77(4): 1348-1359. DOI: 10.1111/biom.13384.',
-    'Bhatt S, Ferguson N, Flaxman S, et al. Semi-mechanistic Bayesian modeling of COVID-19 with renewal processes. Journal of the Royal Statistical Society Series A: Statistics in Society, 2023, 186(4): 601-624. DOI: 10.1093/jrsssa/qnad001.',
-    'Steyn N, Parag K V, Thompson R N. A primer on inference and prediction with epidemic renewal models and sequential Monte Carlo. Statistics in Medicine, 2025, 44(3): e70204. DOI: 10.1002/sim.70204.',
+    'Bosse N I, Abbott S, Bracher J, Cori A, van Leeuwen E, Funk S. Scoring epidemiological forecasts on transformed scales. PLOS Computational Biology, 2023, 19(8): e1011393. DOI: 10.1371/journal.pcbi.1011393.',
+    'Bracher J, Held L. A marginal moment matching approach for fitting endemic-epidemic models to underreported disease surveillance counts. Biometrics, 2021, 77(4): 1202-1214. DOI: 10.1111/biom.13371.',
+    'Bhatt S, Ferguson N, Flaxman S, et al. Semi-mechanistic Bayesian modeling of COVID-19 with renewal processes. Journal of the Royal Statistical Society Series A: Statistics in Society, 2023, 186(4): 601-615. DOI: 10.1093/jrsssa/qnad030.',
+    'Steyn N, Parag K V, Thompson R N, Donnelly C A. A primer on inference and prediction with epidemic renewal models and sequential Monte Carlo. Statistics in Medicine, 2025, 44(18-19): e70204. DOI: 10.1002/sim.70204.',
     'Rasmussen D A, Ratmann O, Koelle K. Inference for nonlinear epidemiological models using genealogies and time series. PLOS Computational Biology, 2011, 7(8): e1002136. DOI: 10.1371/journal.pcbi.1002136.',
-    'Aber S, Di Q, Dalziel B D. Time-series modeling of epidemics in complex populations: Detecting changes in incidence volatility over time. PLOS Computational Biology, 2025, 21(2): e1012882. DOI: 10.1371/journal.pcbi.1012882.',
+    'Aber R, Di Y, Dalziel B D. Time-series modeling of epidemics in complex populations: Detecting changes in incidence volatility over time. PLOS Computational Biology, 2025, 21(7): e1012882. DOI: 10.1371/journal.pcbi.1012882.',
     'Bretó C, He D, Ionides E L, King A A. Time series analysis via mechanistic models: inference on imperfectly observed populations. The Annals of Applied Statistics, 2009, 3(1): 319-348. DOI: 10.1214/08-AOAS201.',
-    'Dalziel B D, Kissler S, Gog J R, et al. Urbanization and the geography of influenza in the United States. Science, 2018, 362(6410): 75-79. DOI: 10.1126/science.aat6030.',
-    'Lipsitch M, Swerdlow D L, Finelli L. Enhancing the value of public health surveillance: simple models for surveillance data. PLOS Medicine, 2015, 12(7): e1001844. DOI: 10.1371/journal.pmed.1001844.',
-    'Nouvellet P, Cori A, Garske T, et al. A simple approach to measure controllability of infectious disease outbreaks. Epidemics, 2018, 22: 29-38. DOI: 10.1016/j.epidem.2017.02.012.',
+    'Dalziel B D, Kissler S, Gog J R, et al. Urbanization and humidity shape the intensity of influenza epidemics in U.S. cities. Science, 2018, 362(6410): 75-79. DOI: 10.1126/science.aat6030.',
+    'Althouse B M, Scarpino S V, Meyers L A, et al. Enhancing disease surveillance with novel data streams: challenges and opportunities. EPJ Data Science, 2015, 4: 17. DOI: 10.1140/epjds/s13688-015-0054-0.',
+    'Nouvellet P, Cori A, Garske T, et al. A simple approach to measure transmissibility and forecast incidence. Epidemics, 2018, 22: 29-35. DOI: 10.1016/j.epidem.2017.02.012.',
     'Fuller W A. Measurement Error Models. New York: John Wiley & Sons, 1987. DOI: 10.1002/9780470316665.',
     'Carroll R J, Ruppert D, Stefanski L A, Crainiceanu C M. Measurement Error in Nonlinear Models: A Modern Approach. 2nd ed. Boca Raton: Chapman & Hall/CRC, 2006. DOI: 10.1201/9781420010138.',
-    'Armstrong B G. Effect of measurement error on epidemiological studies of environmental and nutritional risks. Annals of Epidemiology, 1998, 8(6): 381-387. DOI: 10.1016/S1047-2797(97)00234-8.',
+    'Armstrong B G. Effect of measurement error on epidemiological studies of environmental and occupational exposures. Occupational and Environmental Medicine, 1998, 55(10): 651-656. DOI: 10.1136/oem.55.10.651.',
     'Verbeke G, Molenberghs G. Linear Mixed Models for Longitudinal Data. New York: Springer, 2000. DOI: 10.1007/978-1-4419-0300-6.',
     'Reich N G, McGowan C J, Yamana T K, et al. Accuracy of real-time multi-model ensemble forecasts for seasonal influenza in the U.S. PLOS Computational Biology, 2019, 15(11): e1007486. DOI: 10.1371/journal.pcbi.1007486.',
     'Cramer E Y, Ray E L, Lopez V K, et al. Evaluation of individual and ensemble probabilistic forecasts of COVID-19 mortality in the United States. Proceedings of the National Academy of Sciences, 2022, 119(15): e2113561119. DOI: 10.1073/pnas.2113561119.',
     'Ray E L, Brooks L C, Bien J, et al. Comparing trained and untrained probabilistic ensemble forecasts of COVID-19 cases and deaths in the United States. International Journal of Forecasting, 2023, 39(3): 1366-1383. DOI: 10.1016/j.ijforecast.2022.06.005.',
-    'Biggerstaff M, Alper D, Dredze M, et al. Results from the second open CDC challenge to predict the 2014-2015 influenza season. Epidemics, 2018, 24: 26-37. DOI: 10.1016/j.epidem.2018.02.003.',
-    'Jhung M A, Powell T, Dhara R, et al. Epidemiology of influenza-associated hospitalizations in the United States, 1993-2008. Clinical Infectious Diseases, 2012, 54(11): 1555-1562. DOI: 10.1093/cid/cis253.',
-    'Stoner O, Economou T, Drummond G. Hierarchical spatio-temporal modeling for surveillance data with reporting delays and incomplete observation. Biometrics, 2023, 79(3): 2296-2308. DOI: 10.1111/biom.13788.',
-    'Azmon A, Faes C, Hens N. Estimating the reproduction number from incompletely observed outbreaks: real-time monitoring and reporting delay adjustment. Epidemics, 2014, 9: 30-38. DOI: 10.1016/j.epidem.2014.09.006.',
-    'Rohani P, Keeling M J, Grenfell B T. The interplay between environmental and demographic stochasticity in infectious disease dynamics. Science, 2002, 297(5583): 1010-1012. DOI: 10.1126/science.1073801.'
+    'Biggerstaff M, Johansson M, Alper D, et al. Results from the second year of a collaborative effort to forecast influenza seasons in the United States. Epidemics, 2018, 24: 26-33. DOI: 10.1016/j.epidem.2018.02.003.',
+    'Zhou H, Thompson W W, Viboud C G, et al. Hospitalizations associated with influenza and respiratory syncytial virus in the United States, 1993-2008. Clinical Infectious Diseases, 2012, 54(10): 1427-1436. DOI: 10.1093/cid/cis211.',
+    'Stoner O, Economou T, Drummond Marques da Silva G. A hierarchical framework for correcting under-reporting in count data. Journal of the American Statistical Association, 2019, 114(528): 1481-1492. DOI: 10.1080/01621459.2019.1573732.',
+    'Azmon A, Faes C, Hens N. On the estimation of the reproduction number based on misreported epidemic data. Statistics in Medicine, 2014, 33(7): 1176-1192. DOI: 10.1002/sim.6015.',
+    'Rohani P, Keeling M J, Grenfell B T. The interplay between determinism and stochasticity in childhood diseases. The American Naturalist, 2002, 159(5): 469-481. DOI: 10.1086/339467.',
+    'Centers for Disease Control and Prevention. Weekly Hospital Respiratory Data Metrics by Jurisdiction. 2026. URL: https://data.cdc.gov/ (accessed 2026-09-05).'
 ]
 
 

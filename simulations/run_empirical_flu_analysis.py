@@ -484,7 +484,7 @@ def main():
             dt_ = W[0] * cs[tt] + W[1] * cs[tt - 1] + W[2] * cs[tt - 2]
             div_ = W[0] * cs[tt - 3] + W[1] * cs[tt - 4] + W[2] * cs[tt - 5]
             if dt_ >= 5 and div_ >= 5:
-                rows_iv.append({'wk': pd.Timestamp(dts[tt]), 'D_t': dt_, 'D_iv': div_,
+                rows_iv.append({'state': st, 'wk': pd.Timestamp(dts[tt]), 'D_t': dt_, 'D_iv': div_,
                                 'g': cs[tt + 1] / dt_})
     piv = pd.DataFrame(rows_iv)
     eiv = piv[piv['wk'].isin(early['week_end'])]
@@ -660,12 +660,29 @@ def main():
         res_1s = x_inv_s - x_inv_hat_s
         ss_reg_s = np.sum((x_inv_hat_s - np.mean(x_inv_s))**2)
         f_stat_s = (ss_reg_s / 1) / (np.sum(res_1s**2) / (len(x_inv_s) - 2))
+
+        # cluster robust F
+        st_codes, st_uniques = pd.factorize(sub_s['state'])
+        G = len(st_uniques)
+        N = len(x_inv_s)
+        K = 2
+        score = Z_s * res_1s[:, None]
+        meat = np.zeros((K, K))
+        for g in range(G):
+            sg = score[st_codes == g].sum(axis=0)
+            meat += np.outer(sg, sg)
+        bread = np.linalg.inv(Z_s.T @ Z_s)
+        dfc = (G / (G - 1)) * ((N - 1) / (N - K))
+        V = dfc * bread @ meat @ bread
+        f_stat_clustered = (gamma_s[1] ** 2) / V[1, 1]
+
         X_hat_s = np.column_stack([np.ones(len(x_inv_hat_s)), x_inv_hat_s])
         beta_s = np.linalg.lstsq(X_hat_s, y_s, rcond=None)[0]
         X_raw_s = np.column_stack([np.ones(len(x_inv_s)), x_inv_s])
         beta_ols_s = np.linalg.lstsq(X_raw_s, y_s, rcond=None)[0]
         return {
             'N': int(len(sub_s)), 'F_stat': float(f_stat_s),
+            'F_stat_clustered': float(f_stat_clustered),
             'a_iv': float(beta_s[0]), 'b_iv': float(beta_s[1]),
             'm_x_iv': float(beta_s[1] / beta_s[0]) if beta_s[0] > 0 else np.nan,
             'a_ols': float(beta_ols_s[0]), 'b_ols': float(beta_ols_s[1])
@@ -678,6 +695,7 @@ def main():
         stats['seasonal_subsample_iv'][s_name] = _run_2sls_season(s_data, r_seas)
 
     stats['seasonal_subsample_iv']['pooled_within_phase'] = _run_2sls_season(eiv, r_early)
+    stats['seasonal_subsample_iv']['pooled_subsample_mean'] = _run_2sls_season(eiv, eiv['g'].mean())
 
 
     print('[审稿固化] stage_scale_audit / rolling_origin / iv_check / realized_large_scale 已写入 JSON')

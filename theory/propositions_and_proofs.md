@@ -109,6 +109,15 @@ $$\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) = \frac{1}{T^2}\operator
 $$\operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) = T v_R + 2 v_R \sum_{s=1}^{T-1} (T-s) r^s = v_R T \left[\frac{1+r}{1-r} - \frac{2r(1-r^T)}{T(1-r)^2}\right]$$
 除以 $T^2$ 即得式 (2)。当 $T \gg 1$ 时忽略 $O(1/T^2)$ 项直接得到 $T_{\operatorname{eff}}$。正整数约束 $n_T = B/(\rho T) \in \mathbb{N}_+$ 即给出集合 $\mathcal{T}(B, \rho)$。 $\blacksquare$
 
+### 推论 1（成本与预算约束下的最优监测规模）
+设监测系统在每个观测期存在固定的系统维持成本 $c_0 > 0$，每捕获上报一个病例的边际成本为 $c_1 > 0$。在总成本预算 $C = T(c_0 + c_1 m)$ 约束下，设计者寻求期数 $T$ 与单期期望报告规模 $m$ 的最优组合以最小化跨期估计方差 $\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{v_R}{T} + \frac{A}{T m}$。
+代入 $T = \frac{C}{c_0 + c_1 m}$，目标函数化为：
+$$\min_{m > 0} \; \mathcal{V}(m) \propto (c_0 + c_1 m)\left(v_R + \frac{A}{m}\right) = c_0 v_R + c_1 A + \frac{c_0 A}{m} + c_1 v_R m$$
+对其求导并令一阶导为零：
+$$\frac{\mathrm{d}\mathcal{V}}{\mathrm{d}m} = -\frac{c_0 A}{m^2} + c_1 v_R = 0 \implies m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\times}$$
+二阶导数 $\frac{\mathrm{d}^2\mathcal{V}}{\mathrm{d}m^2} = \frac{2 c_0 A}{m^3} > 0$ 恒正，证明 $m^*$ 为全局唯一最优规模。
+**经济学与监测含义：** 最优单期报告规模恰为“固定成本与边际成本之比”与“方差交叉点 $m_\times$”的几何平均数！当且仅当固定成本与边际成本之比等于方差交叉点（$c_0/c_1 = m_\times$）时，$m^* = m_\times$。这证明了方差交叉点 $m_\times$ 并非主观约定，而是监测设计与运筹优化决策中的基本充分统计量（Sufficient Statistic），从决策论层面严格界定了标题中的“推断边界”。 $\blacksquare$
+
 ---
 
 ## 6. 命题 5（当期超临界增长判定检验与精确离散功效）
