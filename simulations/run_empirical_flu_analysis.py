@@ -855,8 +855,10 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
     ax.errorbar(x, means, yerr=[1.96 * s for s in sems], fmt='o-', color='#1a558a',
                 lw=2.2, ms=7, capsize=4, label='Mean RelMSE (95% CI)')
     ax.plot(x, meds, 's--', color='#e66101', lw=1.8, ms=6, label='Median RelMSE')
-    ax.axvline(1.72, color='gray', ls='--', lw=1.2, alpha=0.7)  # 经验交叉点 22.6 落在 [20,50) 箱内（x=1.72 按对数箱宽近似）
-    ax.text(1.85, max(means) * 0.88, 'empirical crossover\nat ~22.6 cases/week',
+    # 经验交叉点 22.6 落在 [20,50) 箱内，精确对数插值坐标为 1.0 + (ln(22.64)-ln(20))/(ln(50)-ln(20)) ≈ 1.14
+    x_cross = 1.0 + (np.log(22.64) - np.log(20.0)) / (np.log(50.0) - np.log(20.0))
+    ax.axvline(x_cross, color='gray', ls='--', lw=1.2, alpha=0.8)
+    ax.text(x_cross + 0.12, max(means) * 0.88, 'empirical crossover\nat ~22.6 cases/week',
             fontsize=8.5, color='#333333')
     ax.set_xticks(x)
     ax.set_xticklabels(SCALE_LABELS, **xt)
