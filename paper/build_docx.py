@@ -97,11 +97,11 @@ h2('3.1当期传播参数的条件似然、Fisher信息与方差')
 body('命题1：在负二项分支与二项报告基准下，当n与ρ已知时：（i）报告病例数C_t|(n,R_t)严格服从均值为ρnR_t、形状参数为nk的负二项分布；（ii）矩估计量R̂_t=C_t/(ρn)恰为该条件似然下的极大似然估计；（iii）关于R_t的Fisher信息量为')
 eq(r'\mathcal{I}(R_t\mid n)=\frac{n}{R_t/\rho+R_t^2/k}')
 body('（iv）估计量的条件方差严格达到Cramér–Rao下界：')
-eq(r'Var\left(\frac{C_t}{\rho n}\,\middle|\,n,R_t\right)=\frac{R_t}{\rho n}+\frac{R_t^2}{kn}')
+eq(r'Var\left(\frac{C_t}{\rho n}\,|\,n,R_t\right)=\frac{R_t}{\rho n}+\frac{R_t^2}{kn}')
 body('证明思路：由概率生成函数，NB卷积二项抽稀仍是NB（参数p*=k/(k+ρR_t)）；对数似然得分方程直接解得MLE，代入NB方差即得信息量与方差。该命题表明：对当期参数，信息量∝n，规模的边际方差收益恒为正。')
 h2('3.2跨期基础水平的单期边际方差与交叉点')
 body('命题2：在条件矩假设下，以单期估计量C_t/(ρn)估计跨期基础水平R̄，其给定n的条件边际方差为')
-eq(r'Var\left(\frac{C_t}{\rho n}\,\middle|\,n\right)=v_R+\frac{\bar{R}}{\rho n}+\frac{\bar{R}^2+v_R}{kn}')
+eq(r'Var\left(\frac{C_t}{\rho n}\,|\,n\right)=v_R+\frac{\bar{R}}{\rho n}+\frac{\bar{R}^2+v_R}{kn}')
 body('由全方差公式：第一项为环境项Var(R_t|n)=v_R，第二、三项为E[R_t/(ρn)+R_t²/(kn)|n]代入E[R_t²|n]=v_R+R̄²展开即得。令m=ρn为期望报告病例数，上式可重写为v_R+A/m，其中A=R̄+ρ(R̄²+v_R)/k。定义方差占比交叉点：')
 eq(r'm_\times=\frac{A}{v_R}=\frac{\bar{R}+\rho(\bar{R}^2+v_R)/k}{v_R}')
 body('其含义是环境方差项与病例规模相关项相等的规模位置：m>m_×后环境方差占主导，增加病例数仅能作用于占比逐渐减小的A/m项。交叉点是平滑的收益放缓点，不是硬阈值。')
@@ -221,4 +221,12 @@ cmds.append({'command': 'add', 'parent': '/footer[1]/p[1]', 'type': 'field',
 
 with open(os.path.join(BASE, '_batch.json'), 'w', encoding='utf-8') as f:
     json.dump(cmds, f, ensure_ascii=False)
-print(len(cmds), 'commands')
+print(len(cmds), 'commands written to _batch.json')
+
+import shutil, subprocess
+if shutil.which('officecli'):
+    print('Generating main_docx.docx via officecli...')
+    subprocess.run(['officecli', 'create', OUT, '--force', '--locale', 'zh-CN'], check=True)
+    subprocess.run(['officecli', 'batch', OUT, '--input', os.path.join(BASE, '_batch.json')], check=True)
+    subprocess.run(['officecli', 'close', OUT], check=True)
+    print('Successfully generated:', OUT)
