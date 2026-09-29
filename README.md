@@ -19,7 +19,7 @@ paper_final/
     ├── main.tex           LaTeX 源（Tectonic 编译，xelatex 兼容）— 权威版本
     ├── main.pdf           编译产物（28 页；从 paper/ 目录执行 tectonic main.tex）
     ├── main_docx.docx     按学报模板重写的 Word 版（含 OMML 公式、原生表格、3 图）
-    ├── references.bib     33 条权威参考文献（含 DOI，覆盖超传播、更新过程、Fisher信息下界、状态空间、信度比、FluSight）（含 DOI，核对 Communications Physics 450）
+    ├── references.bib     34 条权威参考文献（含 DOI 与 CDC 数据集条目）
     └── build_docx.py      docx 生成脚本（officecli batch，可重跑）
 ```
 
