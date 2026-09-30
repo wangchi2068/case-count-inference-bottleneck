@@ -110,13 +110,14 @@ $$\operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) = T v_R + 2 v
 除以 $T^2$ 即得式 (2)。当 $T \gg 1$ 时忽略 $O(1/T^2)$ 项直接得到 $T_{\operatorname{eff}}$。正整数约束 $n_T = B/(\rho T) \in \mathbb{N}_+$ 即给出集合 $\mathcal{T}(B, \rho)$。 $\blacksquare$
 
 ### 推论 1（成本与预算约束下的最优监测规模）
-设监测系统在每个观测期存在固定的系统维持成本 $c_0 > 0$，每捕获上报一个病例的边际成本为 $c_1 > 0$。在总成本预算 $C = T(c_0 + c_1 m)$ 约束下，设计者寻求期数 $T$ 与单期期望报告规模 $m$ 的最优组合以最小化跨期估计方差 $\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{v_R}{T} + \frac{A}{T m}$。
-代入 $T = \frac{C}{c_0 + c_1 m}$，目标函数化为：
-$$\min_{m > 0} \; \mathcal{V}(m) \propto (c_0 + c_1 m)\left(v_R + \frac{A}{m}\right) = c_0 v_R + c_1 A + \frac{c_0 A}{m} + c_1 v_R m$$
+设监测系统在每个观测期存在固定的系统维持成本 $c_0 > 0$，每捕获上报一个病例的边际成本为 $c_1 > 0$（对应覆盖人群人均成本 $c_1'$ 下 $c_1 = c_1'/\rho$）。在总成本预算 $B = T(c_0 + c_1 m)$ 约束下，假设设计者沿扩大基数 $n$ 的方向（即固定报告率 $\rho$，变动风险集 $n$）寻求连续近似期数 $T \ge 1$ 与单期期望报告规模 $m$ 的最优组合以最小化跨期估计方差 $\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{v_R}{T} + \frac{A}{T m}$。为保证期数 $T \ge 1$，要求 $m \le (B - c_0)/c_1$。
+代入 $T = \frac{B}{c_0 + c_1 m}$，目标函数正比于：
+$$\min_{m > 0} \; \mathcal{V}(m) \propto v_R (c_0 + c_1 m)\left(1 + \frac{m_\times}{m}\right) = c_0 v_R + c_1 A + \frac{c_0 A}{m} + c_1 v_R m$$
 对其求导并令一阶导为零：
 $$\frac{\mathrm{d}\mathcal{V}}{\mathrm{d}m} = -\frac{c_0 A}{m^2} + c_1 v_R = 0 \implies m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\times}$$
-二阶导数 $\frac{\mathrm{d}^2\mathcal{V}}{\mathrm{d}m^2} = \frac{2 c_0 A}{m^3} > 0$ 恒正，证明 $m^*$ 为全局唯一最优规模。
-**经济学与监测含义：** 最优单期报告规模恰为“固定成本与边际成本之比”与“方差交叉点 $m_\times$”的几何平均数！当且仅当固定成本与边际成本之比等于方差交叉点（$c_0/c_1 = m_\times$）时，$m^* = m_\times$。这证明了方差交叉点 $m_\times$ 并非主观约定，而是监测设计与运筹优化决策中的基本充分统计量（Sufficient Statistic），从决策论层面严格界定了标题中的“推断边界”。 $\blacksquare$
+二阶导数 $\frac{\mathrm{d}^2\mathcal{V}}{\mathrm{d}m^2} = \frac{2 c_0 A}{m^3} > 0$ 恒正，在满足可行边界条件下，$m^*$ 为唯一内部最优单期规模。
+注意：命题 4 中纯人数预算 $B = T m$ 恰对应 $c_0 = 0$ 的特例，此时 $m^* \to 0$，即若无单期固定维持开销，资源配置应极端倾向于拉长期数 $T$；推论 1 则刻画了存在固定周期开销时的现实权衡。若环境扰动存在一阶自回归自相关，大期数极限下有效环境方差增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，最优单期规模相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$。
+**运筹设计含义：** 最优单期报告规模 $m^*$ 对未知方差参数对 $(v_R, A)$ 的依赖完全通过交叉点比值 $m_\times$ 体现（构成该设计问题关于方差参数的充分降维）。在数值上，$m^*$ 恰为固定与边际成本比与方差交叉点的几何平均值；仅当固定与边际成本之比恰好等于 $m_\times$ 时，$m^* = m_\times$。这澄清了交叉点 $m_\times$ 本身是方差等权位置，而真实决策的最优规模取决于成本结构。 $\blacksquare$
 
 ---
 
