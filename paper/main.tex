@@ -61,9 +61,9 @@ Estimation Targets, Monitoring Levers, and Influenza Hospitalization Evidence}
 
 第三条脉络近年来利用\textbf{信息论与 Fisher 信息量}严格解析了带噪疫情曲线所蕴含的物理信息极限。开创性文献量化了带噪发病序列中的 Fisher 信息量随观测期与抽样比例的演化规律 \citep{parag2022quantifying}，进而确立了在有效再生数框架下实时检测疫情反弹的严格信息论下界 \citep{parag2022fundamental}，并揭示了由观测噪声诱导的非对称干预延迟边界 \citep{parag2025asymmetric}。然而，既有信息下界文献所确立的标度律（Scaling Law）及其信息量随期望病例数近似线性增长的结论，主要是建立在\textbf{当期再生数 $R_t$ 或特定瞬时传播强度}这一类估计目标之上的。本文与之形成理论对话：\textbf{当推断目标由当期参数转换为跨期基础水平时，方差对病例规模的标度响应出现结构性分化}——对当期条件参数 $R_t$，增加病例规模的边际方差收益恒为正（命题~\ref{prop:measurement_var}）；而对跨周平稳的潜在基础趋势 $\bar{R}$，单期规模收益受制于共同环境方差底板 $v_R$ 并受平滑交叉点 $m_\times$ 标定（命题~\ref{prop:trend_var}）。换言之，“病例数何时不再是主要瓶颈”不是疫情系统的孤立物理属性，而是\textbf{估计目标与观测维度的内生属性}，这一目标依赖性为既有信息极限理论补充了一个关键的结构性维度。
 
-第四条脉络植根于非线性生态动力学中\textbf{人口统计随机性（Demographic Stochasticity）与环境随机性（Environmental Stochasticity）}的经典二分法 \citep{rohani2002determinism, breto2009time}。群体微观的繁殖与抽稀随机性随种群或样本规模扩大而呈现大数定律衰减，但不可观测的宏观共同环境震荡在单期横截面内具有共同加性或乘性特征，无法仅凭该期样本内部的数据聚合予以消除 \citep{rasmussen2011inference, dalziel2018urbanization, aber2025timeseries}。类似地，从应用统计与计量学的视角来看，这一问题与经典\textbf{测量误差模型（Measurement Error Models）与混合效应信度理论}在方差分解的代数形式上高度一致 \citep{fuller1987measurement, carroll2006measurement, verbeke2000linear}。在流行病学暴露与风险估计中，观测噪声导致的衰减偏倚与方差分配已被广泛探讨 \citep{armstrong1998effect}。在这一语境下，本文推导的方差交叉点 $m_\times$，在方差分解的代数形式上恰对应单期估计方差内部信度比（Reliability Ratio，即信号方差占总方差的比例）等于 0.5 的对称位置 \citep{carroll2006measurement}。
+第四条脉络植根于非线性生态动力学中\textbf{人口统计随机性（Demographic Stochasticity）与环境随机性（Environmental Stochasticity）}的经典二分法 \citep{engen1998demographic, rohani2002determinism, breto2009time}。群体微观的繁殖与抽稀随机性随种群或样本规模扩大而呈现大数定律衰减，但不可观测的宏观共同环境震荡在单期横截面内具有共同加性或乘性特征，无法仅凭该期样本内部的数据聚合予以消除 \citep{rasmussen2011inference, dalziel2018urbanization, aber2025timeseries}。类似地，从应用统计与计量学的视角来看，这一问题与经典\textbf{测量误差模型（Measurement Error Models）与混合效应信度理论}在方差分解的代数形式上高度一致 \citep{fuller1987measurement, carroll2006measurement, verbeke2000linear}。在流行病学暴露与风险估计中，观测噪声导致的衰减偏倚与方差分配已被广泛探讨 \citep{armstrong1998effect}。在这一语境下，本文推导的方差交叉点 $m_\times$，在方差分解的代数形式上恰对应单期估计方差内部信度比（Reliability Ratio，即信号方差占总方差的比例）等于 0.5 的对称位置 \citep{carroll2006measurement}。
 
-第五条脉络来自于\textbf{大规模真实监测网络与流感预测评估实践（如 CDC FluSight 挑战赛）}的经验启示 \citep{althouse2015enhancing, reich2019accuracy, biggerstaff2018results}。全美疾控中心长期运行的多模型前瞻性集成预测评估表明，随着监测系统覆盖面的扩张与统计模型的复杂化，前瞻预测精度的提升迅速呈现收益递减平台，多模型集合预警在流行拐点与传播态势突变处往往面临显著的预测偏差与区间覆盖不稳定（COVID-19 多模型预测中心的评估亦显示类似现象）\citep{cramer2022evaluation, ray2023comparing}；在评估此类前瞻预测表现时，相对尺度均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势 \citep{bosse2023scoring}。而在历史住院基准方面，\citet{zhou2012hospitalizations} 针对全美流感住院负担的基础流行病学测算，为本文折算每例有症状感染的住院比例提供了核心参考。
+第五条脉络来自于\textbf{大规模真实监测网络与流感预测评估实践（如 CDC FluSight 挑战赛）}的经验启示 \citep{althouse2015enhancing, reich2019accuracy, biggerstaff2018results, mathis2024evaluation}。全美疾控中心长期运行的多模型前瞻性集成预测评估表明，随着监测系统覆盖面的扩张与统计模型的复杂化，前瞻预测精度的提升迅速呈现收益递减平台，多模型集合预警在流行拐点与传播态势突变处往往面临显著的预测偏差与区间覆盖不稳定（COVID-19 多模型预测中心的评估亦显示类似现象）\citep{cramer2022evaluation, ray2023comparing}；在评估此类前瞻预测表现时，相对尺度均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势 \citep{bosse2023scoring}。而在历史住院基准方面，\citet{zhou2012hospitalizations} 针对全美流感住院负担的基础流行病学测算，为本文折算每例有症状感染的住院比例提供了核心参考。
 
 面对上述理论进展与现实经验，回答“病例规模何时不再主导推断误差”，需要超越单代理想公式的无条件外推。本文的贡献\textbf{不在于单独提出新的负二项分支模型或漏报校正公式}，而在于针对“病例规模何时不再主导推断误差”这一具体监测设计问题，建立一个分层随机推断框架，系统实现以下五项贡献：
 \begin{enumerate}[label=(\arabic*)]
@@ -165,8 +165,8 @@ G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \r
 因此其倒数恰为 $\operatorname{Var}(\widehat{R}_t \mid n, R_t) = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$。
 \end{proof}
 
-\begin{remark}[\textbf{边界限定}]
-命题~\ref{prop:measurement_var} 清晰建立了病例数所携带的 Fisher 信息量 $\mathcal{I}(R_t \mid n) \propto n$ 与方差的关系。但必须明确：这是\textbf{在已知真实风险集 $n$、已知报告率 $\rho$、模型正确设定且估计当期传播参数 $R_t$} 的条件结果，不能直接搬到仅能观测报告序列或估计跨期基础水平 $\bar{R}$ 的问题中。
+\begin{remark}[\textbf{泊松极限退化与边界限定}]
+命题~\ref{prop:measurement_var} 阐明了微观异质性与不完全报告下 Fisher 信息量对病例规模的响应机制。特别地，当个体超传播离散参数 $k \to \infty$（个体繁殖退化为无异质性的经典泊松分布）时，Fisher 信息量精确退化为 $\mathcal{I}(R_t \mid n) = \frac{\rho n}{R_t}$，与泊松更新过程中的经典标度律 \citep{parag2022quantifying} 严格一致；而在现实存在超传播（有限 $k$）时，分母出现的 $R_t^2/k$ 项显式刻画了个体繁殖异质性带来的信息衰减惩罚。需明确指出：该结论是在已知风险集与报告率、且估计\textbf{当期瞬时参数 $R_t$} 的基准结果，不能直接推演至仅凭报告数据推断跨期基础水平 $\bar{R}$ 的情境。
 \end{remark}
 
 \subsection{跨期基础水平的单期边际方差}\label{subsec:theory_trend}
@@ -190,8 +190,8 @@ G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \r
 利用条件二阶矩关系 $\mathbb{E}[R_t^2 \mid n] = \operatorname{Var}(R_t \mid n) + (\mathbb{E}[R_t \mid n])^2 = v_R + \bar{R}^2$，相加即得式~\eqref{eq:var_prop2}。
 \end{proof}
 
-\begin{remark}[\textbf{单期设计的方差底板限定}]
-式~\eqref{eq:var_prop2} 中的 $v_R$ 底板，是在\textbf{指定单期估计量 $\widehat{R}_t = C_t/(\rho n)$、无外部协变量、且仅依据单期数据}推断跨期基础水平 $\bar{R}$ 的严格条件方差下界。这并不排斥通过引入气象/人群接触等显式环境协变量、采用多期时间序列状态平滑或贝叶斯动态滤波来进一步降低后验方差；它界定的是仅凭单期病例聚合本身所无法消除的共同随机性部分。
+\begin{remark}[\textbf{生态随机性传承与单期方差底板}]
+式~\eqref{eq:var_prop2} 呈现的 $v_R + A/m$ 方差结构，在数理思想上与生态动力学中人均增长率方差的经典二分（即环境方差底板与按 $1/N$ 衰减的人口统计方差，\citealp{engen1998demographic}）一脉相承，并与传染病宏观时序模型中环境噪声无法被种群聚合消除的实证结论相容 \citep{breto2009time}。本文的贡献在于将这一分解形式引入二项报告抽稀与超传播分支动力学，解析阐明了抽稀与个体异质性对尺度项 $A$ 的微观构成。需指出：该底板限定于指定单期估计量且无外部协变量的情境，并不排斥引入气象行为协变量或多期滤波进一步降低方差；它界定了仅凭单期横截面数据聚合无法消除的共同随机性下限。
 \end{remark}
 
 \subsection{方差占比交叉点 $m_\times$}\label{subsec:theory_crossover}
@@ -312,8 +312,8 @@ m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\time
 若环境扰动在固定观测周期长度下存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s}) = v_R r^{|s|}$（$r > 0$），大期数极限下有效环境方差由 $v_R$ 增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，使得环境随机性相较抽样误差更为棘手，最优单期规模将相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$，表明强自相关环境下应将更多预算向拉长观测期数 $T$ 倾斜。
 \end{corollary}
 
-\begin{remark}[\textbf{参数降维与运筹设计含义}]
-推论~\ref{cor:optimal_scale} 表明：在成本约束的资源分配问题中，最优单期规模 $m^*$ 对未知方差参数对 $(v_R, A)$ 的依赖完全通过且仅通过交叉点比值 $m_\times$ 体现（构成该设计问题关于方差参数的充分降维）。在数值上，最优规模 $m^*$ 为成本比与方差交叉点的几何平均值；仅当固定与边际成本之比恰好等于 $m_\times$ 时，$m^*$ 才与 $m_\times$ 重合。例如依据呼吸道传染病唯象示例参数设定（Illustrative Scenario）导出理论交叉点约 21--49 例（$m_\times \approx 21.3 \sim 49.3$；参数设定详见第~\ref{subsec:emp_early} 节）：若固定边际成本比 $c_0/c_1 = 10$，则最优配置规模区间为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。这澄清了交叉点 $m_\times$ 本身是方差等权位置，而真实决策的最优规模取决于成本结构。
+\begin{remark}[\textbf{经典两阶段抽样同构与运筹设计含义}]
+在理论同构层面，推论~\ref{cor:optimal_scale} 中的方差 $\frac{v_R}{T} + \frac{A}{T m}$ 与总成本 $T(c_0 + c_1 m)$ 结构，在数理形式上与经典调查抽样理论中两阶段抽样（Two-stage Sampling）的最优次级样本量配置模型（\citealp{cochran1977sampling}，第 10 章）优美对应——时间观测期 $T$ 对应初级抽样单元数，单期报告病例 $m$ 对应每单元次级样本量。推论~\ref{cor:optimal_scale} 的理论推进在于将这一经典抽样设计赋予传染病监测运筹解释，并引入 AR(1) 自相关修正拓展至动态时序。在设计含义上，最优单期规模 $m^*$ 对未知参数对 $(v_R, A)$ 的依赖完全通过交叉点比值 $m_\times$ 充分降维体现；数值上，$m^*$ 恰为成本比与方差交叉点的几何平均值。例如依据呼吸道传染病唯象示例参数设定（Illustrative Scenario）导出理论交叉点约 21--49 例（$m_\times \approx 21.3 \sim 49.3$；参数设定详见第~\ref{subsec:emp_early} 节）：若固定边际成本比 $c_0/c_1 = 10$，则最优配置规模区间为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。这澄清了交叉点 $m_\times$ 本身是方差等权位置，而真实决策的最优规模取决于成本结构。
 \end{remark}
 
 \subsection{当期超临界增长判定检验与离散检出功效}\label{subsec:theory_growth_test}
@@ -460,7 +460,7 @@ D_t \triangleq \sum_{s=1}^S w_s C_{t+1-s}.
 
 \subsection{数据源、制度分段与数据预处理}\label{subsec:emp_data}
 
-数据来自全美各州及华盛顿特区医院向 CDC NHSN 上报的周度实验室确诊新发流感住院人数 \citep{cdc2026nhsn}（\texttt{Total Influenza Admissions}）及各州周度医院报告覆盖率（字段名 \texttt{Percent Hospitals Reporting Influenza Admissions}）。样本时间跨越 2020 年 8 月至 2026 年 9 月，涵盖 50 个州及华盛顿特区共 16,218 个州--周观测（其中 504 个州--周的住院数缺失按 0 例处理：P1 期 468 个、P2 期 36 个；在制度切换期"未填报"与"零住院"不能等同，该处理主要影响 P2 期，见第~\ref{subsec:emp_policy} 节的解读边界）。样本筛选采用单一口径：\textbf{$D_t \ge 5$ 的活跃周阈值}，得 10,303 个州--周有效样本；本文第~\ref{subsec:emp_early}--\ref{subsec:emp_spatial} 节的全部主分析、稳健性与滚动核验均基于该口径，不另设覆盖率门槛（避免系统性剔除低覆盖观测）。在此口径下三个报告制度阶段的医院平均填报覆盖率分别为 91.1\%、54.6\% 与 91.8\%，自愿过渡期的覆盖率断崖式跌落构成本文考察报告率冲击的主要制度变异来源。
+数据来自全美各州及华盛顿特区医院向 CDC NHSN 上报的周度实验室确诊新发流感住院人数 \citep{cdc2026nhsn}（\texttt{Total Influenza Admissions}）及各州周度医院报告覆盖率（字段名 \texttt{Percent Hospitals Reporting Influenza Admissions}）。该住院指标系全美 CDC FluSight 自 2021--22 赛季起确立的核心基准预测目标（参见 \citet{mathis2024evaluation} 针对全美 26 个前瞻预测团队的评估），具备坚实的公共卫生实战代表性。样本时间跨越 2020 年 8 月至 2026 年 9 月，涵盖 50 个州及华盛顿特区共 16,218 个州--周观测（其中 504 个州--周的住院数缺失按 0 例处理：P1 期 468 个、P2 期 36 个；在制度切换期"未填报"与"零住院"不能等同，该处理主要影响 P2 期，见第~\ref{subsec:emp_policy} 节的解读边界）。样本筛选采用单一口径：\textbf{$D_t \ge 5$ 的活跃周阈值}，得 10,303 个州--周有效样本；本文第~\ref{subsec:emp_early}--\ref{subsec:emp_spatial} 节的全部主分析、稳健性与滚动核验均基于该口径，不另设覆盖率门槛（避免系统性剔除低覆盖观测）。在此口径下三个报告制度阶段的医院平均填报覆盖率分别为 91.1\%、54.6\% 与 91.8\%，自愿过渡期的覆盖率断崖式跌落构成本文考察报告率冲击的主要制度变异来源。
 
 \paragraph{报告制度三阶段划分：}
 该监测系统在样本期内经历了三次具有政策调整特征的制度切换：
@@ -659,7 +659,10 @@ $[600, 5000)$ & 262 & 0.2916 & 0.2987 \\
 为确保研究的完全透明与可复现性，本研究的全部仿真模拟脚本、计量实证分析代码、理论证明底稿及原始固化数据均已开源共享，访问地址为：\url{https://github.com/wangchi2068/case-count-inference-bottleneck}。
 
 \bibliographystyle{plainnat}
-\setlength{\bibsep}{2.5pt}
+\begingroup
+\small
+\setlength{\bibsep}{1.2pt}
 \bibliography{references}
+\endgroup
 
 \end{document}

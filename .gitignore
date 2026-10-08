@@ -9,4 +9,5 @@ __pycache__/
 _batch.json
 review.md
 review*.md
+similar*.md
 .*.savetmp*
