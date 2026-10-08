@@ -1,8 +1,8 @@
 """
-Automated consistency and regression verification suite.
-Performs full number tracing from paper/main.tex to simulations/empirical_stats.json,
-checks bibliography 1:1 DOI alignment between DOCX and references.bib,
-and enforces mathematical and text hygiene across all deliverable documents.
+Automated regression and multi-decimal consistency verification suite.
+Traces multi-decimal numbers in paper/main.tex against simulations/empirical_stats.json
+and explicitly documented theoretical/simulation outputs, validates 1:1 DOI parity between
+paper/main_docx.docx and paper/references.bib, and enforces text hygiene.
 """
 import json
 import os
@@ -29,9 +29,9 @@ def extract_numbers_from_json(obj):
 
 def check_all():
     errors = []
-    print(f"Running comprehensive consistency suite from ROOT: {ROOT}")
+    print(f"Running multi-decimal consistency and regression suite from ROOT: {ROOT}")
     
-    # 1. Load empirical_stats.json
+    # 1. Load empirical_stats.json and verify key econometric indicators
     stats_path = p('simulations', 'empirical_stats.json')
     with open(stats_path, 'r', encoding='utf-8') as f:
         stats = json.load(f)
@@ -63,8 +63,24 @@ def check_all():
         tex = f.read()
 
     json_floats = set(extract_numbers_from_json(stats))
-    named_sim_constants = {0.029, 0.0302, 0.0495, 0.190, 0.394, 0.543, 0.718, 2.1232, 1.3921}
-    universe = json_floats | named_sim_constants
+    
+    # Explicitly computed/derived theoretical quantities and documented simulation outputs
+    derived_quantities = {
+        0.029,   # 0.08 / (1.6706 ** 2) (v_R floor relative to R_bar at line 521)
+        0.0302,  # 0.04 / (1.15 ** 2) (v_R floor relative to stationary baseline at line 428)
+        2.1232,  # A parameter in run_forecasting_crossover_simulations.py
+        1.3921,  # b_iv - b_ols difference in early-phase pooled subsample (2.8501 - 1.4581)
+        0.0056,  # Tokars-derived lower attack rate bound (63.5/100000 / 0.113)
+        0.021,   # Tokars-derived upper attack rate bound (63.5/100000 / 0.030)
+    }
+    simulation_grid_outputs = {
+        0.0495,  # Nominal test size from run_detection_simulations.py (line 399)
+        0.190,   # Relative MSE at m=300 in renewal process simulation (line 439)
+        0.394,   # Relative MSE at m=60 in renewal process simulation (line 439)
+        0.543,   # Relative MSE at m=24 in renewal process simulation (line 439)
+        0.718,   # Relative MSE at m=6 in renewal process simulation (line 439)
+    }
+    universe = json_floats | derived_quantities | simulation_grid_outputs
 
     clean_tex_for_numbers = tex.replace('--', ' ')
     matches = re.findall(r'(?<![A-Za-z0-9_])-?\d+\.\d{3,}', clean_tex_for_numbers)
@@ -84,13 +100,31 @@ def check_all():
             unmatched_nums.append(m)
 
     if unmatched_nums:
-        errors.append(f"General Number Trace failed: {len(unmatched_nums)} unmatched numbers in main.tex: {unmatched_nums}")
+        errors.append(f"Number trace check failed: {len(unmatched_nums)} unmatched numbers in main.tex: {unmatched_nums}")
     else:
-        print(f"[OK] General Number Trace 100% matched ({len(distinct_decimals)}/169 numbers verified)")
+        print(f"[OK] Multi-decimal trace 100% matched ({len(distinct_decimals)} distinct numbers verified)")
 
-    # 3. Check banned phrasing in paper/main.tex
+    # 3. Check required and banned phrasing in paper/main.tex
+    required_tex_snippets = [
+        "[-2.33, 0.59]",
+        "14.6 \\sim 22.2",
+        "46.1 \\sim 70.2",
+        "21.3 \\sim 49.3",
+        "0.0056, 0.021",
+        "88.9\\%",
+        "若由内部一阶条件求出的规模超出可行上界"
+    ]
+    for snip in required_tex_snippets:
+        if snip not in tex:
+            errors.append(f"paper/main.tex missing required snippet: '{snip}'")
+        else:
+            print(f"[OK] paper/main.tex contains '{snip}'")
+
     banned_tex_phrases = [
         "[-2.2702, 0.6261]",
+        "14.7 \\sim 24.4",
+        "46.5 \\sim 77.1",
+        "21.6 \\sim 59.4",
         "14.5 \\sim 24.5",
         "45.8 \\sim 77.5",
         "强稳健性对照",

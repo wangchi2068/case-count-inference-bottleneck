@@ -15,7 +15,7 @@ paper_final/
 │   └── empirical_stats.json                 论文第 5 节全部数字的唯一数据来源（156+ 字段全固化）
 ├── theory/      propositions_and_proofs.md  命题 1–6 全推导底稿与成本优化推论 1（含全证明）
 ├── figures/     fig1–fig4（PDF 投稿版 + PNG 预览版，含对数轴尾部离散与精确枚举图例）
-├── tests/       check_paper_numbers.py 自动化数值与文本一致性校验测试
+├── tests/       check_paper_numbers.py 全量多小数数值追踪与文本/文献一致性校验套件
 ├── LICENSE      开源协议（MIT License）
 ├── requirements.txt Python 依赖定义
 └── paper/       论文正文（LaTeX 为权威版本；docx 为按学报模板派生的交付件，修订时以 main.tex 为准）
@@ -35,7 +35,7 @@ python run_theory_simulations.py       # 图1
 python run_detection_simulations.py    # 图2
 python run_forecasting_crossover_simulations.py  # 图3
 cd ..
-python tests/check_paper_numbers.py    # 自动化数值与文本一致性核验
+python tests/check_paper_numbers.py    # 全量多小数数值追踪与文本/文献一致性核验
 cd paper
 tectonic main.tex                      # 编译 LaTeX（xelatex 亦可）
 python build_docx.py                   # 需 officecli，重新生成 docx
