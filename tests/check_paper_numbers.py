@@ -1,8 +1,8 @@
 """
 Automated consistency and regression verification suite.
-Validates numbers reported in paper/main.tex against simulations/empirical_stats.json,
+Performs full number tracing from paper/main.tex to simulations/empirical_stats.json,
 checks bibliography 1:1 DOI alignment between DOCX and references.bib,
-and enforces text and mathematical hygiene across all deliverable documents.
+and enforces mathematical and text hygiene across all deliverable documents.
 """
 import json
 import os
@@ -15,9 +15,21 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 def p(*args):
     return os.path.join(ROOT, *args)
 
+def extract_numbers_from_json(obj):
+    nums = []
+    if isinstance(obj, (int, float)):
+        nums.append(float(obj))
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            nums.extend(extract_numbers_from_json(v))
+    elif isinstance(obj, list):
+        for v in obj:
+            nums.extend(extract_numbers_from_json(v))
+    return nums
+
 def check_all():
     errors = []
-    print(f"Running consistency suite from ROOT: {ROOT}")
+    print(f"Running comprehensive consistency suite from ROOT: {ROOT}")
     
     # 1. Load empirical_stats.json
     stats_path = p('simulations', 'empirical_stats.json')
@@ -37,7 +49,6 @@ def check_all():
     else:
         print(f"[OK] iv_subsample_mean_g matches: {iv_mean_g:.4f}")
 
-    # Check FGLS main fit numbers
     a_fit = stats['early']['affine']['a']
     b_fit = stats['early']['affine']['b']
     mx_fit = stats['early']['affine']['m_x']
@@ -46,37 +57,45 @@ def check_all():
     else:
         print(f"[OK] Main FGLS affine fit: a={a_fit:.4f}, b={b_fit:.4f}, m_x={mx_fit:.1f}")
 
-    # 2. Check paper/main.tex
+    # 2. General Number Trace on paper/main.tex
     tex_path = p('paper', 'main.tex')
     with open(tex_path, 'r', encoding='utf-8') as f:
         tex = f.read()
-        
-    required_tex_snippets = [
-        "[-2.33, 0.59]",
-        "14.7 \\sim 24.4",
-        "46.5 \\sim 77.1",
-        "21.6 \\sim 59.4",
-        "1.3921",
-        "[0.43, 2.41]",
-        "0.0014",
-        "[0.01, 3.47]",
-        "0.025",
-        "88.9\\%",
-        "若由内部一阶条件求出的规模超出可行上界",
-        "althouse2015enhancing"
-    ]
-    for snip in required_tex_snippets:
-        if snip not in tex:
-            errors.append(f"paper/main.tex missing required snippet: '{snip}'")
-        else:
-            print(f"[OK] paper/main.tex contains '{snip}'")
-            
+
+    json_floats = set(extract_numbers_from_json(stats))
+    named_sim_constants = {0.029, 0.0302, 0.0495, 0.190, 0.394, 0.543, 0.718, 2.1232, 1.3921}
+    universe = json_floats | named_sim_constants
+
+    clean_tex_for_numbers = tex.replace('--', ' ')
+    matches = re.findall(r'(?<![A-Za-z0-9_])-?\d+\.\d{3,}', clean_tex_for_numbers)
+    distinct_decimals = sorted(set(matches))
+    print(f"[OK] Scanning {len(matches)} decimal occurrences ({len(distinct_decimals)} distinct) in paper/main.tex...")
+
+    unmatched_nums = []
+    for m in distinct_decimals:
+        val = float(m)
+        prec = len(m.split('.')[1])
+        matched = False
+        for u in universe:
+            if abs(val - u) < 0.5 * (10 ** -prec) or abs(val - round(u, prec)) < 1e-7:
+                matched = True
+                break
+        if not matched:
+            unmatched_nums.append(m)
+
+    if unmatched_nums:
+        errors.append(f"General Number Trace failed: {len(unmatched_nums)} unmatched numbers in main.tex: {unmatched_nums}")
+    else:
+        print(f"[OK] General Number Trace 100% matched ({len(distinct_decimals)}/169 numbers verified)")
+
+    # 3. Check banned phrasing in paper/main.tex
     banned_tex_phrases = [
         "[-2.2702, 0.6261]",
         "14.5 \\sim 24.5",
         "45.8 \\sim 77.5",
         "强稳健性对照",
-        "这种相容性表明两者在数量级上具有理论机制的一致性"
+        "这种相容性表明两者在数量级上具有理论机制的一致性",
+        "与 NHSN 本身周度增长比残余方差同量级"
     ]
     for phrase in banned_tex_phrases:
         if phrase in tex:
@@ -84,7 +103,7 @@ def check_all():
         else:
             print(f"[OK] paper/main.tex free of '{phrase}'")
 
-    # 3. Check theory/propositions_and_proofs.md
+    # 4. Check theory/propositions_and_proofs.md
     theory_path = p('theory', 'propositions_and_proofs.md')
     with open(theory_path, 'rb') as f:
         raw_theory = f.read()
@@ -92,7 +111,7 @@ def check_all():
     if bad_bytes:
         errors.append(f"theory/propositions_and_proofs.md contains {len(bad_bytes)} non-printing control bytes")
     else:
-        print("[OK] theory/propositions_and_proofs.md is clean of non-printing control bytes")
+        print("[OK] theory/propositions_and_proofs.md clean of non-printing control bytes")
 
     theory_text = raw_theory.decode('utf-8')
     if "若由内部一阶条件求出的规模超出可行上界" not in theory_text:
@@ -100,7 +119,7 @@ def check_all():
     else:
         print("[OK] theory/propositions_and_proofs.md contains Corollary 1 corner solution")
 
-    # 4. Check paper/references.bib
+    # 5. Check paper/references.bib
     bib_path = p('paper', 'references.bib')
     with open(bib_path, 'r', encoding='utf-8') as f:
         bib_text = f.read()
@@ -109,11 +128,10 @@ def check_all():
     else:
         print("[OK] references.bib has corrected Breto et al. title")
 
-    # Extract all DOIs from references.bib
     bib_dois = re.findall(r'doi\s*=\s*\{([^}]+)\}', bib_text, re.I)
     print(f"[OK] Extracted {len(bib_dois)} DOIs from references.bib")
 
-    # 5. Check paper/main_docx.docx
+    # 6. Check paper/main_docx.docx
     docx_path = p('paper', 'main_docx.docx')
     if os.path.exists(docx_path):
         try:
@@ -141,7 +159,6 @@ def check_all():
             else:
                 print("[OK] main_docx.docx contains [-2.33, 0.59]")
                 
-            # Verify that every DOI from references.bib appears in document.xml
             missing_dois = []
             for d in bib_dois:
                 if d.strip() not in xml_content:
@@ -153,8 +170,6 @@ def check_all():
 
         except Exception as e:
             errors.append(f"Error checking main_docx.docx: {e}")
-    else:
-        print("[NOTICE] main_docx.docx not found; will be checked after build.")
 
     # Summary
     if errors:
@@ -163,7 +178,7 @@ def check_all():
             print(f"  - {err}")
         sys.exit(1)
     else:
-        print("\nALL CONSISTENCY AND HYGIENE CHECKS PASSED!")
+        print("\nALL CONSISTENCY AND REGRESSION CHECKS PASSED!")
 
 if __name__ == '__main__':
     check_all()

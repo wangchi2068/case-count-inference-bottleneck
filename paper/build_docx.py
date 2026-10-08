@@ -136,7 +136,7 @@ body('第一，传播异质性与更新过程动力学。开创性研究证实�
 body('第二，不完全观测与状态空间滤波。现实监测系统仅能获取经过延迟与漏报抽稀的确诊或住院病例[21,32]。为重构潜在未观测感染压力，学者们构建了包含粒子滤波、半机制更新过程与分层时空平滑在内的状态空间推断架构[14,31]。Bracher与Held[13]则提出了基于边缘矩匹配的方法，在避免潜变量复杂似然计算的同时，系统揭示了报告率与传播强度的联合可识别性边界。')
 body('第三，Fisher信息量与推断物理极限。Parag等[9,10,11]利用信息论严格推导了带噪疫情曲线的Fisher信息量与反弹识别的物理下界。然而必须指出，既有信息下界均建立在当期再生数R_t这一类估计目标之上，其信息量随期望病例数近似线性增长。本文与之形成正面对话：证明更换估计目标为跨期基础水平后，信息标度律随之改变，饱和于环境方差底板。')
 body('第四，人口统计随机性与环境随机性二分。生态动力学经典理论阐明了微观繁殖抽样随机性与宏观共同环境扰动的本质对立[18,33]。微观随机性随种群规模扩大而迅速衰减，但宏观环境震荡在单期横截面内具有共同乘性特征，无法凭单期病例聚合消除[16,17,19]。在计量统计学中，这一问题与经典测量误差模型及方差成分信度理论在代数形式上高度一致[22,23,24,25]，其交叉点在方差分解中恰对应单期估计方差内部信度比（即信号方差占总方差比例）等于0.5的对称位置[23]。')
-body('第五，大规模真实监测与前瞻预测评估实践。新型数据流拓展与美国CDC FluSight挑战赛等多模型集成实践表明[20,26,27,28,29,30]，前瞻预测精度的提升迅速呈现收益递减平台，集合模型的误差往往受制于超预期的季节性漂移而非单个辖区的样本规模；相对均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势[12]。')
+body('第五，大规模真实监测与前瞻预测评估实践。从新型数据流拓展[20]到美国CDC FluSight挑战赛等多模型集成实践[26,29]，前瞻预测精度的提升迅速呈现收益递减平台，集合模型的误差往往受制于超预期的季节性漂移而非单个辖区的样本规模[27,28]；相对均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势[12]。而在历史住院基准方面，相关基础监测分析提供了关键的流行病学背景[30]。')
 body('综上所述，既有文献分别刻画了上述单点机制，但尚未回答病例规模何时不再主导推断误差、规模收益如何随估计目标与监测杠杆发生质变这一核心问题。本文的差异化定位即在于填补这一理论与经验空白。')
 
 # ============ 2模型与方法 ============
@@ -281,7 +281,7 @@ body('表4显示：统一尺度后达峰期斜率点估计（1.8521）低于初�
 fig('fig4_empirical_falsification.png', '图4 全美CDC NHSN流感住院真实监测数据实证与反证检验')
 
 h2('5.5检验四：变量误差敏感性检验与分季独立2SLS工具变量估计')
-body('以滞后3–5周输入核为工具变量开展2SLS回归：汇集样本中第一阶段稳健F=312.9，第二阶段差值(b_iv - b_ols)=1.3921，10,000次聚类bootstrap 95%CI为[0.43, 2.41]（bootstrap单侧比例0.0014，排除零点），表明汇集样本下2SLS估计斜率高于OLS。分季独立检验中，各季节第一阶段稳健F均在75以上（强工具），b_iv均显著为正（2022–23季3.2787, 2023–24季2.1867, 2024–25季3.6131），差值在2024–25季表现为临界为正（[0.01, 3.47]）。鉴于排除限制难以在理论上绝对保证，该对照定位为说明变量误差不改变规模效应正向存在的稳健性对照。')
+body('以滞后3–5周输入核为工具变量开展2SLS回归：汇集样本中第一阶段稳健F=312.9，第二阶段差值(b_iv - b_ols)=1.3921，10,000次聚类bootstrap 95%CI为[0.43, 2.41]（bootstrap单侧比例0.0014，排除零点），表明汇集样本下2SLS估计斜率高于OLS。分季独立检验中，各季节第一阶段稳健F均在75以上（强工具），b_iv均显著为正（2022–23季3.2787, 2023–24季2.1867, 2024–25季3.6131），差值在2024–25季表现为临界为正（[0.01, 3.47]）。鉴于排除限制难以在理论上绝对保证，该对照定位为说明变量误差不改变规模效应正向存在的稳健性对照。在唯象示例参数设定下导出理论交叉点约 22–59 例（m_×≈21.6–59.4，基于Zhou等[30]住院负担与Tokars等[34]侵袭率折算捕获率）；未归一化绝对方差水平上规模无关项与相关项（约0.28与6.3）高于纯理论设定，但比值与理论交叉点数量级相容，重在比值形态一致性。')
 
 h2('5.6检验五：报告政策切换冲击的尾部放大效应与空间加总权衡')
 body('自愿填报期标准差由法定强制子段的0.620跃升至1.823（扩张194%），偏度由3.45暴增至14.98，但主体IQR与MAD保持稳定（图4d对数轴箱线图），与二项抽稀机制放大右尾的理论方向相容；鉴于覆盖率不等同于事件级抽样概率且自愿期与夏季低发期重叠，定位为相容的描述性证据。全美加总序列相对误差降至0.0348（约为单州平台的三分之一），展示了国家层面空间汇聚与属地化预警之间的权衡边界。')
@@ -300,13 +300,28 @@ body('本文建立了一个分层随机推断框架，从理论与实证两个�
 
 # 数据可用性
 h1('数据与代码可用性声明')
-body('本文实证所用的全美各州周度流感住院监测数据来源于美国疾病控制与预防中心国家医疗保健安全网（CDC NHSN）公开数据库[34]（目录记录标识符ua7e-t2fy），数据集访问日期为2026年9月5日，分析所用交付CSV数据文件的SHA-256校验和为：e48c2ea92e0beb552a6510b7b0c2fe7a7c9ea911cd27880169298c34de20c330。全部代码与固化数据开源共享于：https://github.com/wangchi2068/case-count-inference-bottleneck。')
+body('本文实证所用的全美各州周度流感住院监测数据来源于美国疾病控制与预防中心国家医疗保健安全网（CDC NHSN）公开数据库[35]（目录记录标识符ua7e-t2fy），数据集访问日期为2026年9月5日，分析所用交付CSV数据文件的SHA-256校验和为：e48c2ea92e0beb552a6510b7b0c2fe7a7c9ea911cd27880169298c34de20c330。全部代码与固化数据开源共享于：https://github.com/wangchi2068/case-count-inference-bottleneck。')
 
 # 参考文献（动态从 references.bib 严格解析生成，保证与 LaTeX 1:1 绝对一致）
 h1('参考文献')
 
+def clean_latex_str(s):
+    if not s:
+        return ''
+    s = s.replace('{', '').replace('}', '')
+    replacements = [
+        (r"\'o", 'ó'), (r"\'e", 'é'), (r"\'a", 'á'), (r"\'i", 'í'),
+        (r"\`e", 'è'), (r"\`a", 'à'), (r"\c{c}", 'c'), (r"\c c", 'c'),
+        (r"\o", 'ø'), (r"\aa", 'å'), (r"\&", '&'),
+        (r"$R_t$", 'Rt'), (r"$R_0$", 'R0'), (r"$", ''),
+        (r'--', '-'), (r'..', '.')
+    ]
+    for old, new in replacements:
+        s = s.replace(old, new)
+    return s.strip()
+
 def load_bib_references():
-    bib_path = os.path.join(os.path.dirname(__file__), 'references.bib')
+    bib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'references.bib')
     with open(bib_path, 'r', encoding='utf-8') as f:
         text = f.read()
 
@@ -319,18 +334,18 @@ def load_bib_references():
             fields[m.group(1).lower()] = m.group(2).strip()
 
         if kind.lower() == 'misc':
-            title = fields.get('title', '').replace('{', '').replace('}', '')
-            author = fields.get('author', '').replace('{', '').replace('}', '')
+            title = clean_latex_str(fields.get('title', ''))
+            author = clean_latex_str(fields.get('author', ''))
             year = fields.get('year', '')
-            howpub = fields.get('howpublished', '').replace('{', '').replace('}', '').replace(r'\url', '').strip()
-            note = fields.get('note', '').replace('{', '').replace('}', '').strip()
+            howpub = clean_latex_str(fields.get('howpublished', '').replace(r'\url', ''))
+            note = clean_latex_str(fields.get('note', ''))
             formatted.append(f'{author}. {title}. {howpub}, {year}. {note}')
             continue
 
         raw_authors = fields.get('author', '').split(' and ')
         auth_list = []
         for a in raw_authors:
-            a = a.strip().replace('{', '').replace('}', '').replace(r"\'e", 'e').replace(r"\o", 'o')
+            a = clean_latex_str(a)
             if ',' in a:
                 last, first = a.split(',', 1)
                 auth_list.append(f'{last.strip()} {first.strip()}')
@@ -342,22 +357,22 @@ def load_bib_references():
         else:
             authors_str = ', '.join(auth_list) + '.'
 
-        title = fields.get('title', '').replace('{', '').replace('}', '')
+        title = clean_latex_str(fields.get('title', ''))
         year = fields.get('year', '')
-        doi = fields.get('doi', '')
+        doi = fields.get('doi', '').strip()
 
         if kind.lower() == 'book':
-            publisher = fields.get('publisher', '').replace('{', '').replace('}', '')
-            address = fields.get('address', '').replace('{', '').replace('}', '')
+            publisher = clean_latex_str(fields.get('publisher', ''))
+            address = clean_latex_str(fields.get('address', ''))
             edition = fields.get('edition', '')
             ed_str = f'{edition} ed. ' if edition else ''
             pub_str = f'{address}: {publisher}' if address else publisher
             ref_str = f'{authors_str} {title}. {ed_str}{pub_str}, {year}.'
         else:
-            journal = fields.get('journal', '').replace('{', '').replace('}', '')
+            journal = clean_latex_str(fields.get('journal', ''))
             vol = fields.get('volume', '')
             num = fields.get('number', '')
-            pages = fields.get('pages', '').replace('--', '-')
+            pages = clean_latex_str(fields.get('pages', ''))
             ref_str = f'{authors_str} {title}. {journal}, {year}'
             if vol:
                 ref_str += f', {vol}'
@@ -384,6 +399,7 @@ cmds.append({'command': 'add', 'parent': '/', 'type': 'footer',
 cmds.append({'command': 'add', 'parent': '/footer[1]/p[1]', 'type': 'field',
              'props': {'fieldType': 'page'}})
 
-with open(r'D:\trae\paper_final\paper\_batch.json', 'w', encoding='utf-8') as f:
+batch_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '_batch.json')
+with open(batch_file, 'w', encoding='utf-8') as f:
     json.dump(cmds, f, ensure_ascii=False)
-print(len(cmds), 'commands written to _batch.json')
+print(len(cmds), 'commands written to', batch_file)
