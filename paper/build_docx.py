@@ -5,7 +5,7 @@
 全面升华本文的学术文笔与叙事质感，生成权威排版的DOCX定稿。
 """
 
-import json, os
+import json, os, re
 
 FIG = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'figures')
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'main_docx.docx')
@@ -113,7 +113,7 @@ abstract_text = (
     '实证方面，利用美国 CDC NHSN 2020—2026 年覆盖 50 个州及华盛顿特区的 16,218 个州--周流感住院真实监测数据进行系统检验：'
     '流行初期波段仿射 FGLS 拟合得经验截距 a=0.0991、规模斜率 b=2.2434 显著为正，经验交叉点约为 22.6 例/周（跨规格呈现 10.6—42.7 的分布跨度）；'
     '误差预算分解表明与规模无关拟合项占 39%—55%（回顾口径 54.6%），样本内已实现的大规模观测（D_t≥250）误差约为全体平均的六成；'
-    '达峰期近 89% 的总体误差源于平稳基准在流行拐点处的常数偏移，控制偏移后达峰期内部规模项依然显著为正（统一尺度下阶段斜率差异未达统计显著），证明所谓“样本量失效”实为平稳性假设破缺而非规模效应失效；'
+    '达峰期近 89% 的总体误差源于平稳基准在流行拐点处的常数偏移，控制偏移后达峰期内部规模项依然显著为正（两阶段斜率差异未达统计显著），表明所谓“样本量失效”实为跨期平稳性假设破缺而非病例规模项丧失作用；'
     '时变交叉点在流感季（中位数 19.7—20.4）与非流感季（46.9—47.9）呈现系统性分异。'
     '本研究为优化公共卫生监测资源在样本覆盖、环境协变量采集与多期时空平滑之间的科学配置提供了定量分析参照。'
 )
@@ -124,7 +124,7 @@ p(keywords_text, size='12pt', bold=True, first='480', after='16pt')
 
 # ============ 0引言 ============
 h1('0引言')
-body('准确识别疫情由平稳或下降转为上升增长，并对随后数周的病例负担作出可靠预测，是现代传染病预警与公共卫生应急响应的核心支柱。在常规统计直觉中，大样本量通常意味着高推断精度，即增加捕获病例数能够持续压制随机计数波动的相对影响。然而，在传染病监测与动力学建模的真实场景下，这一直觉往往遭遇严峻挑战：病原体传播普遍具有高度个体异质性（超传播），导致继发感染数严重过离散[1,2]；监测系统普遍存在不同程度的不完全检测与报告延迟[20,31]；更关键的是，处于同一地理辖区或时间窗口内的宿主群体共同受到气象条件、人群接触模式以及周期性社会流动等环境随机扰动[16,33]。在个体微观超传播、宏观监测漏报与中观共同环境波动交织并存的条件下，“样本量”与“信息量”不能再被简单等同。')
+body('准确识别疫情由平稳或下降转为上升增长，并对随后数周的病例负担作出可靠预测，是现代传染病预警与公共卫生应急响应的核心支柱。在常规统计直觉中，大样本量通常意味着高推断精度，即增加捕获病例数能够持续压制随机计数波动的相对影响。然而，在传染病监测与动力学建模的真实场景下，这一直觉往往遭遇严峻挑战：病原体传播普遍具有高度个体异质性（超传播），导致继发感染数严重过离散[1,2]；监测系统普遍存在不同程度的不完全检测与报告延迟[32,31]；此外，处于同一地理辖区或时间窗口内的宿主群体共同受到气象条件、人群接触模式以及周期性社会流动等环境随机扰动[16,33]。在个体微观超传播、宏观监测漏报与中观共同环境波动交织并存的条件下，“样本量”与“信息量”不能再被简单等同。')
 body('面对这一理论与现实矛盾，既有文献多将监测误差笼统归因于漏报率或数据质量问题。然而，对“病例规模增加到何时不再是推断的主要瓶颈”这一核心问题的回答，首先取决于究竟要估计什么。如果推断目标是当期特定环境条件下的瞬时传播参数，在模型正确设定的条件下，扩充样本规模可以持续提升测量精度；但若推断目标是跨周平稳的潜在基础增长趋势，单期横截面内的样本聚集即便无限庞大，在缺乏外部协变量的前提下，亦无法凭该期数据消除共同的环境随机震荡。类似地，通过扩大检测覆盖提升报告率，与通过扩大哨点范围扩展风险集基数，其消解噪声的数理路径存在本质不同。若混淆推断目标与监测杠杆，往往会导致公共卫生资源在“盲目追求单期病例堆砌”与“忽视系统性偏差”之间失衡。')
 body('针对上述关键科学问题，本文从负二项分支过程第一性原理出发，构建了一个分层随机推断框架，旨在系统厘清不同估计目标下病例规模的推断收益边界、监测杠杆的非对称性以及成本约束下的运筹设计准则，并基于全美长达六年的流感住院数据展开实证与反证检验。')
 body('本文的结构安排如下：第1节回顾相关文献脉络与理论对话；第2节建立传播与报告动力学模型并界定两类估计目标；第3节推导核心理论结果、交叉点、监测杠杆与最优规模闭式解；第4节报告蒙特卡洛模拟验证与功效分析；第5节利用全美流感住院真实监测数据展开系统实证检验；第6节进行机制讨论、政策启示与局限性审视；第7节总结全文结论。')
@@ -135,8 +135,8 @@ body('与本文密切相关的文献可归纳为六大理论脉络：')
 body('第一，传播异质性与更新过程动力学。开创性研究证实个体继发感染数高度偏离泊松假设，负二项分布中的超传播参数k主导了疾病暴发的灭绝与扩散动态[1,3]。随之发展的代际更新模型奠定了现代实时再生数推断的标准范式[4,5]，尤以Cori等[6]提出的EpiEstim框架成为国际基准。后续学者进一步探讨了滑动窗口跨度、世代间隔不确定性及平滑先验对再生数估计的修正法则[7,8,15]。')
 body('第二，不完全观测与状态空间滤波。现实监测系统仅能获取经过延迟与漏报抽稀的确诊或住院病例[21,32]。为重构潜在未观测感染压力，学者们构建了包含粒子滤波、半机制更新过程与分层时空平滑在内的状态空间推断架构[14,31]。Bracher与Held[13]则提出了基于边缘矩匹配的方法，在避免潜变量复杂似然计算的同时，系统揭示了报告率与传播强度的联合可识别性边界。')
 body('第三，Fisher信息量与推断物理极限。Parag等[9,10,11]利用信息论严格推导了带噪疫情曲线的Fisher信息量与反弹识别的物理下界。然而必须指出，既有信息下界均建立在当期再生数R_t这一类估计目标之上，其信息量随期望病例数近似线性增长。本文与之形成正面对话：证明更换估计目标为跨期基础水平后，信息标度律随之改变，饱和于环境方差底板。')
-body('第四，人口统计随机性与环境随机性二分。生态动力学经典理论阐明了微观繁殖抽样随机性与宏观共同环境扰动的本质对立[18,33]。微观随机性随种群规模扩大而迅速衰减，但宏观环境震荡在单期横截面内具有共同乘性特征，无法凭单期病例聚合消除[16,17,19]。在计量统计学中，这一问题与经典测量误差模型及方差成分信度理论在代数分解形式上高度一致[22,23,24,25]，在方差分解的代数形式上恰对应单期估计方差内部信度比（即信号方差占总方差比例）等于0.5的对称位置[23]。')
-body('第五，大规模真实监测与前瞻预测评估实践。美国CDC FluSight挑战赛等多模型集成实践表明，前瞻预测精度的提升迅速呈现收益递减平台，集合模型的误差往往受制于超预期的季节性漂移而非单个辖区的样本规模[26,27,28,29,30]；相对均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势[12]。')
+body('第四，人口统计随机性与环境随机性二分。生态动力学经典理论阐明了微观繁殖抽样随机性与宏观共同环境扰动的本质对立[18,33]。微观随机性随种群规模扩大而迅速衰减，但宏观环境震荡在单期横截面内具有共同乘性特征，无法凭单期病例聚合消除[16,17,19]。在计量统计学中，这一问题与经典测量误差模型及方差成分信度理论在代数形式上高度一致[22,23,24,25]，其交叉点在方差分解中恰对应单期估计方差内部信度比（即信号方差占总方差比例）等于0.5的对称位置[23]。')
+body('第五，大规模真实监测与前瞻预测评估实践。新型数据流拓展与美国CDC FluSight挑战赛等多模型集成实践表明[20,26,27,28,29,30]，前瞻预测精度的提升迅速呈现收益递减平台，集合模型的误差往往受制于超预期的季节性漂移而非单个辖区的样本规模；相对均方误差等评分规则展现出有效平衡不同发病规模量级的稳健优势[12]。')
 body('综上所述，既有文献分别刻画了上述单点机制，但尚未回答病例规模何时不再主导推断误差、规模收益如何随估计目标与监测杠杆发生质变这一核心问题。本文的差异化定位即在于填补这一理论与经验空白。')
 
 # ============ 2模型与方法 ============
@@ -277,7 +277,7 @@ table(
      ['共同分母归一化', '2.2434', '1.8521', '同一相对尺度下的阶段差异'],
      ['各阶段均值归一化', '2.2434', '7.9272', '各阶段相对自身基准的误差']],
     '表4 两阶段规模相关项b的三口径比较')
-body('表4证实：统一尺度后达峰期斜率点估计（1.8521）低于初期，联合交互项（-0.9183，按州聚类bootstrap 95%CI为[-2.33, 0.59]）包含零点且未达统计显著；结合达峰期总体样本中基准偏移项占总损失88.9%的分解证据，表明达峰期预测误差居高不下主要源于跨期平稳性假设失效，而非病例规模项丧失边际贡献。')
+body('表4显示：统一尺度后达峰期斜率点估计（1.8521）低于初期，联合交互项（-0.9183，按州聚类bootstrap 95%CI为[-2.33, 0.59]）包含零点且未达统计显著；结合达峰期总体样本中基准偏移项占总损失88.9%的分解证据，表明达峰期预测误差居高不下主要源于跨期平稳性假设失效，而非病例规模项丧失边际贡献。')
 fig('fig4_empirical_falsification.png', '图4 全美CDC NHSN流感住院真实监测数据实证与反证检验')
 
 h2('5.5检验四：变量误差敏感性检验与分季独立2SLS工具变量估计')
@@ -289,7 +289,7 @@ body('自愿填报期标准差由法定强制子段的0.620跃升至1.823（扩�
 # ============ 6讨论与政策启示 ============
 h1('6讨论与政策启示')
 h2('6.1机制讨论与理论对话')
-body('本文研究为理解传染病监测中病例规模的推断价值提供了清晰的分析视角。既有前沿文献基于有效再生数推导出了Fisher信息下界随规模线性增长的标度律[9,10]，但该极限主要是针对测量当期瞬时参数R_t成立的。本文分析表明：一旦推断目标切换为消除单周共同波动的跨期基础水平R̄，共同环境随机性v_R构成了单期横截面内仅凭病例聚合无法消除的方差成分；由此导出的交叉点m_×，在数理结构上恰对应单期信度比等于0.5的对称位置[22,23]。')
+body('本文研究为理解传染病监测中病例规模的推断价值提供了清晰的分析视角。既有前沿文献基于有效再生数推导出了Fisher信息下界随规模线性增长的标度律[9,10]，但该极限主要是针对测量当期瞬时参数R_t成立的。本文分析表明：一旦推断目标切换为消除单周共同波动的跨期基础水平R̄，共同环境随机性v_R构成了单期横截面内仅凭病例聚合无法消除的方差成分；由此导出的交叉点m_×，在方差分解的代数形式上恰对应单期信度比等于0.5的对称位置[22,23]。')
 body('在此基础上，监测杠杆的非对称性阐明了资源分配逻辑：在存在超传播的疾病中，提升报告率ρ存在单期饱和下界，唯有扩大基数n才能压制子代抽样波动。而在时间序列演化中，达峰期实证表明所谓“样本量失效”实为平稳性假设失效；当剥离均值漂移后，规模项依然发挥方差削减效应。这提示决策者在初期关注病例捕获以越过交叉点，而在达峰拐点则应迅速引入非平稳状态空间滤波或行为协变量。')
 
 h2('6.2研究局限与审慎边界')
@@ -302,45 +302,79 @@ body('本文建立了一个分层随机推断框架，从理论与实证两个�
 h1('数据与代码可用性声明')
 body('本文实证所用的全美各州周度流感住院监测数据来源于美国疾病控制与预防中心国家医疗保健安全网（CDC NHSN）公开数据库[34]（目录记录标识符ua7e-t2fy），数据集访问日期为2026年9月5日，分析所用交付CSV数据文件的SHA-256校验和为：e48c2ea92e0beb552a6510b7b0c2fe7a7c9ea911cd27880169298c34de20c330。全部代码与固化数据开源共享于：https://github.com/wangchi2068/case-count-inference-bottleneck。')
 
-# 参考文献（33篇 + 数据集 = 34篇）
+# 参考文献（动态从 references.bib 严格解析生成，保证与 LaTeX 1:1 绝对一致）
 h1('参考文献')
-refs = [
-    'Lloyd-Smith J O, Schreiber S J, Kopp P E, et al. Superspreading and the effect of individual variation on disease emergence. Nature, 2005, 438(7066): 355-359. DOI: 10.1038/nature04153.',
-    'Endo A, Abbott S, Kucharski A J, et al. Estimating the overdispersion in COVID-19 transmission using outbreak sizes outside China. Wellcome Open Research, 2020, 5: 67. DOI: 10.12688/wellcomeopenres.15842.3.',
-    'Kucharski A J, Russell T W, Diamond C, et al. Early dynamics of transmission and control of COVID-19: a mathematical modelling study. The Lancet Infectious Diseases, 2020, 20(5): 553-560. DOI: 10.1016/S1473-3099(20)30144-4.',
-    'Wallinga J, Teunis P. Different epidemic curves for severe acute respiratory syndrome reveal similar impacts of control measures. American Journal of Epidemiology, 2004, 160(6): 509-516. DOI: 10.1093/aje/kwh255.',
-    'Fraser C. Estimating individual and household reproduction numbers in an emerging epidemic. PLOS ONE, 2007, 2(8): e758. DOI: 10.1371/journal.pone.0000758.',
-    'Cori A, Ferguson N M, Fraser C, et al. A new framework and software to estimate time-varying reproduction numbers during epidemics. American Journal of Epidemiology, 2013, 178(9): 1505-1512. DOI: 10.1093/aje/kwt133.',
-    'Thompson R N, Stockwin J E, van Gaalen R D, et al. Improved inference of time-varying reproduction numbers during infectious disease outbreaks. Epidemics, 2019, 29: 100356. DOI: 10.1016/j.epidem.2019.100356.',
-    'Gostic K M, McGough L, Baskerville E B, et al. Practical considerations for measuring the effective reproductive number, Rt. PLOS Computational Biology, 2020, 16(12): e1008409. DOI: 10.1371/journal.pcbi.1008409.',
-    'Parag K V, Donnelly C A. Fundamental limits on inferring epidemic resurgence in real time using effective reproduction numbers. PLOS Computational Biology, 2022, 18(4): e1010004. DOI: 10.1371/journal.pcbi.1010004.',
-    'Parag K V, Donnelly C A, Zarebski A E. Quantifying the information in noisy epidemic curves. Nature Computational Science, 2022, 2(9): 584-594. DOI: 10.1038/s43588-022-00313-1.',
-    'Parag K V, Lambert B, Donnelly C A, Beregi S. Asymmetric limits on timely interventions from noisy epidemic data. Communications Physics, 2025, 8: 450. DOI: 10.1038/s42005-025-02358-w.',
-    'Bosse N I, Abbott S, Cori A, van Leeuwen E, Bracher J, Funk S. Scoring epidemiological forecasts on transformed scales. PLOS Computational Biology, 2023, 19(8): e1011393. DOI: 10.1371/journal.pcbi.1011393.',
-    'Bracher J, Held L. A marginal moment matching approach for fitting endemic-epidemic models to underreported disease surveillance counts. Biometrics, 2021, 77(4): 1348-1359. DOI: 10.1111/biom.13384.',
-    'Bhatt S, Ferguson N, Flaxman S, et al. Semi-mechanistic Bayesian modeling of COVID-19 with renewal processes. Journal of the Royal Statistical Society Series A: Statistics in Society, 2023, 186(4): 601-624. DOI: 10.1093/jrsssa/qnad001.',
-    'Steyn N, Parag K V, Thompson R N. A primer on inference and prediction with epidemic renewal models and sequential Monte Carlo. Statistics in Medicine, 2025, 44(3): e70204. DOI: 10.1002/sim.70204.',
-    'Rasmussen D A, Ratmann O, Koelle K. Inference for nonlinear epidemiological models using genealogies and time series. PLOS Computational Biology, 2011, 7(8): e1002136. DOI: 10.1371/journal.pcbi.1002136.',
-    'Aber S, Di Q, Dalziel B D. Time-series modeling of epidemics in complex populations: Detecting changes in incidence volatility over time. PLOS Computational Biology, 2025, 21(2): e1012882. DOI: 10.1371/journal.pcbi.1012882.',
-    'Bretó C, He D, Ionides E L, King A A. Time series analysis via mechanistic models: inference on imperfectly observed populations. The Annals of Applied Statistics, 2009, 3(1): 319-348. DOI: 10.1214/08-AOAS201.',
-    'Dalziel B D, Kissler S, Gog J R, et al. Urbanization and the geography of influenza in the United States. Science, 2018, 362(6410): 75-79. DOI: 10.1126/science.aat6030.',
-    'Lipsitch M, Swerdlow D L, Finelli L. Enhancing the value of public health surveillance: simple models for surveillance data. PLOS Medicine, 2015, 12(7): e1001844. DOI: 10.1371/journal.pmed.1001844.',
-    'Nouvellet P, Cori A, Garske T, et al. A simple approach to measure controllability of infectious disease outbreaks. Epidemics, 2018, 22: 29-38. DOI: 10.1016/j.epidem.2017.02.012.',
-    'Fuller W A. Measurement Error Models. New York: John Wiley & Sons, 1987. DOI: 10.1002/9780470316665.',
-    'Carroll R J, Ruppert D, Stefanski L A, Crainiceanu C M. Measurement Error in Nonlinear Models: A Modern Approach. 2nd ed. Boca Raton: Chapman & Hall/CRC, 2006. DOI: 10.1201/9781420010138.',
-    'Armstrong B G. Effect of measurement error on epidemiological studies of environmental and nutritional risks. Annals of Epidemiology, 1998, 8(6): 381-387. DOI: 10.1016/S1047-2797(97)00234-8.',
-    'Verbeke G, Molenberghs G. Linear Mixed Models for Longitudinal Data. New York: Springer, 2000. DOI: 10.1007/978-1-4419-0300-6.',
-    'Reich N G, McGowan C J, Yamana T K, et al. Accuracy of real-time multi-model ensemble forecasts for seasonal influenza in the U.S. PLOS Computational Biology, 2019, 15(11): e1007486. DOI: 10.1371/journal.pcbi.1007486.',
-    'Cramer E Y, Ray E L, Lopez V K, et al. Evaluation of individual and ensemble probabilistic forecasts of COVID-19 mortality in the United States. Proceedings of the National Academy of Sciences, 2022, 119(15): e2113561119. DOI: 10.1073/pnas.2113561119.',
-    'Ray E L, Brooks L C, Bien J, et al. Comparing trained and untrained probabilistic ensemble forecasts of COVID-19 cases and deaths in the United States. International Journal of Forecasting, 2023, 39(3): 1366-1383. DOI: 10.1016/j.ijforecast.2022.06.005.',
-    'Biggerstaff M, Alper D, Dredze M, et al. Results from the second open CDC challenge to predict the 2014-2015 influenza season. Epidemics, 2018, 24: 26-37. DOI: 10.1016/j.epidem.2018.02.003.',
-    'Jhung M A, Powell T, Dhara R, et al. Epidemiology of influenza-associated hospitalizations in the United States, 1993-2008. Clinical Infectious Diseases, 2012, 54(11): 1555-1562. DOI: 10.1093/cid/cis253.',
-    'Stoner O, Economou T, Drummond G. Hierarchical spatio-temporal modeling for surveillance data with reporting delays and incomplete observation. Biometrics, 2023, 79(3): 2296-2308. DOI: 10.1111/biom.13788.',
-    'Azmon A, Faes C, Hens N. Estimating the reproduction number from incompletely observed outbreaks: real-time monitoring and reporting delay adjustment. Epidemics, 2014, 9: 30-38. DOI: 10.1016/j.epidem.2014.09.006.',
-    'Rohani P, Keeling M J, Grenfell B T. The interplay between environmental and demographic stochasticity in infectious disease dynamics. Science, 2002, 297(5583): 1010-1012. DOI: 10.1126/science.1073801.',
-    'Centers for Disease Control and Prevention. Weekly Hospital Respiratory Data (HRD) Metrics by Jurisdiction, National Healthcare Safety Network (NHSN). CDC open-data catalogue record ua7e-t2fy, 2026. https://data.cdc.gov/d/ua7e-t2fy, accessed 2026-09-05. SHA-256: e48c2ea92e0beb552a6510b7b0c2fe7a7c9ea911cd27880169298c34de20c330.'
-]
 
+def load_bib_references():
+    bib_path = os.path.join(os.path.dirname(__file__), 'references.bib')
+    with open(bib_path, 'r', encoding='utf-8') as f:
+        text = f.read()
+
+    entries = re.findall(r'@(\w+)\{([^,]+),\s*(.*?)\n\}', text, re.DOTALL)
+    formatted = []
+
+    for kind, key, content in entries:
+        fields = {}
+        for m in re.finditer(r'(\w+)\s*=\s*\{((?:[^{}]|\{[^{}]*\})*)\}', content):
+            fields[m.group(1).lower()] = m.group(2).strip()
+
+        if kind.lower() == 'misc':
+            title = fields.get('title', '').replace('{', '').replace('}', '')
+            author = fields.get('author', '').replace('{', '').replace('}', '')
+            year = fields.get('year', '')
+            howpub = fields.get('howpublished', '').replace('{', '').replace('}', '').replace(r'\url', '').strip()
+            note = fields.get('note', '').replace('{', '').replace('}', '').strip()
+            formatted.append(f'{author}. {title}. {howpub}, {year}. {note}')
+            continue
+
+        raw_authors = fields.get('author', '').split(' and ')
+        auth_list = []
+        for a in raw_authors:
+            a = a.strip().replace('{', '').replace('}', '').replace(r"\'e", 'e').replace(r"\o", 'o')
+            if ',' in a:
+                last, first = a.split(',', 1)
+                auth_list.append(f'{last.strip()} {first.strip()}')
+            else:
+                auth_list.append(a)
+
+        if len(auth_list) > 3:
+            authors_str = ', '.join(auth_list[:3]) + ', et al.'
+        else:
+            authors_str = ', '.join(auth_list) + '.'
+
+        title = fields.get('title', '').replace('{', '').replace('}', '')
+        year = fields.get('year', '')
+        doi = fields.get('doi', '')
+
+        if kind.lower() == 'book':
+            publisher = fields.get('publisher', '').replace('{', '').replace('}', '')
+            address = fields.get('address', '').replace('{', '').replace('}', '')
+            edition = fields.get('edition', '')
+            ed_str = f'{edition} ed. ' if edition else ''
+            pub_str = f'{address}: {publisher}' if address else publisher
+            ref_str = f'{authors_str} {title}. {ed_str}{pub_str}, {year}.'
+        else:
+            journal = fields.get('journal', '').replace('{', '').replace('}', '')
+            vol = fields.get('volume', '')
+            num = fields.get('number', '')
+            pages = fields.get('pages', '').replace('--', '-')
+            ref_str = f'{authors_str} {title}. {journal}, {year}'
+            if vol:
+                ref_str += f', {vol}'
+                if num:
+                    ref_str += f'({num})'
+            if pages:
+                ref_str += f': {pages}'
+            ref_str += '.'
+
+        if doi:
+            ref_str += f' DOI: {doi}.'
+
+        formatted.append(ref_str)
+
+    return formatted
+
+refs = load_bib_references()
 for i, r in enumerate(refs, 1):
     p('[%d] %s' % (i, r), size='10.5pt', after='3pt')
 

@@ -115,7 +115,7 @@ $$\mathrm{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) = T v_R + 2 v_R \su
 $$\min_{m > 0} \; \mathcal{V}(m) \propto v_R (c_0 + c_1 m)\left(1 + \frac{m_\times}{m}\right) = c_0 v_R + c_1 A + \frac{c_0 A}{m} + c_1 v_R m$$
 对其求导并令一阶导为零：
 $$\frac{\mathrm{d}\mathcal{V}}{\mathrm{d}m} = -\frac{c_0 A}{m^2} + c_1 v_R = 0 \implies m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\times}$$
-二阶导数 $\frac{\mathrm{d}^2\mathcal{V}}{\mathrm{d}m^2} = \frac{2 c_0 A}{m^3} > 0$ 恒正，在满足可行边界条件下，$m^*$ 为唯一内部最优单期规模。
+二阶导数 $\frac{\mathrm{d}^2\mathcal{V}}{\mathrm{d}m^2} = \frac{2 c_0 A}{m^3} > 0$ 恒正，在满足可行边界条件下，$m^*$ 为唯一内部最优单期规模。若由内部一阶条件求出的规模超出可行上界（即 $\sqrt{\frac{c_0}{c_1} m_\times} > \frac{B - c_0}{c_1}$），则由凸函数的单调性，最优配置取可行域边界角点解 $m^* = \frac{B - c_0}{c_1}$（对应最低期数 $T = 1$）。
 注意：命题 4 中纯人数预算 $B = T m$ 恰对应 $c_0 = 0$ 的特例，此时 $m^* \to 0$，即若无单期固定维持开销，资源配置应极端倾向于拉长期数 $T$；推论 1 则刻画了存在固定周期开销时的现实权衡。若环境扰动存在一阶自回归自相关，大期数极限下有效环境方差增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，最优单期规模相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$。
 **运筹设计含义：** 最优单期报告规模 $m^*$ 对未知方差参数对 $(v_R, A)$ 的依赖完全通过交叉点比值 $m_\times$ 体现（构成该设计问题关于方差参数的充分降维）。在数值上，$m^*$ 恰为固定与边际成本比与方差交叉点的几何平均值；仅当固定与边际成本之比恰好等于 $m_\times$ 时，$m^* = m_\times$。这澄清了交叉点 $m_\times$ 本身是方差等权位置，而真实决策的最优规模取决于成本结构。 $\blacksquare$
 
