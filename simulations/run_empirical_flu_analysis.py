@@ -428,20 +428,23 @@ def main():
     # 共同支撑
     e_ms = early[(early['D_t'] >= 50) & (early['D_t'] < 600)]
     p_ms = pk_sub[(pk_sub['D_t'] >= 50) & (pk_sub['D_t'] < 600)]
-    # 联合交互项聚类 bootstrap 95% CI (W8 固化)
+    # 联合交互项聚类 bootstrap 95% CI (1500 次州聚类重抽样，预聚合正规方程快速求解)
     st_all = np.concatenate([early['state'].values, pk_sub['state'].values])
     codes_all, uniques_all = pd.factorize(st_all)
     G_all = len(uniques_all)
     idx_by_all = [np.where(codes_all == g)[0] for g in range(G_all)]
+    A_g = [Xj[idx].T @ Xj[idx] for idx in idx_by_all]
+    b_g = [Xj[idx].T @ loss_all[idx] for idx in idx_by_all]
     rng_j = np.random.RandomState(20260924)
     j_boots = []
     for _ in range(1500):
         sample_g = rng_j.choice(G_all, size=G_all, replace=True)
-        sel_idx = np.concatenate([idx_by_all[g] for g in sample_g])
-        j_boots.append(float(np.linalg.lstsq(Xj[sel_idx], loss_all[sel_idx], rcond=None)[0][3]))
+        counts = np.bincount(sample_g, minlength=G_all)
+        A_sum = sum(counts[g] * A_g[g] for g in range(G_all))
+        b_sum = sum(counts[g] * b_g[g] for g in range(G_all))
+        j_boots.append(float(np.linalg.solve(A_sum, b_sum)[3]))
     stats['stage_scale_audit']['ols_joint_interaction_ci'] = [
         float(np.percentile(j_boots, 2.5)), float(np.percentile(j_boots, 97.5))]
-    stats['stage_scale_audit']['iv_subsample_mean_g'] = float(r_early)  # placeholder, set below
 
     stats['stage_scale_audit']['common_support_common_denom'] = {
         'b_early': _fgls(np.column_stack([np.ones(len(e_ms)), 1/e_ms['D_t'].values]),

@@ -135,7 +135,7 @@ $$\Pr(C_t = j \mid R_t) = \frac{\Gamma(j + nk)}{j! \Gamma(nk)} (p^*)^{nk} (1 - p
 对任意 $R_t' > R_t$，考虑似然比：
 $$\frac{\Pr(C_t = j \mid R_t')}{\Pr(C_t = j \mid R_t)} = \left(\frac{p^*(R_t')}{p^*(R_t)}\right)^{nk} \left(\frac{1 - p^*(R_t')}{1 - p^*(R_t)}\right)^j$$
 由于 $p^*(R_t)$ 关于 $R_t$ 严格单调递减，故 $1 - p^*(R_t') > 1 - p^*(R_t)$，从而底数 $\frac{1 - p^*(R_t')}{1 - p^*(R_t)} > 1$。因此，似然比关于充分统计量 $j$ 严格单调递增，证明了该分布族具有单调似然比性质。
-由单调似然比分布族的随机占优单调性（Lehmann & Romano, 2005, Lemma 3.4.2），上尾检验统计量 $C_t \ge c_lpha$ 的拒绝概率 $\Pr_{R_t}(C_t \ge c_lpha)$ 关于参数 $R_t$ 单调不减；且依据 Karlin–Rubin 定理，该上尾非随机化检验在其达到的实际显著性水平处为一致最优单侧检验（UMP）。因此：
+由单调似然比分布族的随机占优单调性（Lehmann & Romano, 2005, Lemma 3.4.2），上尾检验统计量 $C_t \ge c_\alpha$ 的拒绝概率 $\Pr_{R_t}(C_t \ge c_\alpha)$ 关于参数 $R_t$ 单调不减；且依据 Karlin–Rubin 定理，该上尾非随机化检验在其达到的实际显著性水平处为一致最优单侧检验（UMP）。因此：
 $$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$$
 上确界严格在边界点 $R_t = 1$ 取到，且由 $c_\alpha$ 的定义严格受控于 $\alpha$ 以下。
 （ii）在备择假设 $R_t = 1 + \delta$ 下，直接应用累积分布补集定义即得功效公式 $\pi(n, \delta) = 1 - F_{\mathrm{NB}}(c_\alpha - 1; nk, p^*(1+\delta))$。需特别指明：离散临界值 $c_\alpha$ 随 $n$ 离散跳变，使得功效函数 $\pi(n, \delta)$ 作为 $n$ 的函数呈现阶梯锯齿状非单调性，因此求解达到目标功效的最小样本量时必须逐点枚举，不能简单二分搜索。 $\blacksquare$
