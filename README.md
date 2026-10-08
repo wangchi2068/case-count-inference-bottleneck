@@ -27,7 +27,7 @@ paper_final/
 
 ```bash
 cd simulations
-python run_empirical_flu_analysis.py   # 约 60 s，重算 empirical_stats.json + 图4
+python run_empirical_flu_analysis.py   # 约 15 s，重算 empirical_stats.json + 图4
 python run_theory_simulations.py       # 图1
 python run_detection_simulations.py    # 图2
 python run_forecasting_crossover_simulations.py  # 图3

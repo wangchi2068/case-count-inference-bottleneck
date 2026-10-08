@@ -2599,7 +2599,12 @@
     "common_support_common_denom": {
       "b_early": 2.9263943333234415,
       "b_peak": 1.632634478628061
-    }
+    },
+    "ols_joint_interaction_ci": [
+      -2.326607318526981,
+      0.5871888060205636
+    ],
+    "iv_subsample_mean_g": 1.6266128444468528
   },
   "rolling_origin": {
     "expanding_all": {

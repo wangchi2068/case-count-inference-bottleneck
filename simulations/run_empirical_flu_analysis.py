@@ -428,6 +428,21 @@ def main():
     # 共同支撑
     e_ms = early[(early['D_t'] >= 50) & (early['D_t'] < 600)]
     p_ms = pk_sub[(pk_sub['D_t'] >= 50) & (pk_sub['D_t'] < 600)]
+    # 联合交互项聚类 bootstrap 95% CI (W8 固化)
+    st_all = np.concatenate([early['state'].values, pk_sub['state'].values])
+    codes_all, uniques_all = pd.factorize(st_all)
+    G_all = len(uniques_all)
+    idx_by_all = [np.where(codes_all == g)[0] for g in range(G_all)]
+    rng_j = np.random.RandomState(20260924)
+    j_boots = []
+    for _ in range(1500):
+        sample_g = rng_j.choice(G_all, size=G_all, replace=True)
+        sel_idx = np.concatenate([idx_by_all[g] for g in sample_g])
+        j_boots.append(float(np.linalg.lstsq(Xj[sel_idx], loss_all[sel_idx], rcond=None)[0][3]))
+    stats['stage_scale_audit']['ols_joint_interaction_ci'] = [
+        float(np.percentile(j_boots, 2.5)), float(np.percentile(j_boots, 97.5))]
+    stats['stage_scale_audit']['iv_subsample_mean_g'] = float(r_early)  # placeholder, set below
+
     stats['stage_scale_audit']['common_support_common_denom'] = {
         'b_early': _fgls(np.column_stack([np.ones(len(e_ms)), 1/e_ms['D_t'].values]),
                          _loss(e_ms, r_early), 1),
@@ -494,6 +509,7 @@ def main():
     ih = b_1st * iv_inv
     beta_iv = np.linalg.lstsq(np.column_stack([np.ones(len(ih)), ih]), l_iv, rcond=None)[0]
     stats['iv_check'] = {'N': int(len(eiv)), 'a': float(beta_iv[0]), 'b': float(beta_iv[1])}
+    stats['stage_scale_audit']['iv_subsample_mean_g'] = float(eiv['g'].mean())
 
     # 大规模端实测对照
     ms_end = early[early['D_t'] >= 250]
