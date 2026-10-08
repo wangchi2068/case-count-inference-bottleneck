@@ -70,15 +70,15 @@ def check_all():
         0.0302,  # 0.04 / (1.15 ** 2) (v_R floor relative to stationary baseline at line 428)
         2.1232,  # A parameter in run_forecasting_crossover_simulations.py
         1.3921,  # b_iv - b_ols difference in early-phase pooled subsample (2.8501 - 1.4581)
-        0.0056,  # Tokars-derived lower attack rate bound (63.5/100000 / 0.113)
-        0.021,   # Tokars-derived upper attack rate bound (63.5/100000 / 0.030)
+        0.0056,  # Lower bound of symptomatic hospitalization fraction rho (Zhou point estimate / Tokars attack rate upper bound)
+        0.021,   # Upper bound of symptomatic hospitalization fraction rho (Zhou point estimate / Tokars attack rate lower bound)
     }
     simulation_grid_outputs = {
-        0.0495,  # Nominal test size from run_detection_simulations.py (line 399)
-        0.190,   # Relative MSE at m=300 in renewal process simulation (line 439)
-        0.394,   # Relative MSE at m=60 in renewal process simulation (line 439)
-        0.543,   # Relative MSE at m=24 in renewal process simulation (line 439)
-        0.718,   # Relative MSE at m=6 in renewal process simulation (line 439)
+        0.0495,  # Empirical Wald test size at k=1.0 reported in paper/main.tex line 399
+        0.190,   # Relative MSE at m=300 reported in paper/main.tex line 439
+        0.394,   # Relative MSE at m=60 reported in paper/main.tex line 439
+        0.543,   # Relative MSE at m=24 reported in paper/main.tex line 439
+        0.718,   # Relative MSE at m=6 reported in paper/main.tex line 439
     }
     universe = json_floats | derived_quantities | simulation_grid_outputs
 
@@ -129,7 +129,8 @@ def check_all():
         "45.8 \\sim 77.5",
         "强稳健性对照",
         "这种相容性表明两者在数量级上具有理论机制的一致性",
-        "与 NHSN 本身周度增长比残余方差同量级"
+        "与 NHSN 本身周度增长比残余方差同量级",
+        "代表性理论参数空间"
     ]
     for phrase in banned_tex_phrases:
         if phrase in tex:
