@@ -680,28 +680,25 @@ def main():
         beta_s = np.linalg.lstsq(X_hat_s, y_s, rcond=None)[0]
         X_raw_s = np.column_stack([np.ones(len(x_inv_s)), x_inv_s])
         beta_ols_s = np.linalg.lstsq(X_raw_s, y_s, rcond=None)[0]
-        # cluster bootstrap for IV inference
+        # 向量化快速 cluster bootstrap (10,000 次，排除蒙特卡洛端点抽样误差)
+        idx_by_st = [np.where(st_codes == g)[0] for g in range(G)]
         rng = np.random.RandomState(20260929)
-        st_arr = np.array(st_uniques)
         b_iv_boots, diff_boots = [], []
-        for _ in range(1000):
-            sample_sts = rng.choice(st_arr, size=len(st_arr), replace=True)
-            boot_df = pd.concat([sub_s[sub_s['state'] == s] for s in sample_sts], ignore_index=True)
-            if len(boot_df) < 10:
-                continue
-            try:
-                y_b = (((boot_df['g'] - r_bar_s) / r_bar_s) ** 2).values
-                x_inv_b = 1.0 / boot_df['D_t'].values
-                z_inv_b = 1.0 / boot_df['D_iv'].values
-                Zb = np.column_stack([np.ones(len(z_inv_b)), z_inv_b])
-                gb = np.linalg.lstsq(Zb, x_inv_b, rcond=None)[0]
-                xh = Zb @ gb
-                b_iv_val = np.linalg.lstsq(np.column_stack([np.ones(len(xh)), xh]), y_b, rcond=None)[0][1]
-                b_ols_val = np.linalg.lstsq(np.column_stack([np.ones(len(x_inv_b)), x_inv_b]), y_b, rcond=None)[0][1]
-                b_iv_boots.append(b_iv_val)
-                diff_boots.append(b_iv_val - b_ols_val)
-            except Exception:
-                pass
+        n_boot = 10000
+        for _ in range(n_boot):
+            sampled_g = rng.choice(G, size=G, replace=True)
+            idx_b = np.concatenate([idx_by_st[g] for g in sampled_g])
+            zb = z_inv_s[idx_b]
+            xb = x_inv_s[idx_b]
+            yb = y_s[idx_b]
+            
+            Zb = np.column_stack([np.ones(len(zb)), zb])
+            gb = np.linalg.lstsq(Zb, xb, rcond=None)[0]
+            xh = Zb @ gb
+            b_iv_val = np.linalg.lstsq(np.column_stack([np.ones(len(xh)), xh]), yb, rcond=None)[0][1]
+            b_ols_val = np.linalg.lstsq(np.column_stack([np.ones(len(xb)), xb]), yb, rcond=None)[0][1]
+            b_iv_boots.append(b_iv_val)
+            diff_boots.append(b_iv_val - b_ols_val)
 
         ci_b_iv = [float(np.percentile(b_iv_boots, 2.5)), float(np.percentile(b_iv_boots, 97.5))]
         ci_diff = [float(np.percentile(diff_boots, 2.5)), float(np.percentile(diff_boots, 97.5))]
@@ -714,6 +711,7 @@ def main():
             'a_iv': float(beta_s[0]), 'b_iv': float(beta_s[1]),
             'b_iv_ci': ci_b_iv, 'p_b_iv_le_0': p_b_iv_le_0,
             'diff_b_ci': ci_diff, 'p_diff_le_0': p_diff_le_0,
+            'n_boot_ok': int(len(b_iv_boots)),
             'm_x_iv': float(beta_s[1] / beta_s[0]) if beta_s[0] > 0 else np.nan,
             'a_ols': float(beta_ols_s[0]), 'b_ols': float(beta_ols_s[1])
         }
