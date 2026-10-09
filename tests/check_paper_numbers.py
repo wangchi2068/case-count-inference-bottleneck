@@ -57,6 +57,28 @@ def check_all():
     else:
         print(f"[OK] Main FGLS affine fit: a={a_fit:.4f}, b={b_fit:.4f}, m_x={mx_fit:.1f}")
 
+    # Verify lag weights sensitivity from JSON
+    lag_sens = stats.get('lag_weights_sensitivity', {})
+    if 'equal_3w' in lag_sens and 'single_1w' in lag_sens:
+        b_eq = lag_sens['equal_3w']['b']
+        b_sg = lag_sens['single_1w']['b']
+        if round(b_eq, 4) != 1.9262 or round(b_sg, 4) != 3.1337:
+            errors.append(f"Lag weights sensitivity mismatch: equal_3w b={b_eq}, single_1w b={b_sg}")
+        else:
+            print(f"[OK] Lag weights sensitivity matches: equal_3w b={b_eq:.4f}, single_1w b={b_sg:.4f}")
+
+    # Verify bootstrap robustness from JSON
+    boot_rob = stats.get('early', {}).get('bootstrap_robustness', {})
+    if 'endogenous_reestimation' in boot_rob and 'week_clustered' in boot_rob:
+        ci_endo = boot_rob['endogenous_reestimation']['b_ci']
+        ci_week = boot_rob['week_clustered']['b_ci']
+        if round(ci_endo[0], 4) != 1.5170 or round(ci_endo[1], 4) != 2.9807:
+            errors.append(f"Endogenous bootstrap CI mismatch: {ci_endo}")
+        elif round(ci_week[0], 4) != 1.4728 or round(ci_week[1], 4) != 3.1191:
+            errors.append(f"Week-clustered bootstrap CI mismatch: {ci_week}")
+        else:
+            print(f"[OK] Bootstrap robustness matches: endo=[{ci_endo[0]:.4f}, {ci_endo[1]:.4f}], week=[{ci_week[0]:.4f}, {ci_week[1]:.4f}]")
+
     # 2. General Number Trace on paper/main.tex
     tex_path = p('paper', 'main.tex')
     with open(tex_path, 'r', encoding='utf-8') as f:

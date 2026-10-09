@@ -174,6 +174,62 @@ def affine_fit(sub, r_bar, n_boot=1500, seed=3):
     }
 
 
+def bootstrap_endogenous_reest(sub, n_boot=1500, seed=3):
+    """基准均值内生重抽下的按州聚类 Bootstrap（纳入基准估计不确定性）。"""
+    if len(sub) < 20:
+        return None
+    inv = 1.0 / sub['D_t'].values
+    gv = sub['g_ratio'].values
+    codes = sub['state'].astype('category').cat.codes.values
+    G = codes.max() + 1
+    idx_by = [np.where(codes == g)[0] for g in range(G)]
+    rng = np.random.default_rng(seed)
+    out = np.empty((n_boot, 2))
+    for i in range(n_boot):
+        sel = np.concatenate([idx_by[rng.integers(0, G)] for _ in range(G)])
+        if np.unique(inv[sel]).size < 3:
+            out[i] = np.nan
+            continue
+        rb_b = gv[sel].mean()
+        lv = ((gv[sel] - rb_b) / rb_b) ** 2
+        out[i] = fgls_affine(inv[sel], lv)
+    out = out[~np.isnan(out).any(1)]
+    return {
+        'b_ci': [float(np.percentile(out[:, 1], 2.5)), float(np.percentile(out[:, 1], 97.5))],
+        'a_ci': [float(np.percentile(out[:, 0], 2.5)), float(np.percentile(out[:, 0], 97.5))],
+        'p_b_le_0': float(np.mean(out[:, 1] <= 0)),
+        'n_boot': int(len(out))
+    }
+
+
+def bootstrap_week_clustered(sub, n_boot=1500, seed=3):
+    """按观测周（week_end）时间维度聚类重抽（检验跨州同周外生时间冲击）。"""
+    if len(sub) < 20:
+        return None
+    inv = 1.0 / sub['D_t'].values
+    gv = sub['g_ratio'].values
+    weeks = sub['week_end'].astype('category').cat.codes.values
+    W_cnt = weeks.max() + 1
+    idx_w = [np.where(weeks == w)[0] for w in range(W_cnt)]
+    rng = np.random.default_rng(seed)
+    out = np.empty((n_boot, 2))
+    for i in range(n_boot):
+        sel = np.concatenate([idx_w[rng.integers(0, W_cnt)] for _ in range(W_cnt)])
+        if np.unique(inv[sel]).size < 3:
+            out[i] = np.nan
+            continue
+        rb_b = gv[sel].mean()
+        lv = ((gv[sel] - rb_b) / rb_b) ** 2
+        out[i] = fgls_affine(inv[sel], lv)
+    out = out[~np.isnan(out).any(1)]
+    return {
+        'b_ci': [float(np.percentile(out[:, 1], 2.5)), float(np.percentile(out[:, 1], 97.5))],
+        'a_ci': [float(np.percentile(out[:, 0], 2.5)), float(np.percentile(out[:, 0], 97.5))],
+        'p_b_le_0': float(np.mean(out[:, 1] <= 0)),
+        'n_boot': int(len(out))
+    }
+
+
 def decile_fit(sub, r_bar):
     """十分位组均值拟合：把 D_t 的测量误差平均掉，缓解 errors-in-x。"""
     if len(sub) < 50:
@@ -307,6 +363,10 @@ def main():
                           r_early),
                       'decile': decile_fit(early, r_early),
                       'var_structure': variance_structure(early, r_early)}
+    stats['early']['bootstrap_robustness'] = {
+        'endogenous_reestimation': bootstrap_endogenous_reest(early, n_boot=1500, seed=3),
+        'week_clustered': bootstrap_week_clustered(early, n_boot=1500, seed=3)
+    }
     stats['early']['error_budget'] = error_budget(
         early, r_early, stats['early']['affine'])
     af = stats['early']['affine']
