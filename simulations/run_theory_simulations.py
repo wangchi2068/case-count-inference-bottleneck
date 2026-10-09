@@ -98,37 +98,42 @@ def plot_simulation_results(df_res):
     A = R_bar + rho * (R_bar**2 + v_R) / k
     m_times = A / v_R  # Exactly 53.080357...
     
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.5), dpi=300)
+    fig, axes = plt.subplots(1, 3, figsize=(15.5, 4.8), dpi=300)
     
     # Panel 1: Prop 1 vs Prop 2 Variance
     ax = axes[0]
-    ax.loglog(df_res["m"], df_res["ana_var_p1"], 'b--', lw=2, label=r"Prop 1 ($R_t$ parameter): $\frac{R_t}{\rho n} + \frac{R_t^2}{kn}$")
-    ax.loglog(df_res["m"], df_res["emp_var_p1"], 'bo', alpha=0.7, label="Prop 1 Monte Carlo")
+    ax.loglog(df_res["m"], df_res["ana_var_p1"], 'b--', lw=2.2, label=r"Prop 1 ($R_t$ parameter): $\frac{R_t}{\rho n} + \frac{R_t^2}{kn}$")
+    ax.loglog(df_res["m"], df_res["emp_var_p1"], 'bo', ms=5, alpha=0.8, mec='white', mew=0.5, label="Prop 1 Monte Carlo")
     
-    ax.loglog(df_res["m"], df_res["ana_var_p2"], 'r-', lw=2, label=r"Prop 2 ($\bar{R}$ total): $v_R + \frac{A}{m}$")
-    ax.loglog(df_res["m"], df_res["emp_var_p2"], 'rs', alpha=0.7, label="Prop 2 Monte Carlo")
+    ax.loglog(df_res["m"], df_res["ana_var_p2"], 'r-', lw=2.2, label=r"Prop 2 ($\bar{R}$ total): $v_R + \frac{A}{m}$")
+    ax.loglog(df_res["m"], df_res["emp_var_p2"], 'rs', ms=5, alpha=0.8, mec='white', mew=0.5, label="Prop 2 Monte Carlo")
     
-    ax.axhline(v_R, color='gray', linestyle=':', lw=1.5, label=r"Env Variance Floor $v_R = 0.04$")
-    ax.axvline(m_times, color='darkgreen', linestyle='-.', lw=1.5, label=rf"Crossover $m_\times = {m_times:.1f}$")
+    ax.axhline(v_R, color='gray', linestyle=':', lw=1.5)
+    ax.text(3.0, v_R * 1.12, r"Env Floor $v_R = 0.04$", color='#444444', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85))
+            
+    ax.axvline(m_times, color='darkgreen', linestyle='-.', lw=1.5)
+    ax.text(m_times * 1.08, 0.45, rf"Crossover $m_\times = {m_times:.1f}$", color='darkgreen', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85))
     
-    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11)
-    ax.set_ylabel(r"Estimation Variance $\operatorname{Var}(\widehat{R}_t)$ (Log Scale)", fontsize=11)
-    ax.set_title(r"(a) Variance Convergence & Floor $v_R$", fontsize=12, fontweight='bold')
-    ax.grid(True, which="both", ls=":", alpha=0.5)
-    ax.legend(fontsize=8, loc='lower left')
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel(r"Estimation Variance $\operatorname{Var}(\widehat{R}_t)$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_title(r"(a) Variance Convergence & Floor $v_R$", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, which="both", ls=":", alpha=0.35)
+    ax.legend(fontsize=8, loc='upper right', framealpha=0.92, edgecolor='#CCCCCC')
     
     # Panel 2: Ratio of Monte Carlo to Analytical
     ax = axes[1]
-    ax.plot(df_res["m"], df_res["ratio_p1"], 'b-o', lw=1.8, label="Prop 1 (MC / Analytical)")
-    ax.plot(df_res["m"], df_res["ratio_p2"], 'r-s', lw=1.8, label="Prop 2 (MC / Analytical)")
+    ax.plot(df_res["m"], df_res["ratio_p1"], 'b-o', lw=1.8, ms=5, mec='white', label="Prop 1 (MC / Analytical)")
+    ax.plot(df_res["m"], df_res["ratio_p2"], 'r-s', lw=1.8, ms=5, mec='white', label="Prop 2 (MC / Analytical)")
     ax.axhline(1.0, color='black', linestyle='--', lw=1.2)
     ax.set_xscale('log')
     ax.set_ylim(0.97, 1.03)
-    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11)
-    ax.set_ylabel("Empirical Variance / Analytical Formula", fontsize=11)
-    ax.set_title("(b) Exact Finite-Sample Agreement", fontsize=12, fontweight='bold')
-    ax.grid(True, ls=":", alpha=0.5)
-    ax.legend(fontsize=9)
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Empirical Variance / Analytical Formula", fontsize=11, fontweight='bold')
+    ax.set_title("(b) Exact Finite-Sample Agreement", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, ls=":", alpha=0.35)
+    ax.legend(fontsize=8.5, loc='upper right', framealpha=0.92, edgecolor='#CCCCCC')
     
     # Panel 3: Variance Component Share
     ax = axes[2]
@@ -139,7 +144,18 @@ def plot_simulation_results(df_res):
     
     ax.plot(m_dense, share_case * 100, 'b-', lw=2.2, label=r"Scale-Dep. Var Share $\frac{A/m}{v_R + A/m}$")
     ax.plot(m_dense, share_env * 100, 'r-', lw=2.2, label=r"Env Var Share $\frac{v_R}{v_R + A/m}$")
-    ax.axvline(m_times, color='darkgreen', linestyle='-.', lw=1.8, label=rf"Crossover $m_\times = {m_times:.1f}$ (50% / 50%)")
+    ax.axvline(m_times, color='darkgreen', linestyle='-.', lw=1.8)
+    ax.axhline(50, color='gray', linestyle=':', lw=1.2)
+    
+    ax.text(m_times * 1.08, 92, rf"$m_\times = {m_times:.1f}$ (50% / 50%)", color='darkgreen', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="darkgreen", lw=0.8, alpha=0.9))
+    
+    ax.set_xscale('log')
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel("Variance Component Percentage (%)", fontsize=11, fontweight='bold')
+    ax.set_title(r"(c) Error Budget Transition Across $m_\times$", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, ls=":", alpha=0.35)
+    ax.legend(fontsize=8.5, loc='center left', framealpha=0.92, edgecolor='#CCCCCC')
     ax.axhline(50, color='gray', linestyle=':', lw=1.2)
     
     ax.set_xscale('log')

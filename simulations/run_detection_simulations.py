@@ -132,9 +132,12 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     
     # Reference nominal level line
     ax.axhline(0.05, color='#333333', linestyle='--', lw=1.5, zorder=2, label=r"Nominal Size $\alpha = 0.05$")
-    ax.text(6.0, 0.052, r"Nominal $\alpha = 0.05$", color='#333333', fontsize=9, fontweight='bold', zorder=3)
-    ax.text(6.0, 0.098, "Over-rejection Zone\n(Wald Test Invalid)", color='#A50F15', fontsize=8.5, fontweight='bold', alpha=0.85)
-    ax.text(6.0, 0.008, r"Strictly Controlled Zone ($\alpha \leq 0.05$)", color='#006D2C', fontsize=8.5, fontweight='bold', alpha=0.85)
+    ax.text(0.035, 0.88, "Over-rejection Zone\n(Wald Test Invalid)", transform=ax.transAxes,
+            color='#A50F15', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=3)
+    ax.text(0.035, 0.10, r"Strictly Controlled Zone ($\alpha \leq 0.05$)", transform=ax.transAxes,
+            color='#006D2C', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=3)
     
     for k in [0.1, 0.35, 1.0]:
         m = size_results[k]["m"]
@@ -184,10 +187,11 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
         if m80:
             ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
             ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
-            y_offset = -0.07 if delta != 0.30 else 0.05
+            y_offset = -0.09 if delta != 0.30 else 0.05
             ax.annotate(rf"$m_{{80\%}} \approx {m80:.0f}$" + f"\n($n={n80}$)",
                         xy=(m80, 0.80), xytext=(m80 * 0.85, 0.80 + y_offset),
                         fontsize=7.8, fontweight='bold', color=col,
+                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=col, lw=0.6, alpha=0.9),
                         arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
         
     ax.set_xscale('log')
@@ -227,18 +231,20 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
         if m80:
             ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
             ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
-            y_offset = -0.08 if k_val == 0.35 else (0.05 if k_val == 1.0 else -0.09)
+            y_offset = -0.10 if k_val == 0.35 else (0.05 if k_val == 1.0 else -0.11)
             ax.annotate(rf"$m_{{80\%}}={m80:.0f}$" + f"\n($n={n80}$)",
                         xy=(m80, 0.80), xytext=(m80 * 0.82, 0.80 + y_offset),
                         fontsize=8.0, fontweight='bold', color=col,
+                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=col, lw=0.6, alpha=0.9),
                         arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
 
     # Add ~2.9x expansion annotation bracket between k=1.0 and k=0.1
     m80_k10 = m80_dict[1.00][0]
     m80_k01 = m80_dict[0.10][0]
-    ax.annotate("", xy=(m80_k01, 0.40), xytext=(m80_k10, 0.40),
+    # Move to y=0.22 to completely avoid curves
+    ax.annotate("", xy=(m80_k01, 0.22), xytext=(m80_k10, 0.22),
                 arrowprops=dict(arrowstyle="<->", color='#800026', lw=1.5))
-    ax.text(np.sqrt(m80_k10 * m80_k01), 0.425, r"$\approx 2.9\times$ Scale Penalty",
+    ax.text(np.sqrt(m80_k10 * m80_k01), 0.245, r"$\approx 2.9\times$ Scale Penalty",
             horizontalalignment='center', color='#800026', fontsize=8.8, fontweight='bold',
             bbox=dict(boxstyle="round,pad=0.25", fc='white', ec='#800026', lw=0.8, alpha=0.95))
 
