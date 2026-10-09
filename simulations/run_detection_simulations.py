@@ -111,76 +111,147 @@ def enumerate_m80(n_max, k, rho, delta, alpha=0.05, target=0.80):
     return None
 
 def plot_fig2_detection(size_results, m_dense, n_dense):
-    fig, axes = plt.subplots(1, 3, figsize=(16, 4.6), dpi=300)
+    # Publication-grade canvas
+    fig, axes = plt.subplots(1, 3, figsize=(16.5, 5.0), dpi=300)
     rho = 0.25
     alpha = 0.05
     
-    # Panel 1: Type I error (Size)
+    # Low-saturation, high-contrast academic palette
+    col_k01 = '#D73027'   # Crimson for high superspreading
+    col_k035 = '#1F78B4'  # Navy for typical respiratory
+    col_k10 = '#2CA25F'   # Emerald for geometric/weak
+    colors_k = {0.1: col_k01, 0.35: col_k035, 1.0: col_k10}
+
+    # ==========================================
+    # Panel (a): Type I Error Control
+    # ==========================================
     ax = axes[0]
-    ax.axhline(0.05, color='black', linestyle='--', lw=1.2, label=r"Nominal Level $\alpha = 0.05$")
-    colors = {0.1: 'crimson', 0.35: 'navy', 1.0: 'teal'}
+    # Subtle shaded background zones for intuitive reading
+    ax.fill_between([3.5, 900], 0.05, 0.125, color='#FEE0D2', alpha=0.45, zorder=0)
+    ax.fill_between([3.5, 900], 0.00, 0.05, color='#E5F5E0', alpha=0.45, zorder=0)
+    
+    # Reference nominal level line
+    ax.axhline(0.05, color='#333333', linestyle='--', lw=1.5, zorder=2, label=r"Nominal Size $\alpha = 0.05$")
+    ax.text(6.0, 0.052, r"Nominal $\alpha = 0.05$", color='#333333', fontsize=9, fontweight='bold', zorder=3)
+    ax.text(6.0, 0.098, "Over-rejection Zone\n(Wald Test Invalid)", color='#A50F15', fontsize=8.5, fontweight='bold', alpha=0.85)
+    ax.text(6.0, 0.008, r"Strictly Controlled Zone ($\alpha \leq 0.05$)", color='#006D2C', fontsize=8.5, fontweight='bold', alpha=0.85)
     
     for k in [0.1, 0.35, 1.0]:
         m = size_results[k]["m"]
-        ax.plot(m, size_results[k]["empirical_exact"], marker='o', color=colors[k], lw=1.8,
-                label=rf"Exact NB Test ($k={k}$)")
-        ax.plot(m, size_results[k]["empirical_wald"], marker='^', linestyle=':', color=colors[k], lw=1.5, alpha=0.75,
-                label=rf"Asymptotic Wald ($k={k}$)")
+        # Exact NB Test (Solid line + circle)
+        ax.plot(m, size_results[k]["empirical_exact"], marker='o', color=colors_k[k], lw=2.0, ms=5.5,
+                mec='white', mew=0.8, zorder=4, label=rf"Exact NB ($k={k}$)")
+        # Asymptotic Wald (Dotted line + triangle)
+        ax.plot(m, size_results[k]["empirical_wald"], marker='^', linestyle=':', color=colors_k[k], lw=1.6, ms=5.5,
+                mec='white', mew=0.8, alpha=0.85, zorder=4, label=rf"Wald Approx ($k={k}$)")
         
     ax.set_xscale('log')
-    ax.set_ylim(0.00, 0.125)
-    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11)
-    ax.set_ylabel(r"Empirical Type I Error Rate $\widehat{\alpha}$", fontsize=11)
-    ax.set_title(r"(a) Type I Error Control: Exact vs Asymptotic", fontsize=12, fontweight='bold')
-    ax.grid(True, ls=":", alpha=0.5)
-    ax.legend(fontsize=6.5, loc='center right', ncol=1)
-    
-    # Panel 2: Power curves across delta (at fixed k = 0.35)
+    ax.set_xlim(4.0, 800)
+    ax.set_ylim(0.00, 0.115)
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel(r"Empirical Type I Error Rate $\widehat{\alpha}$", fontsize=11, fontweight='bold')
+    ax.set_title(r"(a) Type I Error Control: Exact vs. Wald", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, ls=":", color='gray', alpha=0.35)
+    ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
+    ax.legend(fontsize=7.5, loc='center right', framealpha=0.92, edgecolor='#CCCCCC', ncol=1)
+
+    # ==========================================
+    # Panel (b): Power Curves across Effect Size delta
+    # ==========================================
     ax = axes[1]
     k_fixed = 0.35
-    delta_styles = {}
-    for delta, (col, ls) in zip([0.15, 0.30, 0.50], [('darkorange','solid'),('purple','solid'),('forestgreen','solid')]):
+    delta_palette = {
+        0.50: ('#2CA25F', 'Strong Outbreak'),
+        0.30: ('#756BB1', 'Moderate Outbreak'),
+        0.15: ('#E6550D', 'Mild Resurgence')
+    }
+    
+    ax.axhline(0.80, color='#666666', linestyle='--', lw=1.3, zorder=2)
+    ax.text(5.5, 0.815, r"80% Power Threshold", color='#444444', fontsize=9, fontweight='bold')
+    
+    for delta, (col, d_name) in delta_palette.items():
         n80 = enumerate_m80(20000, k_fixed, rho, delta)
         m80 = round(n80 * rho, 1)
-        delta_styles[delta] = (col, ls, rf"$\delta={delta}$ ($m_{{80\%}}={m80:.0f}$, first-crossing $n={n80}$)")
-    
-    for delta, (col, ls, lbl) in delta_styles.items():
+        
         p_ex = [compute_exact_power(compute_exact_critical_value(n, k_fixed, rho, alpha), n, k_fixed, rho, delta) for n in n_dense]
         p_nm = [compute_normal_approx_power(n, k_fixed, rho, delta, alpha) for n in n_dense]
-        ax.plot(m_dense, p_ex, color=col, linestyle=ls, lw=2.2, label=rf"Exact: {lbl}")
-        ax.plot(m_dense, p_nm, color=col, linestyle='--', lw=1.3, alpha=0.7, label=rf"Wald Approx ($\delta={delta}$)")
         
-    ax.axhline(0.80, color='gray', linestyle=':', lw=1.2, label=r"80% Power Benchmark")
+        # Plot curves
+        ax.plot(m_dense, p_ex, color=col, lw=2.2, zorder=3, label=rf"Exact: $\delta={delta}$ ({d_name})")
+        ax.plot(m_dense, p_nm, color=col, linestyle=':', lw=1.4, alpha=0.7, zorder=3, label=rf"Wald: $\delta={delta}$")
+        
+        # Mark 80% threshold crossing with drop lines
+        if m80:
+            ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
+            ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
+            y_offset = -0.07 if delta != 0.30 else 0.05
+            ax.annotate(rf"$m_{{80\%}} \approx {m80:.0f}$" + f"\n($n={n80}$)",
+                        xy=(m80, 0.80), xytext=(m80 * 0.85, 0.80 + y_offset),
+                        fontsize=7.8, fontweight='bold', color=col,
+                        arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
+        
     ax.set_xscale('log')
-    ax.set_ylim(0.0, 1.02)
-    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11)
-    ax.set_ylabel(r"Statistical Power $\pi(n, \delta)$", fontsize=11)
-    ax.set_title(r"(b) Detection Power vs Case Scale ($k=0.35, \rho=0.25$)", fontsize=12, fontweight='bold')
-    ax.grid(True, ls=":", alpha=0.5)
-    ax.legend(fontsize=7.5, loc='lower right', ncol=2)
-    
-    # Panel 3: Power curves across k (at fixed delta = 0.25)
+    ax.set_xlim(4.0, 800)
+    ax.set_ylim(0.0, 1.03)
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel(r"Statistical Power $\pi(n, \delta)$", fontsize=11, fontweight='bold')
+    ax.set_title(r"(b) Detection Power vs. Scale ($k=0.35, \rho=0.25$)", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, ls=":", color='gray', alpha=0.35)
+    ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
+    ax.legend(fontsize=7.2, loc='lower right', framealpha=0.92, edgecolor='#CCCCCC', ncol=1)
+
+    # ==========================================
+    # Panel (c): Impact of Overdispersion k
+    # ==========================================
     ax = axes[2]
     delta_fixed = 0.25
-    k_styles = {}
-    for k_val, col in zip([0.1, 0.35, 1.0], ['crimson', 'navy', 'teal']):
+    k_palette = {
+        0.10: (col_k01, 'High Superspreading'),
+        0.35: (col_k035, 'Typical Respiratory'),
+        1.00: (col_k10, 'Weak/Geometric')
+    }
+    
+    ax.axhline(0.80, color='#666666', linestyle='--', lw=1.3, zorder=2)
+    ax.text(5.5, 0.815, r"80% Power Threshold", color='#444444', fontsize=9, fontweight='bold')
+    
+    m80_dict = {}
+    for k_val, (col, k_name) in k_palette.items():
         n80 = enumerate_m80(20000, k_val, rho, delta_fixed)
         m80 = round(n80 * rho, 1)
-        k_styles[k_val] = (col, rf"$k={k_val:.2f}$ ($m_{{80\%}}={m80:.0f}$, first-crossing $n={n80}$)")
-    
-    for k_val, (col, lbl) in k_styles.items():
-        p_ex = [compute_exact_power(compute_exact_critical_value(n, k_val, rho, alpha), n, k_val, rho, delta_fixed) for n in n_dense]
-        ax.plot(m_dense, p_ex, color=col, lw=2.2, label=lbl)
+        m80_dict[k_val] = (m80, n80)
         
-    ax.axhline(0.80, color='gray', linestyle=':', lw=1.2, label=r"80% Power Benchmark")
+        p_ex = [compute_exact_power(compute_exact_critical_value(n, k_val, rho, alpha), n, k_val, rho, delta_fixed) for n in n_dense]
+        ax.plot(m_dense, p_ex, color=col, lw=2.2, zorder=3, label=rf"$k={k_val:.2f}$ ({k_name})")
+        
+        # Mark 80% threshold crossing with drop lines
+        if m80:
+            ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
+            ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
+            y_offset = -0.08 if k_val == 0.35 else (0.05 if k_val == 1.0 else -0.09)
+            ax.annotate(rf"$m_{{80\%}}={m80:.0f}$" + f"\n($n={n80}$)",
+                        xy=(m80, 0.80), xytext=(m80 * 0.82, 0.80 + y_offset),
+                        fontsize=8.0, fontweight='bold', color=col,
+                        arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
+
+    # Add ~2.9x expansion annotation bracket between k=1.0 and k=0.1
+    m80_k10 = m80_dict[1.00][0]
+    m80_k01 = m80_dict[0.10][0]
+    ax.annotate("", xy=(m80_k01, 0.40), xytext=(m80_k10, 0.40),
+                arrowprops=dict(arrowstyle="<->", color='#800026', lw=1.5))
+    ax.text(np.sqrt(m80_k10 * m80_k01), 0.425, r"$\approx 2.9\times$ Scale Penalty",
+            horizontalalignment='center', color='#800026', fontsize=8.8, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.25", fc='white', ec='#800026', lw=0.8, alpha=0.95))
+
     ax.set_xscale('log')
-    ax.set_ylim(0.0, 1.02)
-    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11)
-    ax.set_ylabel(r"Statistical Power $\pi(n, \delta = 0.25)$", fontsize=11)
-    ax.set_title(r"(c) Impact of Overdispersion $k$ ($\delta=0.25, \rho=0.25$)", fontsize=12, fontweight='bold')
-    ax.grid(True, ls=":", alpha=0.5)
-    ax.legend(fontsize=8, loc='lower right')
-    
+    ax.set_xlim(4.0, 800)
+    ax.set_ylim(0.0, 1.03)
+    ax.set_xlabel(r"Expected Reported Cases $m = \rho n$ (Log Scale)", fontsize=11, fontweight='bold')
+    ax.set_ylabel(r"Statistical Power $\pi(n, \delta = 0.25)$", fontsize=11, fontweight='bold')
+    ax.set_title(r"(c) Impact of Superspreading $k$ on Surveillance Capacity", fontsize=12, fontweight='bold', pad=10)
+    ax.grid(True, ls=":", color='gray', alpha=0.35)
+    ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
+    ax.legend(fontsize=8.0, loc='lower right', framealpha=0.92, edgecolor='#CCCCCC')
+
     plt.tight_layout()
     pdf_path = os.path.join(OUTPUT_FIG_DIR, "fig2_growth_detection_power.pdf")
     png_path = os.path.join(OUTPUT_FIG_DIR, "fig2_growth_detection_power.png")
