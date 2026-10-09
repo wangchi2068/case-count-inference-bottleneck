@@ -176,11 +176,14 @@ def plot_fig3_forecasting(df_res, m_times, v_R, A, R_bar):
     ax.scatter([10, m_times, 200], [100.0/(2*(1+10/m_times)), 25.0, 100.0/(2*(1+200/m_times))],
                color='crimson', zorder=5)
     ax.annotate(r"$m=10$ (42.1%)", xy=(10, 42.1), xytext=(11, 46),
-                fontsize=8, fontweight='bold', color='navy')
+                fontsize=8, fontweight='bold', color='navy',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='navy', lw=0.6, alpha=0.9))
     ax.annotate(r"$m_\times=53.1$ (25.0%)", xy=(m_times, 25.0), xytext=(m_times*1.1, 28),
-                fontsize=8, fontweight='bold', color='darkgreen')
+                fontsize=8, fontweight='bold', color='darkgreen',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='darkgreen', lw=0.6, alpha=0.9))
     ax.annotate(r"$m=200$ (10.5%)", xy=(200, 10.5), xytext=(110, 14),
-                fontsize=8, fontweight='bold', color='purple')
+                fontsize=8, fontweight='bold', color='purple',
+                bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='purple', lw=0.6, alpha=0.9))
     
     ax.set_xscale('log')
     ax.set_ylim(0, 80)

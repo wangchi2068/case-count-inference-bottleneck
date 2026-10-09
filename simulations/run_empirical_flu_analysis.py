@@ -906,7 +906,8 @@ def make_figure(panel, t_early, t_peak_stat, r_early):
     x_cross = 1.0 + (np.log(22.64) - np.log(20.0)) / (np.log(50.0) - np.log(20.0))
     ax.axvline(x_cross, color='gray', ls='--', lw=1.2, alpha=0.8)
     ax.text(x_cross + 0.12, max(means) * 0.88, 'empirical crossover\nat ~22.6 cases/week',
-            fontsize=8.5, color='#333333')
+            fontsize=8.5, color='#333333',
+            bbox=dict(boxstyle='round,pad=0.2', facecolor='white', edgecolor='gray', lw=0.5, alpha=0.9))
     ax.set_xticks(x)
     ax.set_xticklabels(SCALE_LABELS, **xt)
     ax.set_xlabel('Effective weekly scale $D_t$ (admissions/week)')
