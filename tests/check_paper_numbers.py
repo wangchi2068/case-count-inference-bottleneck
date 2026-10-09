@@ -72,6 +72,8 @@ def check_all():
         1.3921,  # b_iv - b_ols difference in early-phase pooled subsample (2.8501 - 1.4581)
         0.0056,  # Lower bound of symptomatic hospitalization fraction rho (Zhou point estimate / Tokars attack rate upper bound)
         0.021,   # Upper bound of symptomatic hospitalization fraction rho (Zhou point estimate / Tokars attack rate lower bound)
+        0.2230,  # Common-scale relative MSE of Cori 2-week baseline on 1,244 matched early-phase observations
+        0.2738,  # Common-scale relative MSE of naive persistence baseline on 1,244 matched early-phase observations
     }
     simulation_grid_outputs = {
         0.0495,  # Empirical Wald test size at k=1.0 reported in paper/main.tex line 399
