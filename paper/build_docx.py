@@ -335,7 +335,7 @@ def load_bib_references():
         'carroll2006measurement', 'verbeke2000linear', 'armstrong1998effect', 'althouse2015enhancing',
         'reich2019accuracy', 'biggerstaff2018results', 'mathis2024evaluation', 'cramer2022evaluation',
         'ray2023comparing', 'bosse2023scoring', 'zhou2012hospitalizations', 'cochran1977sampling',
-        'cdc2026nhsn', 'tokars2018seasonal'
+        'cdc2026nhsn', 'tokars2018seasonal', 'flaxman2020estimating'
     ]
 
     entries_map = {}
