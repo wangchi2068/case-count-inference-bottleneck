@@ -103,6 +103,11 @@ def check_all():
         2.9807,  # Upper bound of endogenous re-estimation cluster bootstrap 95% CI for slope b
         1.4728,  # Lower bound of week-clustered temporal bootstrap 95% CI for slope b
         3.1191,  # Upper bound of week-clustered temporal bootstrap 95% CI for slope b
+        0.1212,  # Mathis 2024 FluSight states retrospective sensitivity intercept a
+        5.5204,  # Mathis 2024 FluSight all-locations sensitivity bootstrap lower CI for b
+        10.7831, # Mathis 2024 FluSight all-locations sensitivity bootstrap upper CI for b
+        5.7935,  # Mathis 2024 FluSight states retrospective sensitivity bootstrap lower CI for b
+        11.4120, # Mathis 2024 FluSight states retrospective sensitivity bootstrap upper CI for b
     }
     simulation_grid_outputs = {
         0.0495,  # Empirical Wald test size at k=1.0 reported in paper/main.tex line 399

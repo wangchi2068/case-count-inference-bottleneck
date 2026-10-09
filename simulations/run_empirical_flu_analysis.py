@@ -948,6 +948,16 @@ def main():
                          'relmse_mean': float(nat_loss.mean()),
                          'relmse_median': float(nat_loss.median())}
 
+    # 加载外部扩展验证结果 (FluSight 挑战赛集成模型 & 欧洲 11 国 COVID-19 早期暴发)
+    try:
+        val_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'validation_experiments', 'results')
+        with open(os.path.join(val_dir, 'target2_mathis2024_summary.json'), 'r', encoding='utf-8') as f:
+            stats['extended_validation_flusight'] = json.load(f)
+        with open(os.path.join(val_dir, 'target3_flaxman2020_summary.json'), 'r', encoding='utf-8') as f:
+            stats['extended_validation_covid19'] = json.load(f)
+    except Exception as e:
+        print(f'Extended validation load note: {e}')
+
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'empirical_stats.json'),
               'w', encoding='utf-8') as f:
         json.dump(stats, f, ensure_ascii=False, indent=2)
