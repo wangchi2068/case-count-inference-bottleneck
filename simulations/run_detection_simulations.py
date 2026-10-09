@@ -132,12 +132,12 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     
     # Reference nominal level line
     ax.axhline(0.05, color='#333333', linestyle='--', lw=1.5, zorder=2, label=r"Nominal Size $\alpha = 0.05$")
-    ax.text(0.035, 0.88, "Over-rejection Zone\n(Wald Test Invalid)", transform=ax.transAxes,
-            color='#A50F15', fontsize=8.5, fontweight='bold',
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=3)
-    ax.text(0.035, 0.10, r"Strictly Controlled Zone ($\alpha \leq 0.05$)", transform=ax.transAxes,
-            color='#006D2C', fontsize=8.5, fontweight='bold',
-            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.9), zorder=3)
+    ax.text(0.035, 0.93, "Over-rejection Zone (Wald Test Invalid)", transform=ax.transAxes,
+            color='#A50F15', fontsize=8.0, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec='#A50F15', lw=0.6, alpha=0.92), zorder=3)
+    ax.text(0.035, 0.06, r"Strictly Controlled Zone ($\alpha \leq 0.05$)", transform=ax.transAxes,
+            color='#006D2C', fontsize=8.0, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.2", fc="white", ec='#006D2C', lw=0.6, alpha=0.92), zorder=3)
     
     for k in [0.1, 0.35, 1.0]:
         m = size_results[k]["m"]
@@ -156,7 +156,7 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     ax.set_title(r"(a) Type I Error Control: Exact vs. Wald", fontsize=12, fontweight='bold', pad=10)
     ax.grid(True, ls=":", color='gray', alpha=0.35)
     ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
-    ax.legend(fontsize=7.5, loc='center right', framealpha=0.92, edgecolor='#CCCCCC', ncol=1)
+    ax.legend(fontsize=7.2, loc='upper right', framealpha=0.95, edgecolor='#CCCCCC', ncol=2)
 
     # ==========================================
     # Panel (b): Power Curves across Effect Size delta
@@ -170,8 +170,16 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     }
     
     ax.axhline(0.80, color='#666666', linestyle='--', lw=1.3, zorder=2)
-    ax.text(5.5, 0.815, r"80% Power Threshold", color='#444444', fontsize=9, fontweight='bold')
+    ax.text(280.0, 0.818, r"80% Power Threshold", color='#333333', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.18", fc="white", ec="none", alpha=0.9))
     
+    # Pre-calculated zero-occlusion text targets (m, y) verified to have maximum clearance from all curves
+    b_targets = {
+        0.50: (28.0, 0.90),   # In open sky above curve (curve is at 0.55 here)
+        0.30: (95.0, 0.52),   # In open corridor between delta=0.30 (at 0.66) and delta=0.15 (at 0.28)
+        0.15: (450.0, 0.48)   # In open space below curve (curve is at 0.74 here, lower space is empty)
+    }
+
     for delta, (col, d_name) in delta_palette.items():
         n80 = enumerate_m80(20000, k_fixed, rho, delta)
         m80 = round(n80 * rho, 1)
@@ -187,12 +195,12 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
         if m80:
             ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
             ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
-            y_offset = -0.09 if delta != 0.30 else 0.05
+            tx, ty = b_targets[delta]
             ax.annotate(rf"$m_{{80\%}} \approx {m80:.0f}$" + f"\n($n={n80}$)",
-                        xy=(m80, 0.80), xytext=(m80 * 0.85, 0.80 + y_offset),
+                        xy=(m80, 0.80), xytext=(tx, ty),
                         fontsize=7.8, fontweight='bold', color=col,
-                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=col, lw=0.6, alpha=0.9),
-                        arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
+                        bbox=dict(boxstyle="round,pad=0.22", fc="white", ec=col, lw=0.7, alpha=0.95),
+                        arrowprops=dict(arrowstyle="->", color=col, lw=1.0, shrinkB=4))
         
     ax.set_xscale('log')
     ax.set_xlim(4.0, 800)
@@ -202,7 +210,7 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     ax.set_title(r"(b) Detection Power vs. Scale ($k=0.35, \rho=0.25$)", fontsize=12, fontweight='bold', pad=10)
     ax.grid(True, ls=":", color='gray', alpha=0.35)
     ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
-    ax.legend(fontsize=7.2, loc='lower right', framealpha=0.92, edgecolor='#CCCCCC', ncol=1)
+    ax.legend(fontsize=7.2, loc='upper left', framealpha=0.95, edgecolor='#CCCCCC', ncol=1)
 
     # ==========================================
     # Panel (c): Impact of Overdispersion k
@@ -216,9 +224,16 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     }
     
     ax.axhline(0.80, color='#666666', linestyle='--', lw=1.3, zorder=2)
-    ax.text(5.5, 0.815, r"80% Power Threshold", color='#444444', fontsize=9, fontweight='bold')
+    ax.text(280.0, 0.818, r"80% Power Threshold", color='#333333', fontsize=8.5, fontweight='bold',
+            bbox=dict(boxstyle="round,pad=0.18", fc="white", ec="none", alpha=0.9))
     
     m80_dict = {}
+    c_targets = {
+        1.00: (50.0, 0.90),   # Open sky above curve
+        0.35: (120.0, 0.52),  # Open corridor between curves
+        0.10: (330.0, 0.52)   # Open space below curve
+    }
+
     for k_val, (col, k_name) in k_palette.items():
         n80 = enumerate_m80(20000, k_val, rho, delta_fixed)
         m80 = round(n80 * rho, 1)
@@ -231,12 +246,12 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
         if m80:
             ax.plot(m80, 0.80, marker='o', ms=6.5, color=col, mec='white', mew=1.2, zorder=5)
             ax.vlines(m80, 0, 0.80, color=col, linestyle=':', lw=1.2, alpha=0.75, zorder=2)
-            y_offset = -0.10 if k_val == 0.35 else (0.05 if k_val == 1.0 else -0.11)
+            tx, ty = c_targets[k_val]
             ax.annotate(rf"$m_{{80\%}}={m80:.0f}$" + f"\n($n={n80}$)",
-                        xy=(m80, 0.80), xytext=(m80 * 0.82, 0.80 + y_offset),
-                        fontsize=8.0, fontweight='bold', color=col,
-                        bbox=dict(boxstyle="round,pad=0.2", fc="white", ec=col, lw=0.6, alpha=0.9),
-                        arrowprops=dict(arrowstyle="->", color=col, lw=0.9, shrinkB=4))
+                        xy=(m80, 0.80), xytext=(tx, ty),
+                        fontsize=7.8, fontweight='bold', color=col,
+                        bbox=dict(boxstyle="round,pad=0.22", fc="white", ec=col, lw=0.7, alpha=0.95),
+                        arrowprops=dict(arrowstyle="->", color=col, lw=1.0, shrinkB=4))
 
     # Add ~2.9x expansion annotation bracket between k=1.0 and k=0.1
     m80_k10 = m80_dict[1.00][0]
@@ -256,7 +271,7 @@ def plot_fig2_detection(size_results, m_dense, n_dense):
     ax.set_title(r"(c) Impact of Superspreading $k$ on Surveillance Capacity", fontsize=12, fontweight='bold', pad=10)
     ax.grid(True, ls=":", color='gray', alpha=0.35)
     ax.tick_params(direction='out', length=4, width=0.8, labelsize=9.5)
-    ax.legend(fontsize=8.0, loc='lower right', framealpha=0.92, edgecolor='#CCCCCC')
+    ax.legend(fontsize=7.8, loc='upper left', framealpha=0.95, edgecolor='#CCCCCC')
 
     plt.tight_layout()
     pdf_path = os.path.join(OUTPUT_FIG_DIR, "fig2_growth_detection_power.pdf")
