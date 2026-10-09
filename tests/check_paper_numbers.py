@@ -74,6 +74,12 @@ def check_all():
         0.021,   # Upper bound of symptomatic hospitalization fraction rho (Zhou point estimate / Tokars attack rate lower bound)
         0.2230,  # Common-scale relative MSE of Cori 2-week baseline on 1,244 matched early-phase observations
         0.2738,  # Common-scale relative MSE of naive persistence baseline on 1,244 matched early-phase observations
+        0.4781,  # Common-scale relative MSE of Cori 2-week baseline on [5, 20) scale bin
+        0.4915,  # Common-scale relative MSE of naive baseline on [5, 20) scale bin
+        1.5170,  # Lower bound of endogenous re-estimation cluster bootstrap 95% CI for slope b
+        2.9807,  # Upper bound of endogenous re-estimation cluster bootstrap 95% CI for slope b
+        1.4728,  # Lower bound of week-clustered temporal bootstrap 95% CI for slope b
+        3.1191,  # Upper bound of week-clustered temporal bootstrap 95% CI for slope b
     }
     simulation_grid_outputs = {
         0.0495,  # Empirical Wald test size at k=1.0 reported in paper/main.tex line 399

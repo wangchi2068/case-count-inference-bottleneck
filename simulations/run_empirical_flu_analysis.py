@@ -43,8 +43,9 @@ def load_data():
     return df, states
 
 
-def build_panel(df, states, d_threshold=5.0):
+def build_panel(df, states, d_threshold=5.0, w_weights=None):
     """逐州构建 (D_t, C_{t+1}, 覆盖率, 日期) 面板。仅要求 D_t >= d_threshold。"""
+    w_vec = W if w_weights is None else w_weights
     rows = []
     for state in states:
         sub = df[df['Geographic aggregation'] == state].sort_values('week_end').reset_index(drop=True)
@@ -55,7 +56,7 @@ def build_panel(df, states, d_threshold=5.0):
             continue
         for t in range(2, len(cases) - 1):
             d = pd.to_datetime(dates[t])
-            d_t = W[0] * cases[t] + W[1] * cases[t - 1] + W[2] * cases[t - 2]
+            d_t = w_vec[0] * cases[t] + w_vec[1] * cases[t - 1] + w_vec[2] * cases[t - 2]
             if d_t >= d_threshold:
                 rows.append({
                     'state': state,
@@ -636,6 +637,31 @@ def main():
         'affine_cori_3w': {'a': float(a_c3), 'b': float(b_c3), 'm_x': float(b_c3 / a_c3)}
     }
 
+    # 共同基准尺度 (以回顾性阶段均值 r_early 为统一归一化分母)
+    sub_c2_clean = df_pbase_early.dropna(subset=['loss_cori_2']).copy()
+    bins_common = []
+    for b in SCALE_LABELS:
+        sb = sub_c2_clean[sub_c2_clean['bin'] == b]
+        ep = ((sb['g_ratio'] - r_early) / r_early) ** 2
+        ec2 = ((sb['g_ratio'] - sb['R_cori_2']) / r_early) ** 2
+        ec3 = ((sb['g_ratio'] - sb['R_cori_3']) / r_early) ** 2
+        en = ((sb['c_next'] - sb['c_curr']) / (r_early * sb['D_t'])) ** 2
+        bins_common.append({
+            'bin': b, 'N': int(len(sb)),
+            'phase_mean': float(ep.mean()),
+            'cori_2w': float(ec2.mean()),
+            'cori_3w': float(ec3.mean()),
+            'naive': float(en.mean())
+        })
+    loss_c2_comm = ((sub_c2_clean['g_ratio'] - sub_c2_clean['R_cori_2']) / r_early) ** 2
+    loss_nv_comm = ((sub_c2_clean['c_next'] - sub_c2_clean['c_curr']) / (r_early * sub_c2_clean['D_t'])) ** 2
+    stats['competing_baselines']['common_scale'] = {
+        'N': int(len(sub_c2_clean)),
+        'cori_2w_mean': float(loss_c2_comm.mean()),
+        'naive_mean': float(loss_nv_comm.mean()),
+        'bins': bins_common
+    }
+
     # ---- 任务2: 预测偏差项与条件方差项分解 ----
     early_clean_dec = df_pbase_early.dropna(subset=['R_cori_2']).copy()
     diff_var = (early_clean_dec['g_ratio'] - early_clean_dec['R_cori_2']) / r_early
@@ -744,6 +770,29 @@ def main():
     stats['seasonal_subsample_iv']['pooled_within_phase'] = _run_2sls_season(eiv, r_early)
     stats['seasonal_subsample_iv']['pooled_subsample_mean'] = _run_2sls_season(eiv, eiv['g'].mean())
 
+    # ---- 任务4: 滞后权重敏感性分析 (原权重 vs 三周等权 vs 单周滞后) ----
+    print('\n[5.2 敏感性] 滞后权重敏感性检验 (原权重 vs 三周等权 vs 单周滞后):')
+    weights_eval = {
+        'original': [0.65, 0.25, 0.10],
+        'equal_3w': [1.0/3.0, 1.0/3.0, 1.0/3.0],
+        'single_1w': [1.0, 0.0, 0.0]
+    }
+    lag_sens = {}
+    for w_name, w_vec in weights_eval.items():
+        pan_w = build_panel(df, states, d_threshold=5.0, w_weights=w_vec)
+        pan_w['phase'] = tag_phase(pan_w)
+        early_w = pan_w[pan_w['phase'] == 'early_growth']
+        rb_w = float(early_w['g_ratio'].mean())
+        fit_w = affine_fit(early_w, rb_w, n_boot=1500, seed=3)
+        lag_sens[w_name] = {
+            'weights': w_vec, 'N': int(len(early_w)), 'R_bar': rb_w,
+            'a': fit_w['a'], 'b': fit_w['b'], 'm_x': fit_w['m_x'],
+            'b_ci': fit_w['b_ci'], 'a_ci': fit_w['a_ci'], 'm_x_ci': fit_w['m_x_ci']
+        }
+        print(f'   {w_name:>10s}: N={len(early_w):4d}  R_bar={rb_w:.4f}  a={fit_w["a"]:.4f}  '
+              f'b={fit_w["b"]:.4f}  b_CI=[{fit_w["b_ci"][0]:.4f}, {fit_w["b_ci"][1]:.4f}]  '
+              f'm_x={fit_w["m_x"]:.2f}')
+    stats['lag_weights_sensitivity'] = lag_sens
 
     print('[审稿固化] stage_scale_audit / rolling_origin / iv_check / realized_large_scale 已写入 JSON')
 
