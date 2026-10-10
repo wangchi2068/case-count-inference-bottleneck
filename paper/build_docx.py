@@ -92,10 +92,10 @@ def table(headers, rows, cap):
                      'props': dict([('c%d' % (i + 1), v) for i, v in enumerate(row)])})
 
 # ============ 标题与元数据区 ============
-p('病例规模的推断收益边界：估计目标、监测杠杆与流感住院实证',
+p('基于负二项分支过程的疫情监测规模收益边界研究',
   style='Title', size='22pt', bold=True, align='center', before='12pt', after='16pt')
-p('（匿名评审稿）',
-  size='12pt', align='center', after='16pt')
+p('Boundaries of Surveillance Scale Returns Based on Negative Binomial Branching Processes',
+  size='12pt', bold=True, align='center', after='16pt')
 
 # 摘要
 abstract_text = (
