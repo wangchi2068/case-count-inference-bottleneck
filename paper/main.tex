@@ -38,11 +38,11 @@
 \maketitle
 
 \begin{abstract}
-\noindent 准确识别疫情增长并预测短期病例负担是现代传染病预警的核心任务。常规直觉认为样本量越大推断精度越高，但在个体超传播、不完全检测与共同环境扰动并存时，样本规模与推断信息量不能简单等同。既有信息下界理论主要建立在瞬时再生数 $R_t$ 一类估计目标上；本文证明更换估计目标后方差标度律随之改变，据此将病例规模何时不再主导推断误差转化为一个条件明确的监测设计问题。
+\noindent 准确识别疫情增长并预测短期病例负担是现代传染病预警的核心任务。常规直觉认为样本量越大推断精度越高，但在个体超传播、不完全检测与共同环境扰动并存时，样本规模与推断信息量不能简单等同。既有理论主要关注当期瞬时再生数 $R_t$；本文表明，一旦推断目标改变，误差随样本规模的下降规律也随之改变，据此将病例规模何时不再主导推断误差转化为一个条件明确的监测设计问题。
 
-主要理论结果表明：（1）估计当期瞬态参数 $R_t$ 时，测量方差随期望报告规模 $m$ 严格单调趋零；（2）以单期数据估计跨期平稳基准 $\bar{R}$ 时，单期推断留存不可消除的环境方差底板 $v_R$，由此导出两类方差相等的收益拐点 $m_\times$；（3）提高报告率 $\rho$ 仅能消除漏报抽稀方差，唯有扩大真实感染基数 $n$ 才能使各项方差同时衰减；（4）时间序列中事后代理增长统计量与事前单步预测严格成比例，且误差在极小规模端受更新过程尾部方差二次放大。
+主要理论结果表明：（1）估计当期传播强度 $R_t$ 时，测量方差随期望报告病例数 $m$ 单调趋零；（2）以单期数据估计跨期平均传播水平 $\bar{R}$ 时，单期推断留存不可消除的环境方差底板 $v_R$，由此导出抽样方差与环境方差相等的收益拐点 $m_\times$；（3）提高检测报告率 $\rho$ 仅能消除漏报抽稀方差，唯有扩大实际感染基数 $n$ 才能使各项方差同时衰减；（4）时间序列中事后代理增长指标与事前单步预测严格成比例，且误差在极小规模端受更新过程尾部方差二次放大。
 
-实证方面，基于全美 CDC NHSN 流感住院真实监测数据（16,218 个州周观测）：流行初期相对均方误差随规模呈理论预测的仿射衰减，经验拐点约为 23 例/周；约四至五成半的误差份额落在与规模无关的拟合底板上；在达峰期，常数均值偏移是误差平台的主要来源，剥离偏差后规模效应依然显著。本文进一步分析了 CDC FluSight 前瞻集成预测和欧洲 11 国 COVID-19 数据，两组数据中的规模相关误差项均为正，经验拐点随监测尺度和时间粒度变化。这些结果可用于比较扩大样本、延长观测期和采用多模型预测的相对收益。
+实证方面，基于全美 CDC NHSN 流感住院真实监测数据（16,218 个州周观测）：流行初期相对均方误差随规模按 $1/D_t$ 形式递减，经验拐点约为 23 例/周；约四至五成半的误差份额落在与规模无关的拟合底板上；在达峰期，常数均值偏移是误差平台的主要来源，剥离偏差后规模效应依然显著。本文进一步分析了 CDC FluSight 前瞻集成预测和欧洲 11 国 COVID-19 数据，两组数据中随病例规模按 $1/D_t$ 衰减的误差项均为正，经验拐点随监测尺度和时间粒度变化。这些结果可用于比较扩大样本、延长观测期和采用多模型预测的相对收益。
 
 \vspace{0.8em}
 \noindent \textbf{关键词：} 疫情增长判定；分支过程；超传播；环境随机性；监测设计；误差预算分解；流感住院实证
@@ -58,18 +58,20 @@
 
 其三近年来利用信息论与 Fisher 信息量解析了带噪疫情曲线的信息极限 \citep{parag2022quantifying}，确立了检测疫情反弹的严格信息论下界及干预延迟边界 \citep{parag2022fundamental, parag2025asymmetric}。然而，既有信息下界文献中信息量随病例数近似线性增长的标度律，主要建立在当期瞬态参数 $R_t$ 这一类估计目标之上。本文与之形成理论对话：当推断目标由当期瞬态参数转换为跨期基础水平时，方差对病例规模的标度响应出现分水岭。对当期瞬态参数 $R_t$，增加病例规模的边际方差收益恒为正，测量方差随规模扩大严格单调趋零（命题~\ref{prop:measurement_var}）；而对跨期平稳的潜在基础趋势 $\bar{R}$，单期推断必然留存不可消除的环境方差底板 $v_R$，由此定义出两类方差相等的经验收益拐点 $m_\times$（命题~\ref{prop:trend_var}）。这一结果与生态动力学中人口统计随机性和环境随机性的区分一致 \citep{engen1998demographic, rohani2002determinism, breto2009time, rasmussen2011inference, dalziel2018urbanization, aber2025timeseries}，在应用统计中则对应测量误差模型与信度理论的方差分解 \citep{fuller1987measurement, carroll2006measurement, verbeke2000linear, armstrong1998effect}。此外，大规模真实监测（如 CDC FluSight 挑战赛）的经验评估表明，随着监测覆盖面扩张，多模型前瞻预测精度的提升迅速呈现收益递减平台 \citep{althouse2015enhancing, reich2019accuracy, biggerstaff2018results, mathis2024evaluation, cramer2022evaluation, ray2023comparing, bosse2023scoring}，而全美流感住院负担测算 \citep{zhou2012hospitalizations} 为折算住院比例提供了经验参照。
 
-因此，不能直接把单一模型中的规模规律外推到所有监测场景。本文针对这一具体监测设计问题，构建了条件明确的分层随机模型，系统实现以下五项贡献：
+现有研究已经说明病例规模会影响再生数估计和预测误差，但尚未区分当期传播参数与跨期基础水平这两个估计目标。由此产生三个关键问题：第一，病例规模对两类推断目标的方差影响是否相同？第二，提高报告率和扩大监测基数能否消除相同的误差来源？第三，这些理论差异能否在真实监测数据和外部预测数据中观察到？
+
+针对上述问题，本文构建了条件明确的分层随机模型，完成以下五项工作：
 \begin{enumerate}[label=(\arabic*)]
-\item \textbf{明确估计目标与收益拐点}：严格区分当期瞬态传播参数 $R_t$ 与跨期潜在基准 $\bar{R}$，证明二者对增加病例规模的边际方差响应截然不同；解析导出单期估计方差内部环境底板项与抽样方差项相等的收益拐点 $m_\times$（对应信度比 0.5 的临界结构位置）。
+\item \textbf{明确估计目标与收益拐点}：严格区分当期传播强度 $R_t$ 与跨期潜在基准 $\bar{R}$，证明二者对增加病例规模的边际方差响应不同；解析导出单期估计方差内部环境底板项与抽样方差项相等的收益拐点 $m_\times$（对应信度比 0.5 的临界结构位置）。
 \item \textbf{精确拆解监测杠杆的非对称性}：证明扩大真实感染捕获基数 $n$（人群/地理覆盖扩大）与提高检测报告率 $\rho$存在数理非对称性——显式分解指出提高报告率仅能消除漏报抽稀方差 $\frac{(1-\rho)\bar{R}}{\rho n}$，无法消除完全报告时依然存在的计数方差与超传播内在抽样方差；唯有扩大真实基数 $n$ 才能使各项方差同时衰减。
-\item \textbf{分析理想设计下的监测维度权衡}：在理想化重复采样设计与总监测输入规模预算 $B = T \cdot m$ 约束下，严格推导拉长独立观测期数 $T$ 削减环境方差 $v_R$ 的精确表达式与 AR(1) 自相关闭式，并明确指出每期整数风险集约束下的离散可行设计集合。
-\item \textbf{给出增长判定检验与预测基准评估}：导出基于负二项单调似然比的精确上尾超临界增长判定检验并证明其水平控制；在时间序列更新过程中清晰界定事后代理增长统计量与事前单步病例预测的内在代数关系与条件方差展开，并通过有限样本模拟检验理论基准的适用性与衰减形态。
-\item \textbf{真实监测数据实证与误差预算分解：}采用美国疾控中心国家医疗保健安全网（CDC NHSN）2020--2026 年覆盖 50 个州及华盛顿特区周度流感住院真实数据（16,218 个州周观测），在控制聚类不确定性的前提下，测得经验收益放缓平台的数量级与报告政策切换前后的离散度分化，识别出达峰期失效的是跨期平稳基准假定而非病例规模本身；进一步构建与 Cori 时变更新过程基线的竞争对照，开展预测偏差项分解与季节内独立两阶段最小二乘（2SLS）稳健性检验；并给出误差预算份额分解与时变经验交叉点：仿射拟合中约四至五成半（39\%--55\%）的误差份额落在与规模无关的拟合项上，样本中已实现的大规模观测误差约为全体平均的六成——这一份额结构本身，提示进一步评估环境协变量与多期信息的价值。
+\item \textbf{分析理想设计下的监测维度权衡}：在理想化重复采样设计与总监测输入规模预算 $B = T \cdot m$ 约束下，推导拉长独立观测期数 $T$ 削减环境方差 $v_R$ 的表达式与 AR(1) 自相关闭式，并明确指出每期整数风险集约束下的离散可行设计集合。
+\item \textbf{给出增长判定检验与预测基准评估}：导出基于负二项单调似然比的精确上尾增长判定检验并证明其水平控制；在时间序列更新过程中区分事后代理增长指标与事前单步病例预测的内在代数关系与条件方差展开，并通过有限样本模拟检验理论基准的适用性与衰减形态。
+\item \textbf{真实监测数据实证与误差预算分解：}采用美国 CDC NHSN 2020--2026 年覆盖 50 个州及华盛顿特区周度流感住院真实数据（16,218 个州周观测）进行系统检验。结果测得经验收益放缓平台的数量级与报告政策切换前后的离散度分化，识别出达峰期失效的是跨期平稳基准假定而非病例规模本身。进一步构建与 Cori 时变更新过程基线的对照，开展预测偏差项分解与季节内独立两阶段最小二乘（2SLS）稳健性检验。误差预算份额分解表明：仿射拟合中约四至五成半（39\%--55\%）的误差份额落在与规模无关的拟合项上，样本中已实现的大规模观测误差约为全体平均的六成，提示进一步评估环境协变量与多期信息的价值。
 \end{enumerate}
 
 需要明确，本文的核心理论贡献在于揭示估计目标与环境随机性对监测规模收益的决定性制约，把估计目标、方差结构和监测设计放在同一分析框架中，而非提出新的动力学分布模型。
 
-本文结构安排如下：第~\ref{sec:methods} 节建立传播与报告模型并界定两类估计目标；第~\ref{sec:theory} 节呈现核心理论结果、交叉点与监测杠杆非对称性推导；第~\ref{sec:simulations} 节报告增长判定离散功效与更新过程预测模拟；第~\ref{sec:empirical} 节利用全美流感住院真实监测数据展开系统实证检验与反证边界分析；第~\ref{sec:conclusion} 节总结全文并探讨公共卫生监测设计的决策启示。
+本文结构安排如下：第~\ref{sec:methods} 节建立传播与报告模型并界定两类估计目标；第~\ref{sec:theory} 节给出核心理论结果与交叉点推导；第~\ref{sec:simulations} 节报告增长判定离散功效与更新过程预测模拟；第~\ref{sec:empirical} 节利用全美流感住院真实数据开展实证检验；第~\ref{sec:conclusion} 节总结全文并探讨监测设计启示。
 
 
 \section{模型与估计目标}\label{sec:methods}
@@ -684,6 +686,10 @@ G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \r
 \begin{equation*}
 \frac{\partial \ln L}{\partial R_t} = -\frac{\rho(nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)} = 0 \implies \widehat{R}_t^{\text{MLE}} = \frac{C_t}{\rho n}.
 \end{equation*}
+首先验证估计量的无偏性：在内部参数空间 $R_t \in (0, \infty)$ 上，
+\begin{equation*}
+\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{\mathbb{E}[C_t \mid n, R_t]}{\rho n} = \frac{\rho n R_t}{\rho n} = R_t.
+\end{equation*}
 计算得分函数的方差以求 Fisher 信息量：
 \begin{equation*}
 \mathcal{I}(R_t \mid n) = \operatorname{Var}\left(\frac{\partial \ln L}{\partial R_t}\right) = \frac{k^2 \operatorname{Var}(C_t \mid n, R_t)}{R_t^2(k + \rho R_t)^2}.
@@ -692,7 +698,7 @@ G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \r
 \begin{equation*}
 \mathcal{I}(R_t \mid n) = \frac{k^2 \cdot \frac{\rho n R_t(k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n R_t}{R_t^2(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}.
 \end{equation*}
-因此其倒数恰为 $\operatorname{Var}(\widehat{R}_t \mid n, R_t) = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$。
+估计量 $\widehat{R}_t$ 的条件方差为 $\operatorname{Var}(\widehat{R}_t \mid n, R_t) = \frac{R_t}{\rho n} + \frac{R_t^2}{kn} = \mathcal{I}(R_t \mid n)^{-1}$，严格达到 Cramér--Rao 下界，证实其在单代信息集下为一致最小方差无偏估计。
 \end{proof}
 
 \subsection{命题 2 的数学证明}\label{app:proof_prop2}
@@ -710,35 +716,45 @@ G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \r
 
 \subsection{命题 3 的数学证明}\label{app:proof_prop3}
 \begin{proof}
-将式~\eqref{eq:rho_decomp} 代入式~\eqref{eq:var_bivariate} 分别令 $\rho \to 1$ 与 $n \to \infty$，代入极限直接即得。
+将式~\eqref{eq:rho_decomp} 代入式~\eqref{eq:var_bivariate}。首先考察提高报告率的极限：令 $\rho \to 1$，漏报抽稀项 $\frac{(1-\rho)\bar{R}}{\rho n} \to 0$，但式中保留的计数波动项 $\frac{\bar{R}}{n}$ 与个体超传播项 $\frac{\bar{R}^2+v_R}{kn}$ 均严格为正，因此其极限严格大于环境方差底板 $v_R$。其次考察扩大样本基数的极限：令 $n \to \infty$，由于两个规模相关项的分母均含 $n$，二者均单调趋于零，故边际方差极限恰好收敛至环境底板 $v_R$。这在数理上证明了监测杠杆的非对称性。
 \end{proof}
 
 \subsection{命题 4 的数学证明}\label{app:proof_prop4}
 \begin{proof}
-由全方差公式，由于给定环境序列后分支与抽样过程条件独立，平均估计量的方差严格分解为环境项与抽样项：
+证明分三步展开：
+
+第一步，条件独立性。在给定各期环境序列 $\{R_t\}_{t=1}^T$ 的条件下，各期的分支传播与二项报告抽稀过程相互条件独立。
+
+第二步，全方差分解。对跨期样本均值 $\overline{\widehat{R}}_T$ 应用全方差公式，严格分解为宏观环境项与微观抽样项：
 \begin{align*}
-\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) &= \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) + \frac{1}{T^2}\sum_{t=1}^T \mathbb{E}\big[\operatorname{Var}(\widehat{R}_t \mid n_T, R_t) \;\big|\; n_T\big] \\
+\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) &= \operatorname{Var}\left(\mathbb{E}[\overline{\widehat{R}}_T \mid \{R_t\}, n_T] \;\middle|\; n_T\right) + \mathbb{E}\left[\operatorname{Var}(\overline{\widehat{R}}_T \mid \{R_t\}, n_T) \;\middle|\; n_T\right] \\
+&= \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) + \frac{1}{T^2}\sum_{t=1}^T \mathbb{E}\big[\operatorname{Var}(\widehat{R}_t \mid n_T, R_t) \;\big|\; n_T\big] \\
 &= \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) + \frac{A}{T(\rho n_T)}.
 \end{align*}
-将 $n_T = B/(\rho T)$ 代入抽样项，即得 $\rho n_T = B/T$，从而第二项恒为 $A/B$。在环境跨期独立假定下，第一项化为 $v_R/T$，相加直接得式~\eqref{eq:var_budget_indep}。若各期环境扰动存在一阶自回归自相关，利用平稳协方差双重求和展开：
+
+第三步，代入预算约束与自相关展开。由总期望报告规模预算 $B = T \cdot m = T \rho n_T$，得抽样项分母 $T(\rho n_T) = B$，故第二项恒为常数 $A/B$。在环境跨期独立假定下，第一项化为 $v_R/T$，相加即得式~\eqref{eq:var_budget_indep}。若环境扰动存在一阶自回归自相关，利用平稳协方差双重求和展开：
 \begin{equation*}
 \operatorname{Var}\left(\sum_{t=1}^T R_t \;\middle|\; n_T\right) = T v_R + 2 v_R \sum_{s=1}^{T-1} (T-s) r^s = v_R T \left[\frac{1+r}{1-r} - \frac{2r(1-r^T)}{T(1-r)^2}\right].
 \end{equation*}
-除以 $T^2$ 即得式~\eqref{eq:var_budget_ar1}。当 $T \gg 1$ 时忽略 $O(1/T^2)$ 项，直接得到有效期数近似。最后由 $n_T = B/(\rho T) \in \mathbb{N}_+$ 即得式~\eqref{eq:feasible_T}。
+两端除以 $T^2$ 即得式~\eqref{eq:var_budget_ar1}。当 $T \gg 1$ 时忽略 $O(1/T^2)$ 项，直接得到有效期数近似。最后由单期整数风险集约束 $n_T = B/(\rho T) \in \mathbb{N}_+$ 即得可行期数集合式~\eqref{eq:feasible_T}。
 \end{proof}
 
 \subsection{命题 5 的数学证明}\label{app:proof_prop5}
 \begin{proof}
-（i）给定 $(n, \rho, k)$，$C_t$ 的分布族为以 $R_t$ 为参数的负二项族，其概率质量函数 $\Pr(C_t = j) \propto (k/(k+\rho R_t))^{nk}(1-p^*)^j$。对任意 $R_t' > R_t$，似然比 $\Pr_{R_t'}(j)/\Pr_{R_t}(j)$ 关于 $j$ 严格单调递增（分子分母中 $(1-p^*)^j$ 的指数律比较，$p^*$ 随 $R_t$ 递减），故该族关于充分统计量 $C_t$ 具有单调似然比。由 MLR 性质，尾部概率 $\Pr_{R_t}(C_t \ge c)$ 关于 $R_t$ 单调不减，因此 $\sup_{R_t \le 1}\Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$，即拒绝域 $\{C_t \ge c_\alpha\}$ 在复合原假设下严格控制水平。（ii）在备择 $R_t = 1 + \delta$ 处直接计算同一拒绝域的概率即得式~\eqref{eq:power_exact}。另注：固定 $(\rho, k)$ 时，整数临界值 $c_\alpha(n)$ 作为 $n$ 的函数单调不减（随 $nk$ 呈现离散阶梯状跳变），但由于离散阶梯跳跃，实际检验水平与统计功效 $\pi(n, \delta)$ 关于 $n$ 呈现局部的非单调锯齿形波动，故满足特定功效要求的最小样本量确定必须逐点枚举而非单纯二分搜索。
+（i）给定 $(n, \rho, k)$，$C_t$ 的分布族为以 $R_t$ 为参数的负二项族，其概率质量函数为 $\Pr(C_t = j) \propto (k/(k+\rho R_t))^{nk}(1-p^*)^j$。对任意 $R_t' > R_t$，似然比 $\Pr_{R_t'}(j)/\Pr_{R_t}(j)$ 关于 $j$ 严格单调递增，故该分布族关于充分统计量 $C_t$ 具有单调似然比（MLR）性质。由单调似然比性质，尾部概率 $\Pr_{R_t}(C_t \ge c)$ 关于 $R_t$ 单调不减，因此 $\sup_{R_t \le 1}\Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$，表明拒绝域 $\{C_t \ge c_\alpha\}$ 在复合原假设下严格控制检验水平。（ii）在备择 $R_t = 1 + \delta$ 处直接计算同一拒绝域的概率即得式~\eqref{eq:power_exact}。另注：固定 $(\rho, k)$ 时，整数临界值 $c_\alpha(n)$ 作为 $n$ 的函数单调不减（随 $nk$ 呈现离散阶梯状跳变），但由于离散阶梯跳跃，实际检验水平与统计功效 $\pi(n, \delta)$ 关于 $n$ 呈现局部的非单调锯齿形波动，故满足特定功效要求的最小样本量确定必须逐点枚举而非单纯二分搜索。
 \end{proof}
 
 \subsection{命题 6 的数学证明}\label{app:proof_prop6}
 \begin{proof}
-对 $I_{t+1}$ 以 $(\Lambda_{t+1}, R_{t+1})$ 为条件应用全方差公式，即得式~\eqref{eq:var_I_decomp}。对于报告病例 $C_{t+1}$，以 $I_{t+1}$ 为条件应用全方差公式：
+证明分两步应用全方差公式展开：
+
+第一步，分解潜在真实感染人数 $I_{t+1}$ 的预测方差。以历史信息及当期传播压力 $(\Lambda_{t+1}, R_{t+1})$ 为条件应用全方差公式，即得式~\eqref{eq:var_I_decomp}。
+
+第二步，分解报告病例数 $C_{t+1}$ 的观测预测方差。以未观测的潜在真实感染 $I_{t+1}$ 为条件应用全方差公式：
 \begin{equation*}
 \operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \mathbb{E}[\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) \mid \mathcal{F}_t^C] + \operatorname{Var}(\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] \mid \mathcal{F}_t^C).
 \end{equation*}
-由条件独立假定 $C_{t+1} \mid (I_{t+1}, \mathcal{F}_t^C) \sim \operatorname{Binomial}(I_{t+1}, \rho)$，有 $\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) = I_{t+1}\rho(1-\rho)$ 与 $\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] = \rho I_{t+1}$，代入即得式~\eqref{eq:var_C_decomp}。
+由条件二项抽稀假定 $C_{t+1} \mid (I_{t+1}, \mathcal{F}_t^C) \sim \operatorname{Binomial}(I_{t+1}, \rho)$，有 $\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) = I_{t+1}\rho(1-\rho)$ 与 $\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] = \rho I_{t+1}$，代入即得式~\eqref{eq:var_C_decomp}。
 \end{proof}
 
 \end{document}
