@@ -3,7 +3,7 @@
 - **英文标题（原文）**：Boundaries of Surveillance Scale Returns in Epidemic Monitoring: Estimation Targets, Environmental Stochasticity, and External Validation
 - **来源仓库**：https://github.com/wangchi2068/case-count-inference-bottleneck （最新定稿 commit `80e7d39`，2026 年 10 月 10 日）
 - **深读依据**：仓库内权威定稿正文 `paper/main.tex`（28 页）、理论附录 A.1–A.6、全美 NHSN 流感实证、CDC FluSight 前瞻集成验证与欧洲 11 国 COVID-19 扩展实验。
-- **阅读定位**：面向应用统计专业硕士（MAS）及生物数学/动力学建模方向研究生的**全景教学级研读长文与答辩通透指南**。旨在不仅解释公式“是什么”，更深度拆解“为什么这样推”、“直觉怎么理解”、“实证说明了什么”以及“评委可能怎么问”。
+- **阅读对象**：应用统计专业硕士（MAS）及生物数学/动力学建模方向研究生。旨在不仅讲清公式“是什么”，更深度拆解“为什么这样推”、“直觉怎么理解”、“实证说明了什么”以及“评委可能怎么问”。
 
 ---
 
@@ -28,7 +28,7 @@
 
 然而，在应对流感大流行、COVID-19 等真实传染病爆发时，全球疾控机构频繁面临一个极其尴尬的困境：
 - 为什么在疫情高峰期，即便每周捕获上万例患者，模型的短期预测误差依然居高不下？
-- 为什么在投入数亿元扩展检测网络后，对未来趋势的判断却很快遭遇“平台瓶颈”，再怎么加倍收集病例，预测精度的改善也极其微弱？
+- 为什么在投入巨资扩展检测网络后，对未来趋势的判断却很快遭遇“平台瓶颈”，再怎么加倍收集病例，预测精度的改善也极其微弱？
 
 **既有文献的局限**：以往学者通常笼统地将这种现象归咎于“漏报太多”、“数据质量差”或“模型设定错误”。近年来 Parag 等人（Nature Physics, 2022）利用信息论推导了带噪疫情曲线的信息极限，但其核心结论依然是：信息量随病例数近似线性增长。这仍未回答：**究竟在什么时候，病例规模不再是推断的主要瓶颈？**
 
@@ -77,7 +77,7 @@ $$m_\times \equiv \frac{A}{v_R}$$
 
 ---
 
-## 第三部分：数学命题教学级逐行拆解与深入证明
+## 第三部分：数学命题教学级逐行拆解与深入证明（保姆级代数展开）
 
 本部分面向数学与统计学严格标准，将附录与正文中的每一个定理进行保姆级代数展开，绝不跳步。
 
@@ -117,79 +117,92 @@ $$p^* = \frac{\frac{k}{k + R_t}}{\frac{k}{k + R_t} + \rho \frac{R_t}{k + R_t}} =
 $$C_t \mid n, R_t \sim \operatorname{NB}\left(\text{形状参数} = nk, \; \text{成功概率} = \frac{k}{k + \rho R_t}\right)$$
 条件期望为 $\mathbb{E}[C_t] = nk \frac{1-p^*}{p^*} = \rho n R_t$。
 
-**第四步：对数似然方程与极值解**
+**第四步：对数似然方程与 `const` 拆解**
 观测样本 $C_t$ 的概率质量函数为：
-$$\Pr(C_t) = \frac{\Gamma(C_t + nk)}{C_t! \Gamma(nk)} (p^*)^{nk} (1 - p^*)^{C_t} = \text{const} \cdot \left(\frac{k}{k + \rho R_t}\right)^{nk} \left(\frac{\rho R_t}{k + \rho R_t}\right)^{C_t}$$
-取对数得到对数似然函数：
-$$\ln L(R_t) = \text{const} - (nk + C_t) \ln(k + \rho R_t) + C_t \ln R_t$$
+$$\Pr(C_t = c) = \frac{\Gamma(c + nk)}{c! \Gamma(nk)} (p^*)^{nk} (1 - p^*)^c = \left[ \frac{\Gamma(c + nk)}{c! \Gamma(nk)} \cdot k^{nk} \cdot \rho^c \right] \cdot \frac{R_t^c}{(k + \rho R_t)^{nk + c}}$$
+两边取自然对数 $\ln$：
+$$\ln L(R_t) = \underbrace{\ln\left[\frac{\Gamma(c + nk)}{c! \Gamma(nk)}\right] + nk \ln k + c \ln \rho}_{\text{与未知参数 } R_t \text{ 完全无关，简记为 } \mathbf{const}} + c \ln R_t - (nk + c) \ln(k + \rho R_t)$$
 对参数 $R_t$ 求一阶导数（得分函数 Score Function）：
-$$S(R_t) \triangleq \frac{\partial \ln L}{\partial R_t} = -\frac{\rho (nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t}$$
+$$S(R_t) \triangleq \frac{\partial \ln L}{\partial R_t} = 0 - \frac{\rho (nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t}$$
 通分展开：
-$$S(R_t) = \frac{-\rho R_t(nk + C_t) + C_t(k + \rho R_t)}{R_t(k + \rho R_t)} = \frac{-\rho n R_t k - \rho R_t C_t + C_t k + \rho R_t C_t}{R_t(k + \rho R_t)} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)}$$
-令得分函数为零 $S(R_t) = 0$，解得唯一驻点：
+$$S(R_t) = \frac{-\rho R_t(nk + C_t) + C_t(k + \rho R_t)}{R_t(k + \rho R_t)} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)}$$
+令得分函数为零 $S(R_t) = 0$，解得唯一驻点（极大似然估计量）：
 $$\widehat{R}_t^{\text{MLE}} = \frac{C_t}{\rho n}$$
 
-**第五步：无偏性验证**
-在内部参数空间 $R_t \in (0, \infty)$ 上：
-$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = \frac{\mathbb{E}[C_t \mid n, R_t]}{\rho n} = \frac{\rho n R_t}{\rho n} = R_t$$
-估计量严格无偏。
+**第五步：无偏性验证（双层全期望展开）**
+要求解 $\mathbb{E}[\widehat{R}_t \mid n, R_t]$：
+$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = \frac{1}{\rho n} \mathbb{E}[C_t \mid n, R_t]$$
+利用双层全期望公式（塔式法则）：
+$$\mathbb{E}[C_t \mid n, R_t] = \mathbb{E}_{I_t}\Big( \mathbb{E}_{C_t}[C_t \mid I_t] \;\Big|\; n, R_t \Big)$$
+- 内层：已知真实感染 $I_t$，二项抽样均值为 $\mathbb{E}[C_t \mid I_t] = \rho I_t$；
+- 外层：已知风险集 $n$ 和传播率 $R_t$，各分支独立，感染总数期望为 $\mathbb{E}[I_t \mid n, R_t] = n R_t$；
+代入得：
+$$\mathbb{E}[C_t \mid n, R_t] = \mathbb{E}[\rho I_t \mid n, R_t] = \rho \mathbb{E}[I_t \mid n, R_t] = \rho n R_t$$
+两端相除：
+$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{\rho n R_t}{\rho n} = R_t$$
+**无偏性证毕！**
 
-**第六步：Fisher 信息量与 Cramér–Rao 下界验证**
-利用得分函数的方差计算 Fisher 信息量：
-$$\mathcal{I}(R_t \mid n) = \operatorname{Var}(S(R_t)) = \operatorname{Var}\left( \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)} \right) = \frac{k^2}{R_t^2(k + \rho R_t)^2} \operatorname{Var}(C_t \mid n, R_t)$$
-将负二项条件方差 $\operatorname{Var}(C_t \mid n, R_t) = \rho n R_t + \frac{(\rho R_t)^2 n}{k} = \frac{\rho n R_t (k + \rho R_t)}{k}$ 代入：
-$$\mathcal{I}(R_t \mid n) = \frac{k^2}{R_t^2(k + \rho R_t)^2} \cdot \frac{\rho n R_t (k + \rho R_t)}{k} = \frac{k \rho n}{R_t(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}$$
-计算其倒数：
-$$\mathcal{I}(R_t \mid n)^{-1} = \frac{1}{n} \left(\frac{R_t}{\rho} + \frac{R_t^2}{k}\right) = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$$
-而估计量 $\widehat{R}_t$ 的真实抽样方差为：
-$$\operatorname{Var}(\widehat{R}_t \mid n, R_t) = \operatorname{Var}\left(\frac{C_t}{\rho n}\right) = \frac{1}{\rho^2 n^2} \operatorname{Var}(C_t) = \frac{1}{\rho^2 n^2} \left[ \rho n R_t + \frac{\rho^2 n R_t^2}{k} \right] = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$$
-二者严格代数相等！
-**结论证毕**：该估计量在有限样本下严格达到信息矩阵下界，为一致最小方差无偏估计（UMVUE）。
+**第六步：Fisher 信息量两套算法与 Cramér–Rao 下界**
+- **算法一（得分方差法）**：
+  $$\mathcal{I}(R_t \mid n) = \operatorname{Var}(S(R_t)) = \frac{k^2}{R_t^2(k + \rho R_t)^2} \operatorname{Var}(C_t \mid n, R_t)$$
+  代入负二项方差 $\operatorname{Var}(C_t) = \frac{\rho n R_t (k + \rho R_t)}{k}$：
+  $$\mathcal{I}(R_t \mid n) = \frac{k^2 \cdot \frac{\rho n R_t (k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n}{R_t(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}$$
+- **算法二（负二阶导期望法）**：
+  对得分函数 $S(R_t) = -\frac{\rho(nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t}$ 再次求导：
+  $$\frac{\partial^2 \ln L}{\partial R_t^2} = \frac{\rho^2(nk + C_t)}{(k + \rho R_t)^2} - \frac{C_t}{R_t^2}$$
+  取负号并求期望，代入 $\mathbb{E}[C_t] = \rho n R_t$：
+  $$\mathcal{I}(R_t \mid n) = \mathbb{E}\left[\frac{C_t}{R_t^2} - \frac{\rho^2(nk + C_t)}{(k + \rho R_t)^2}\right] = \frac{\rho n R_t}{R_t^2} - \frac{\rho^2(nk + \rho n R_t)}{(k + \rho R_t)^2} = \frac{\rho n}{R_t} - \frac{\rho^2 n}{k + \rho R_t} = \frac{k \rho n}{R_t(k + \rho R_t)}$$
+两套算法完全一致！计算其倒数：
+$$\mathcal{I}(R_t \mid n)^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$$
+由于估计量无偏，Cramér–Rao 方差下界恰为 $\mathcal{I}^{-1}$，而估计量方差代数上严格等于该倒数。
+**证毕**：估计量为 UMVUE。
 
 ---
 
 ### 3.2 命题 2：跨期基础水平的边际方差分解
 
-#### 3.2.1 核心问题与数学表述
-若目标不是当期具体的 $R_t$，而是跨周平稳的潜在基准 $\bar{R} = \mathbb{E}[R_t \mid n]$，且环境存在真实波动 $\operatorname{Var}(R_t \mid n) = v_R > 0$。问：使用单期估计量 $\frac{C_t}{\rho n}$ 估计 $\bar{R}$ 的边际方差是多少？
+#### 3.2.1 定理陈述
+估计跨期平均传播基准 $\bar{R} \equiv \mathbb{E}[R_t \mid n]$（存在宏观环境随机性 $\operatorname{Var}(R_t \mid n) = v_R > 0$），单期估计量 $\frac{C_t}{\rho n}$ 给定风险集 $n$ 的条件边际方差为：
+$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} \equiv v_R + \frac{A}{m}$$
+其中期望报告规模 $m \equiv \rho n$，标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$。
 
 #### 3.2.2 逐步严密代数推导
 应用**全方差公式（Law of Total Variance）**：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \underbrace{\operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right)}_{\text{宏观环境项}} + \underbrace{\mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]}_{\text{微观抽样项}}$$
+$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \underbrace{\operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right)}_{\text{宏观环境方差贡献}} + \underbrace{\mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]}_{\text{微观抽样方差贡献}}$$
 
-**第一项（环境项展开）**：
-由命题 1 的条件无偏性，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$。因此：
+**第一项计算**：
+由命题 1 的无偏性结论，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$。因此：
 $$\operatorname{Var}(R_t \mid n) = v_R$$
 
-**第二项（微观抽样项展开）**：
-代入命题 1 导出的条件方差公式：
+**第二项计算**：
+代入命题 1 导出的条件方差式：
 $$\mathbb{E}\left[ \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \;\middle|\; n \right] = \frac{\mathbb{E}[R_t \mid n]}{\rho n} + \frac{\mathbb{E}[R_t^2 \mid n]}{kn}$$
-利用方差与二阶矩基本关系：$\mathbb{E}[R_t^2 \mid n] = (\mathbb{E}[R_t \mid n])^2 + \operatorname{Var}(R_t \mid n) = \bar{R}^2 + v_R$。
+由二阶矩与方差的基本代数关系：$\mathbb{E}[R_t^2 \mid n] = \operatorname{Var}(R_t \mid n) + (\mathbb{E}[R_t \mid n])^2 = v_R + \bar{R}^2$。
 代入得：
-$$\frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
+$$= \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
 
-两项相加，得到定稿核心方差公式（式 7）：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + \frac{1}{m}\left[\bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}\right] \equiv v_R + \frac{A}{m}$$
-其中令 $m = \rho n$ 为期望报告规模，定义标量系数 $A \triangleq \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$。
+两项相加，得到定稿核心方差公式：
+$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + \frac{1}{\rho n}\left[\bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}\right] = v_R + \frac{A}{m}$$
+**物理含义**：单期方差呈现严格的仿射结构 $v_R + A/m$。当 $m \to \infty$ 时，后项抽样方差消失，但前项宏观环境方差 $v_R$ 永远保留！
 
 ---
 
 ### 3.3 命题 3：监测杠杆的理论非对称性
 
-#### 3.3.1 定理陈述与公卫意义
-将方差中的抽样项展开：
-$$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1 - \rho)\bar{R}}{\rho n}$$
-因此总方差为：
-$$V(n, \rho) = v_R + \underbrace{\frac{(1 - \rho)\bar{R}}{\rho n}}_{\text{漏报抽样方差}} + \underbrace{\frac{\bar{R}}{n}}_{\text{完全报告计数方差}} + \underbrace{\frac{\bar{R}^2 + v_R}{kn}}_{\text{超传播固有方差}}$$
+#### 3.3.1 定理陈述
+将单期方差中的抽样项展开：
+$$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1-\rho)\bar{R}}{\rho n}$$
+总方差二元函数 $V(n, \rho)$ 满足：
+1. 报告率极限（$\rho \to 1$）：$\lim_{\rho \to 1} V(n, \rho) = v_R + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$；
+2. 风险集基数极限（$n \to \infty$）：$\lim_{n \to \infty} V(n, \rho) = v_R$。
 
-#### 3.3.2 分步极限证明
-- **极限一（提高报告率 $\rho \to 1$）**：
-  $$\lim_{\rho \to 1} V(n, \rho) = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + \frac{1}{n}\left(\bar{R} + \frac{\bar{R}^2 + v_R}{k}\right) > v_R$$
-  **物理含义**：即便疾控中心投入无限资源把报告率提高到 100%（$\rho = 1$），漏报方差虽然消除了，但人群内部固有的计数方差和个体超级传播带来的内在抽样方差依然存在！估计方差存在严格大于 $v_R$ 的刚性下界。
-- **极限二（扩大人群覆盖基数 $n \to \infty$）**：
-  对任意固定的 $\rho \in (0, 1]$：
-  $$\lim_{n \to \infty} V(n, \rho) = v_R + \lim_{n \to \infty}\left[\frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}\right] = v_R + 0 + 0 = v_R$$
-  **物理含义**：唯有扩大人群捕获基数 $n$，通过大数定律才能将微观层面的所有抽样波动彻底压平，收敛到不可约环境方差下限 $v_R$。
+#### 3.3.2 严密分步极限推导
+- **对报告率 $\rho \to 1$ 求极限**：
+  $$\lim_{\rho \to 1} V(n, \rho) = v_R + \lim_{\rho \to 1} \frac{(1-\rho)\bar{R}}{\rho n} + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$$
+  **解释**：完全消除漏报只能干掉 $\frac{(1-\rho)\bar{R}}{\rho n}$，但人群内部固有的完全报告泊松计数波动 $\bar{R}/n$ 和超级传播子代抽样波动 $\frac{\bar{R}^2+v_R}{kn}$ 均依赖于有限样本量 $n$，无法靠提升报告率解决。
+- **对人群基数 $n \to \infty$ 求极限**：
+  $$\lim_{n \to \infty} V(n, \rho) = v_R + \lim_{n \to \infty}\frac{1}{n} \left[ \frac{\bar{R}}{\rho} + \frac{\bar{R}^2 + v_R}{k} \right] = v_R + 0 = v_R$$
+  **解释**：扩大基数 $n$ 分母趋于无穷大，利用大数定律将所有微观层面的抽样波动彻底消除。
 
 ---
 
@@ -292,7 +305,7 @@ $$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha)
 
 ### 5.4 欧洲 11 国 COVID-19 跨病种验证
 - 引入欧洲 11 国早期日度发病监测数据（$N=404$）；
-- 纯事前口径拟合得 $\hat{b} = 33.92$（95% CI $[14.60, 74.99]$），显著为正，经验平衡点为 124.7 例/天；
+- 纯事前口径拟合得 $\hat{b} = 33.92$（95% CI $[14.60, 74.9873]$），显著为正，经验平衡点为 124.7 例/天；
 - 证明了规模递减规律跨病种、跨地域的高度稳健性，同时证实特征平衡点随时间分辨率和监测尺度变动。
 
 ---
