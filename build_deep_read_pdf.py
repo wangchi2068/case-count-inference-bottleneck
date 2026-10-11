@@ -351,7 +351,7 @@ full_tex = r"""\documentclass[11pt,a4paper]{ctexart}
 
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\color{gray}《病例规模的推断收益边界》深读与推导详解}
+\fancyhead[L]{\small\color{gray}《疫情监测中的病例规模收益边界》深读与推导详解}
 \fancyhead[R]{\small\color{gray}\nouppercase{\leftmark}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
