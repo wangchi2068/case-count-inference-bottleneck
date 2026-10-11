@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
 """
 生成全方位、教学级《论文深读与理论推导详解》（deep-read.md）
-含微观Gamma-Poisson积分逐行展开、PGF复合、负二项方差展开、错位相减级数求和、
-双层条件期望塔式法则、Cochran对偶凸性、参数字典与实证样本N全景表。
+严格涵盖命题1~6与推论1全套逐行推导：
+- 命题1前置：Gamma-Poisson连续积分与成功概率p的反直觉物理顿悟
+- 命题1：PGF复合封闭性、负二项方差代数对消、得分方程求解、双层全期望塔式法则无偏性、Fisher信息双算法与CRLB
+- 命题2：跨期全方差分解与仿射结构 v_R + A/m
+- 命题3：监测杠杆理论非对称性（rho->1 与 n->infty 极限保姆级展开）
+- 命题4与推论1：AR(1)双重级数错位相减保姆级求和、经费约束优化凸性证明与Cochran对偶
+- 命题5：MLR一阶对数差分严格为正、Karlin-Rubin定理与离散功效锯齿
+- 命题6：更新过程预测方差两步全方差分解与式(29)预测偏差项展开
+- 20大核心参数全景速查字典与物理直觉
+- 实证样本量N完整筛选漏斗与10303数据闭环全景表
+- 答辩11问11答终极宝典
 """
 
 content = r"""# 论文深读与理论推导详解：《疫情监测中的病例规模收益边界：估计目标、环境随机性与外部验证》
@@ -215,9 +224,40 @@ $$\operatorname{Var} = v_R + \frac{1}{\rho n}\left[ \bar{R} + \frac{\rho(\bar{R}
 
 ---
 
-### 3.4 命题 4 与推论 1：AR(1) 错位相减级数求和与 Cochran 对偶证明
+### 3.4 命题 3：监测杠杆的理论非对称性（提高报告率 vs 扩大基数）
 
-#### 3.4.1 AR(1) 双重协方差级数求和的错位相减法展开
+#### 3.4.1 定理陈述与抽样项的代数拆解
+将命题 2 中的单期边际方差拆解为显式的二元函数 $V(n, \rho)$：
+$$V(n, \rho) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
+观察第二项中出现的 $\frac{\bar{R}}{\rho n}$，通过代数恒等变形分解为“完全报告项”与“漏报抽样惩罚项”：
+$$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1 - \rho)\bar{R}}{\rho n}$$
+代回总方差式，得到三层方差解析结构：
+$$V(n, \rho) = v_R + \underbrace{\frac{(1 - \rho)\bar{R}}{\rho n}}_{\text{漏报抽稀噪声}} + \underbrace{\frac{\bar{R}}{n}}_{\text{有限人群泊松计数波动}} + \underbrace{\frac{\bar{R}^2 + v_R}{kn}}_{\text{超级传播子代抽样波动}}$$
+
+#### 3.4.2 极限一：报告率极限（$\rho \to 1$）
+假设公共卫生部门投入极大代价，将监测网络的报告率提升至极限 $\rho \to 1$（完全无漏报）：
+$$\lim_{\rho \to 1} V(n, \rho) = v_R + \lim_{\rho \to 1}\frac{(1 - \rho)\bar{R}}{\rho n} + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$$
+**深刻物理结论**：完全消除漏报（$\rho \to 1$）**只能干掉第一项漏报抽稀噪声**！人群内部固有的泊松相遇离散度 $\frac{\bar{R}}{n}$ 和超级传播重尾波动 $\frac{\bar{R}^2 + v_R}{kn}$ 依然存在，因此单期推断方差存在一个**绝对无法突破的下界**，永远无法逼近不可约环境方差 $v_R$。
+
+#### 3.4.3 极限二：人群基数极限（$n \to \infty$）
+反之，保持任意固定的低报告率 $\rho > 0$ 不变，通过扩大地理覆盖面或监测基数使风险集 $n \to \infty$：
+$$\lim_{n \to \infty} V(n, \rho) = v_R + \lim_{n \to \infty} \frac{1}{n} \left[ \frac{\bar{R}}{\rho} + \frac{\bar{R}^2 + v_R}{k} \right] = v_R + 0 = v_R$$
+**深刻物理结论**：扩大基数 $n$ 分母趋于无穷大，利用大数定律将所有微观层面的抽样波动彻底消除。这从数理上严格确立了**“扩大基数具有对所有微观噪声的统摄消除能力，而提高报告率仅能消除漏报扰动”**的理论非对称性。
+
+---
+
+### 3.5 命题 4 与推论 1：多期时间平均、AR(1) 错位相减求和与 Cochran 对偶证明
+
+#### 3.5.1 多期样本均值的方差分解与样本预算恒常性
+设总样本输入规模预算为 $B = T \cdot m = T \rho n_T$。设计方案为 $\mathcal{D}_T = (T, n_T)$。
+对跨期样本均值 $\overline{\widehat{R}}_T = \frac{1}{T}\sum_{t=1}^T \widehat{R}_t$ 求方差：
+$$\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2}\sum_{t=1}^T \operatorname{Var}(\widehat{R}_t \mid R_t) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2} \cdot T \frac{A}{m}$$
+代入 $T m = B$：
+$$\text{第二项（抽样项）} = \frac{A}{T m} = \frac{A}{B} \quad (\text{恒为常数！})$$
+**惊人结论**：在固定总样本预算下，无论你分多少期，抽样误差项永远是常数 $A/B$！
+要想降低总方差，**唯一的方法是拉长期数 $T$ 去压制第一项（环境项）**！
+
+#### 3.5.2 AR(1) 双重协方差级数求和的错位相减法展开
 在 AR(1) 自相关下，要求解级数：
 $$S \triangleq \sum_{s=1}^{T-1} (T-s) r^s = (T-1)r + (T-2)r^2 + \dots + 1 \cdot r^{T-1}$$
 两端同乘公比 $r$：
@@ -230,20 +270,24 @@ $$S = \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2}$$
 $$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R S = T v_R + 2 v_R \left[ \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2} \right] = v_R T \left[ 1 + \frac{2r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
 通分化简括号内前两项：$1 + \frac{2r}{1-r} = \frac{1-r+2r}{1-r} = \frac{1+r}{1-r}$：
 $$= v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
-两端除以 $T^2$，严格导出命题 4(ii) 式 (16)！
+两端除以 $T^2$，严格导出命题 4(ii) 式 (16)！当 $T \gg \frac{1}{1-r}$ 时，有效独立期数退化为 $T_{\mathrm{eff}} \approx T \frac{1-r}{1+r}$。
 
-#### 3.4.2 推论 1 成本优化一阶导与二阶导完整展开
-目标函数代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$：
+#### 3.5.3 推论 1 成本优化一阶导与二阶导完整展开
+设每期固定运转维持成本为 $c_0$，每报告一例边际成本为 $c_1$。总经费预算为 $\mathcal{B} = T(c_0 + c_1 m)$。
+代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$ 到目标方差函数：
 $$f(m) = \frac{c_0 + c_1 m}{\mathcal{B}} \left( v_R + \frac{A}{m} \right) = \frac{1}{\mathcal{B}} \left[ c_0 v_R + c_1 v_R m + \frac{c_0 A}{m} + c_1 A \right]$$
 **一阶导数**：
 $$f'(m) = \frac{1}{\mathcal{B}} \left[ c_1 v_R - \frac{c_0 A}{m^2} \right] = 0 \implies m^2 = \frac{c_0 A}{c_1 v_R} = \frac{c_0}{c_1} m_\times \implies m^* = \sqrt{\frac{c_0}{c_1} m_\times}$$
 **二阶导数**：
 $$f''(m) = \frac{1}{\mathcal{B}} \frac{d}{dm}\left( c_1 v_R - c_0 A m^{-2} \right) = \frac{2 c_0 A}{\mathcal{B} m^3} > 0 \quad (\text{严格凸函数，唯一全局极小值点！})$$
+**学术高度**：这在数学结构上与抽样调查鼻祖 Cochran (1977) 第 10 章的两阶段抽样最优次级样本量公式完全同构！初级抽样单元对应期数 $T$，次级抽样单元对应单期病例 $m$。
 
 ---
 
-### 3.5 命题 5：单调似然比（MLR）一阶差分严格为正证明
+### 3.6 命题 5：超临界增长精确检验、单调似然比（MLR）一阶差分与离散功效锯齿
 
+#### 3.6.1 单调似然比（MLR）一阶差分严格为正证明
+单侧假设检验：$H_0: R_t \le 1 \quad \text{vs} \quad H_1: R_t > 1$。
 对任意备择强度 $R_1 > R_0$，似然比对数形式为：
 $$\ln \frac{\Pr_{R_1}(C_t = j)}{\Pr_{R_0}(C_t = j)} = nk \ln \frac{p^*(R_1)}{p^*(R_0)} + j \ln \frac{1 - p^*(R_1)}{1 - p^*(R_0)}$$
 计算对计数值 $j$ 的一阶差分：
@@ -251,8 +295,41 @@ $$\Delta(j) \triangleq \ln \frac{\Pr_{R_1}(j+1)}{\Pr_{R_0}(j+1)} - \ln \frac{\Pr
 代入 $1 - p^*(R) = \frac{\rho R}{k + \rho R}$：
 $$\frac{1 - p^*(R_1)}{1 - p^*(R_0)} = \frac{\frac{\rho R_1}{k + \rho R_1}}{\frac{\rho R_0}{k + \rho R_0}} = \frac{R_1(k + \rho R_0)}{R_0(k + \rho R_1)} = \frac{k R_1 + \rho R_0 R_1}{k R_0 + \rho R_0 R_1}$$
 由于 $R_1 > R_0$，显然分子 $k R_1 + \rho R_0 R_1 > k R_0 + \rho R_0 R_1$ 分母，该比值严格大于 1！
-取自然对数后，一阶差分 $\Delta(j) > 0$ 恒成立！
-证明了似然比关于充分统计量 $C_t$ **严格单调递增**，Karlin–Rubin 定理严格适用！
+取自然对数后，一阶差分 $\Delta(j) > 0$ 恒成立！证明了似然比关于充分统计量 $C_t$ **严格单调递增**，Karlin–Rubin 定理严格适用！
+由经典统计推断理论，上尾拒绝域 $\{C_t \ge c_\alpha\}$ 在复合原假设下，一类错误率严格在上确界点（边界点 $R_t = 1$）达到最大：
+$$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$$
+离散临界值由 $c_\alpha = \min \{c \in \mathbb{N} : \Pr_{R_t=1}(C_t \ge c) \le \alpha\}$ 唯一确定。
+
+#### 3.6.2 离散功效锯齿波（Sawtooth Wave）成因
+因为观测计数 $C_t$ 只能取整数，临界值 $c_\alpha(n)$ 随样本量 $n$ 呈阶梯状跳变：
+- 当 $n$ 在某个区间微增时，临界值 $c_\alpha$ 保持不变，由于样本量变大，功效连续上升；
+- 一旦 $n$ 跨过某个阈值，为了控制检验水平 $\alpha$，$c_\alpha$ 突然跳跃到 $c_\alpha + 1$，拒绝门槛突然拔高，导致统计功效瞬间出现向下跳跃！
+- 这一离散特征解释了为什么图 2 模拟中连续增加病例数，功效曲线会出现特有的锯齿波动，证实了离散枚举求解最小样本量的必要性。
+
+---
+
+### 3.7 命题 6：更新过程条件预测方差全分解与式 (29) 预测偏差项展开
+
+#### 3.7.1 两步全方差公式展开
+在时间序列更新过程中，给定截至第 $t$ 期的报告信息集 $\mathcal{F}_t^C$：
+
+**第一步：分解潜在真实感染数 $I_{t+1}$ 的预测方差**
+以历史信息及当期传播压力 $(\Lambda_{t+1}, R_{t+1})$ 为条件应用全方差公式：
+$$\operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) = \operatorname{Var}\big(\Lambda_{t+1} R_{t+1} \;\big|\; \mathcal{F}_t^C\big) + \mathbb{E}\Big[\operatorname{Var}\big(I_{t+1} \;\big|\; \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C\big) \;\Big|\; \mathcal{F}_t^C\Big]$$
+
+**第二步：分解报告病例数 $C_{t+1}$ 的观测预测方差**
+以未观测的潜在真实感染 $I_{t+1}$ 为条件再次应用全方差公式：
+$$\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \mathbb{E}[\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) \mid \mathcal{F}_t^C] + \operatorname{Var}(\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] \mid \mathcal{F}_t^C)$$
+代入二项报告抽样条件分布 $C_{t+1} \mid I_{t+1} \sim \operatorname{Binomial}(I_{t+1}, \rho)$ 的条件方差 $I_{t+1}\rho(1-\rho)$ 与条件均值 $\rho I_{t+1}$：
+$$\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \rho(1 - \rho)\,\mathbb{E}[I_{t+1} \mid \mathcal{F}_t^C] + \rho^2 \operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C)$$
+
+#### 3.7.2 相对预测误差均方分解（式 29 / 式 380）
+设 $\mu_{t+1 \mid t} \triangleq \mathbb{E}[C_{t+1} \mid \mathcal{F}_t^C]$ 与 $\sigma_{t+1 \mid t}^2 \triangleq \operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C)$。在活跃周（$D_t > 0$）上有严格条件分解：
+$$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}\left[\frac{\sigma_{t+1 \mid t}^2}{D_t^2} + \left(\frac{\mu_{t+1 \mid t}}{D_t} - \bar{R}\right)^2 \;\middle|\; D_t > 0\right]$$
+- **关键物理机制**：
+  1. 第一项：随机分母 $D_t$ 对条件方差的**倒数二次方重新加权**；
+  2. 第二项：用报告历史代理真实感染压力导致的**非负预测偏差项** $(\mu_{t+1 \mid t}/D_t - \bar{R})^2 \ge 0$。
+- **对图 3 结果的终极解释**：这从代数上严格证明了：为什么在更新过程中，实际经验预测误差始终**严格不低于**单代静态下界！
 
 ---
 
@@ -271,7 +348,7 @@ $$\frac{1 - p^*(R_1)}{1 - p^*(R_0)} = \frac{\frac{\rho R_1}{k + \rho R_1}}{\frac
 
 ### 4.3 图 3（更新过程时序卷积与单步预测误差的双口径解密）
 - **为什么初始参数看是 0.75–0.98 倍？** 模拟横轴标示的是第 0 周的初始规模 $m$。因为 $\bar{R} = 1.15 > 1$（疫情自发增长），到了第 4–29 周评估时，实际病例数自发增长至初始值的 1.7–2.4 倍（中位数口径，均值口径约 2.6–3.2 倍）！拿增长后的大病例数对比初始小规模理论值，表观比值自然偏低；
-- **为什么实际规模看是不低于下界的 1.01–1.17 倍（按组 1.00–1.45 倍）？** 按实际发生规模重核参照线，经验预测误差**严格不低于单代静态下界**，直接证实了式 (29) 预言的额外预测偏差项 $(\mu/D - \bar{R})^2 \ge 0$！
+- **为什么实际规模看是不低于下界的 1.01–1.17 倍（按组 1.00–1.45 倍）？** 按实际发生规模重核参照线，经验预测误差**严格不低于单代静态下界**，直接证实了命题 6 式 (29) 预言的额外预测偏差项 $(\mu/D - \bar{R})^2 \ge 0$！
 
 ---
 
@@ -397,4 +474,4 @@ $$\frac{1 - p^*(R_1)}{1 - p^*(R_0)} = \frac{\frac{\rho R_1}{k + \rho R_1}}{\frac
 with open("D:/trae/paper_final/deep-read.md", "w", encoding="utf-8") as f:
     f.write(content.strip() + "\n")
 
-print("Generated comprehensive deep-read.md with Full Derivations, Parameter Dictionary, and Sample N Breakdown successfully! Length:", len(content))
+print("Generated comprehensive deep-read.md with Full Propositions 1-6 and Derivations successfully! Length:", len(content))
