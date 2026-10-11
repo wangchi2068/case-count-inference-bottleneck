@@ -112,199 +112,159 @@ $$\bar{\tau} = 1 \times 0.65 + 2 \times 0.25 + 3 \times 0.10 = 1.45 \text{ 周} 
 
 本部分面向数学与统计学严格标准，将附录与正文中的每一个定理进行保姆级代数展开，绝不跳步。
 
-### 3.1 命题 1：条件似然、Fisher 信息与 Cramér–Rao 下界
+### 3.1 命题 1 前置：Gamma–Poisson 混合积分逐行展开与“成功概率” $p$ 的物理本质
 
-#### 3.1.1 定理陈述
-设已知上一代风险集真实规模 $n$、固定报告率 $\rho$ 及离散参数 $k$：
-1. 观测报告数 $C_t \mid n, R_t \sim \operatorname{NB}\left(\text{均值} = \rho n R_t, \; \text{形状参数} = nk\right)$；
-2. 矩估计量 $\widehat{R}_t = \frac{C_t}{\rho n}$ 恰为极大似然估计（MLE）；
-3. 在内部参数空间 $R_t \in (0, \infty)$ 上，估计量 $\widehat{R}_t$ 严格无偏，且方差严格达到 Cramér–Rao 下界：
-   $$\operatorname{Var}(\widehat{R}_t \mid n, R_t) = \mathcal{I}(R_t \mid n)^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$$
+#### 3.1.0 成功概率 $p$ 的反直觉物理顿悟
+在负二项分布 $\operatorname{NB}(k, p)$ 的抛硬币定义中：
+- 我们不断试验，直到累计看到第 $k$ 次“成功”为止；
+- 在此之前所经历的“失败总次数” $X$ 服从负二项分布。
+- **在传染病模型中**：
+  - **传染给一个人 $\Longrightarrow$ 数学上记为一次“失败”**！
+  - **传染链条中断（未传染） $\Longrightarrow$ 数学上记为一次“成功”**！
+- 均值公式反解：
+  $$R_t = k \frac{1-p}{p} \implies p R_t = k - kp \implies p(k + R_t) = k \implies p = \frac{k}{k + R_t}$$
+- **物理直觉**：病毒传染力越强（$R_t$ 越大），“中断传染（成功）”的概率 $p$ 越接近 0，于是在链条中断前就会发生大量的“传染事件（失败）”，造成超级暴发！
 
-#### 3.1.2 逐步严密代数推导
+#### 3.1.1 Gamma–Poisson 连续混合积分逐行演算
+设个体传染力 $\nu \sim \operatorname{Gamma}(k, \theta)$，其中形状参数为 $k$，尺度参数 $\theta = R_t/k$。概率密度为：
+$$f_\nu(\nu) = \frac{1}{\theta^k \Gamma(k)} \nu^{k-1} e^{-\nu/\theta} = \frac{(k/R_t)^k}{\Gamma(k)} \nu^{k-1} e^{-k\nu / R_t}$$
+给定个体传染力 $\nu$，二代感染数条件服从泊松分布：$\Pr(X = x \mid \nu) = \frac{\nu^x e^{-\nu}}{x!}$。
+对潜变量 $\nu$ 在 $(0, \infty)$ 上求全积分（边缘化）：
+$$\Pr(X = x) = \int_0^\infty \frac{\nu^x e^{-\nu}}{x!} \cdot \frac{(k/R_t)^k}{\Gamma(k)} \nu^{k-1} e^{-k\nu / R_t} d\nu$$
+提取所有不含积分变量 $\nu$ 的常数项，合并被积函数中的幂次与指数：
+$$= \frac{(k/R_t)^k}{x! \Gamma(k)} \int_0^\infty \nu^{(x+k)-1} \exp\left\{ -\nu \left(1 + \frac{k}{R_t}\right) \right\} d\nu$$
+做变量代换：令 $u = \nu \left(1 + \frac{k}{R_t}\right) = \nu \frac{k + R_t}{R_t}$，则 $\nu = u \frac{R_t}{k + R_t}$，微元 $d\nu = \frac{R_t}{k + R_t} du$。
+代入积分中：
+$$\int_0^\infty \nu^{(x+k)-1} e^{-u} \frac{R_t}{k + R_t} du = \left(\frac{R_t}{k + R_t}\right)^{x+k} \int_0^\infty u^{(x+k)-1} e^{-u} du$$
+由欧拉 Gamma 函数严格积分定义：$\int_0^\infty u^{(x+k)-1} e^{-u} du = \Gamma(x+k)$！
+代回原式展开：
+$$\Pr(X = x) = \frac{(k/R_t)^k}{x! \Gamma(k)} \cdot \left(\frac{R_t}{k + R_t}\right)^{x+k} \cdot \Gamma(x+k) = \frac{\Gamma(x+k)}{x! \Gamma(k)} \cdot \frac{k^k R_t^x}{(k + R_t)^{x+k}}$$
+按幂次项拆分组合：
+$$= \frac{\Gamma(x+k)}{x! \Gamma(k)} \cdot \left(\frac{k}{k + R_t}\right)^k \left(\frac{R_t}{k + R_t}\right)^x$$
+令 $p \triangleq \frac{k}{k + R_t}$，则 $1 - p = 1 - \frac{k}{k + R_t} = \frac{R_t}{k + R_t}$。
+代入即得：
+$$\Pr(X = x) = \frac{\Gamma(x+k)}{x! \Gamma(k)} p^k (1 - p)^x \equiv \operatorname{NB}(k, p)$$
+**从微观连续混合积分到离散负二项 PMF 逐行证毕！**
 
-**第一步：单感染者的概率母函数（PGF）**
-个体二代感染数 $X_{i,t} \sim \operatorname{NB}(k, p)$，其中成功概率 $p = \frac{k}{k + R_t}$。
-负二项分布的标准 PGF 形式为：
-$$G_X(s) \equiv \mathbb{E}[s^X] = \left(\frac{p}{1 - (1-p)s}\right)^k$$
+---
 
-**第二步：$n$ 名独立感染者求和**
-当期真实新发感染总数 $I_t = \sum_{i=1}^n X_{i,t}$。由条件独立性，独立随机变量和的 PGF 等于各自 PGF 之积：
-$$G_{I_t}(s) = \prod_{i=1}^n G_X(s) = \left(\frac{p}{1 - (1-p)s}\right)^{nk}$$
-因此，$I_t \mid n, R_t \sim \operatorname{NB}(nk, p)$，形状参数累加为 $nk$。
+### 3.2 命题 1：条件似然、得分函数、无偏性与 Cramér–Rao 下界
 
-**第三步：二项报告抽样下的 PGF 复合运算**
-每个感染者独立以概率 $\rho$ 上报，则报告数可表示为复合随机和 $C_t = \sum_{j=1}^{I_t} B_j$，其中 $B_j \sim \operatorname{Bernoulli}(\rho)$。
-伯努利分布的 PGF 为 $G_B(s) = (1 - \rho) + \rho s$。
-利用复合随机变量的 PGF 复合律 $G_{C_t}(s) = G_{I_t}(G_B(s))$：
+#### 3.2.1 PGF 复合律保族性逐行推导
+每个感染者独立以概率 $\rho$ 上报，报告数 $C_t = \sum_{j=1}^{I_t} B_j$，其中 $B_j \sim \operatorname{Bernoulli}(\rho)$，其 PGF 为 $G_B(s) = (1 - \rho) + \rho s$。
+上一代 $n$ 个人产生的感染总数 $I_t \sim \operatorname{NB}(nk, p)$，其 PGF 为：
+$$G_{I_t}(s) = \left(\frac{p}{1 - (1-p)s}\right)^{nk}$$
+利用复合随机和 PGF 复合定理 $G_{C_t}(s) = G_{I_t}(G_B(s))$：
 $$G_{C_t}(s) = \left( \frac{p}{1 - (1-p)[(1-\rho) + \rho s]} \right)^{nk}$$
-展开分母：
-$$1 - (1-p)(1-\rho) - \rho(1-p)s = [p + \rho(1-p)] - \rho(1-p)s$$
-分子分母同除以 $[p + \rho(1-p)]$：
+将分母完全展开：
+$$1 - (1-p)(1-\rho) - \rho(1-p)s = 1 - (1 - \rho - p + p\rho) - \rho(1-p)s = [p + \rho(1-p)] - \rho(1-p)s$$
+分子分母同时除以提取因子 $[p + \rho(1-p)]$：
 $$G_{C_t}(s) = \left( \frac{\frac{p}{p + \rho(1-p)}}{1 - \frac{\rho(1-p)}{p + \rho(1-p)}s} \right)^{nk}$$
-定义新的成功概率 $p^* \triangleq \frac{p}{p + \rho(1-p)}$。将 $p = \frac{k}{k + R_t}$ 及 $1-p = \frac{R_t}{k + R_t}$ 代入：
+定义新成功概率 $p^* \triangleq \frac{p}{p + \rho(1-p)}$。代入 $p = \frac{k}{k+R_t}$ 与 $1-p = \frac{R_t}{k+R_t}$：
 $$p^* = \frac{\frac{k}{k + R_t}}{\frac{k}{k + R_t} + \rho \frac{R_t}{k + R_t}} = \frac{k}{k + \rho R_t}$$
-对比负二项标准 PGF 形式，直接证明了：**观测值 $C_t$ 严格服从负二项分布**：
-$$C_t \mid n, R_t \sim \operatorname{NB}\left(\text{形状参数} = nk, \; \text{成功概率} = \frac{k}{k + \rho R_t}\right)$$
-条件期望为 $\mathbb{E}[C_t] = nk \frac{1-p^*}{p^*} = \rho n R_t$。
+对比负二项标准 PGF 形式，直接证明了：**观测值 $C_t \mid n, R_t \sim \operatorname{NB}(nk, p^*)$ 严格保族封闭！**
 
-**第四步：对数似然方程与 `const` 拆解**
-观测样本 $C_t$ 的概率质量函数为：
-$$\Pr(C_t = c) = \frac{\Gamma(c + nk)}{c! \Gamma(nk)} (p^*)^{nk} (1 - p^*)^c = \left[ \frac{\Gamma(c + nk)}{c! \Gamma(nk)} \cdot k^{nk} \cdot \rho^c \right] \cdot \frac{R_t^c}{(k + \rho R_t)^{nk + c}}$$
-两边取自然对数 $\ln$：
-$$\ln L(R_t) = \underbrace{\ln\left[\frac{\Gamma(c + nk)}{c! \Gamma(nk)}\right] + nk \ln k + c \ln \rho}_{\text{与未知参数 } R_t \text{ 完全无关，简记为 } \mathbf{const}} + c \ln R_t - (nk + c) \ln(k + \rho R_t)$$
-对参数 $R_t$ 求一阶导数（得分函数 Score Function）：
-$$S(R_t) \triangleq \frac{\partial \ln L}{\partial R_t} = 0 - \frac{\rho (nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t}$$
-通分展开：
-$$S(R_t) = \frac{-\rho R_t(nk + C_t) + C_t(k + \rho R_t)}{R_t(k + \rho R_t)} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)}$$
-令得分函数为零 $S(R_t) = 0$，解得唯一驻点（极大似然估计量）：
-$$\widehat{R}_t^{\text{MLE}} = \frac{C_t}{\rho n}$$
+#### 3.2.2 负二项方差公式化简
+由负二项分布方差公式，形状参数为 $nk$，成功概率为 $p^*$：
+$$\operatorname{Var}(C_t \mid n, R_t) = \frac{nk(1 - p^*)}{(p^*)^2} = nk \cdot \frac{\frac{\rho R_t}{k + \rho R_t}}{\left(\frac{k}{k + \rho R_t}\right)^2} = nk \cdot \frac{\rho R_t}{k + \rho R_t} \cdot \frac{(k + \rho R_t)^2}{k^2}$$
+分子分母对消 $k(k + \rho R_t)$：
+$$= \frac{n \rho R_t (k + \rho R_t)}{k} = \frac{nk \rho R_t + n \rho^2 R_t^2}{k} = \rho n R_t + \frac{(\rho R_t)^2 n}{k}$$
+清晰展示了泊松方差 $\rho n R_t$ 与个体超传播方差 $\frac{(\rho R_t)^2 n}{k}$ 的代数叠加！
 
-**第五步：无偏性验证（双层全期望展开）**
-要求解 $\mathbb{E}[\widehat{R}_t \mid n, R_t]$：
-$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = \frac{1}{\rho n} \mathbb{E}[C_t \mid n, R_t]$$
-利用双层全期望公式（塔式法则）：
-$$\mathbb{E}[C_t \mid n, R_t] = \mathbb{E}_{I_t}\Big( \mathbb{E}_{C_t}[C_t \mid I_t] \;\Big|\; n, R_t \Big)$$
-- 内层：已知真实感染 $I_t$，二项抽样均值为 $\mathbb{E}[C_t \mid I_t] = \rho I_t$；
-- 外层：已知风险集 $n$ 和传播率 $R_t$，各分支独立，感染总数期望为 $\mathbb{E}[I_t \mid n, R_t] = n R_t$；
-代入得：
-$$\mathbb{E}[C_t \mid n, R_t] = \mathbb{E}[\rho I_t \mid n, R_t] = \rho \mathbb{E}[I_t \mid n, R_t] = \rho n R_t$$
-两端相除：
-$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{\rho n R_t}{\rho n} = R_t$$
-**无偏性证毕！**
+#### 3.2.3 对数似然与得分函数求解
+$$\ln L(R_t) = \text{const} - (nk + C_t) \ln(k + \rho R_t) + C_t \ln R_t$$
+对 $R_t$ 求偏导：
+$$S(R_t) = \frac{\partial \ln L}{\partial R_t} = -\frac{\rho(nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t} = \frac{-\rho R_t(nk + C_t) + C_t(k + \rho R_t)}{R_t(k + \rho R_t)} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)}$$
+令 $S(R_t) = 0$，解得唯一极大似然估计量 $\widehat{R}_t^{\text{MLE}} = \frac{C_t}{\rho n}$。
 
-**第六步：Fisher 信息量两套算法与 Cramér–Rao 下界**
-- **算法一（得分方差法）**：
-  $$\mathcal{I}(R_t \mid n) = \operatorname{Var}(S(R_t)) = \frac{k^2}{R_t^2(k + \rho R_t)^2} \operatorname{Var}(C_t \mid n, R_t)$$
-  代入负二项方差 $\operatorname{Var}(C_t) = \frac{\rho n R_t (k + \rho R_t)}{k}$：
-  $$\mathcal{I}(R_t \mid n) = \frac{k^2 \cdot \frac{\rho n R_t (k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n}{R_t(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}$$
-- **算法二（负二阶导期望法）**：
-  对得分函数 $S(R_t) = -\frac{\rho(nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t}$ 再次求导：
-  $$\frac{\partial^2 \ln L}{\partial R_t^2} = \frac{\rho^2(nk + C_t)}{(k + \rho R_t)^2} - \frac{C_t}{R_t^2}$$
-  取负号并求期望，代入 $\mathbb{E}[C_t] = \rho n R_t$：
-  $$\mathcal{I}(R_t \mid n) = \mathbb{E}\left[\frac{C_t}{R_t^2} - \frac{\rho^2(nk + C_t)}{(k + \rho R_t)^2}\right] = \frac{\rho n R_t}{R_t^2} - \frac{\rho^2(nk + \rho n R_t)}{(k + \rho R_t)^2} = \frac{\rho n}{R_t} - \frac{\rho^2 n}{k + \rho R_t} = \frac{k \rho n}{R_t(k + \rho R_t)}$$
-两套算法完全一致！计算其倒数：
-$$\mathcal{I}(R_t \mid n)^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn}$$
-由于估计量无偏，Cramér–Rao 方差下界恰为 $\mathcal{I}^{-1}$，而估计量方差代数上严格等于该倒数。
-**证毕**：估计量为 UMVUE。
+#### 3.2.4 无偏性验证（双层全期望展开）
+利用双层全期望公式：
+$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{1}{\rho n} \mathbb{E}[C_t \mid n, R_t] = \frac{1}{\rho n} \mathbb{E}_{I_t}\Big( \mathbb{E}_{C_t}[C_t \mid I_t] \;\Big|\; n, R_t \Big)$$
+- 内层：二项报告抽样均值 $\mathbb{E}[C_t \mid I_t] = \rho I_t$；
+- 外层：独立分支和均值 $\mathbb{E}[I_t \mid n, R_t] = \mathbb{E}\left[\sum_{i=1}^n X_{i,t}\right] = n R_t$；
+代入：
+$$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{1}{\rho n} \cdot \rho (n R_t) = R_t \quad (\text{严格无偏！})$$
+
+#### 3.2.5 Fisher 信息量与 Cramér–Rao 下界确立
+$$\mathcal{I}(R_t \mid n) = \operatorname{Var}(S(R_t)) = \frac{k^2 \operatorname{Var}(C_t)}{R_t^2(k + \rho R_t)^2} = \frac{k^2 \cdot \frac{n \rho R_t (k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n}{R_t(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}$$
+取倒数得下界：
+$$\mathcal{I}^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \equiv \operatorname{Var}(\widehat{R}_t \mid n, R_t)$$
+无偏估计量方差达到 Cramér–Rao 下界，确立其为 UMVUE！
 
 ---
 
-### 3.2 命题 2：跨期基础水平的边际方差分解
+### 3.3 命题 2：跨期基础水平的边际方差分解与仿射式推导
 
-#### 3.2.1 定理陈述
-估计跨期平均传播基准 $\bar{R} \equiv \mathbb{E}[R_t \mid n]$（存在宏观环境随机性 $\operatorname{Var}(R_t \mid n) = v_R > 0$），单期估计量 $\frac{C_t}{\rho n}$ 给定风险集 $n$ 的条件边际方差为：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} \equiv v_R + \frac{A}{m}$$
-其中期望报告规模 $m \equiv \rho n$，标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$。
-
-#### 3.2.2 逐步严密代数推导
-应用**全方差公式（Law of Total Variance）**：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \underbrace{\operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right)}_{\text{宏观环境方差贡献}} + \underbrace{\mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]}_{\text{微观抽样方差贡献}}$$
-
-**第一项计算**：
-由命题 1 的无偏性结论，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$。因此：
-$$\operatorname{Var}(R_t \mid n) = v_R$$
-
-**第二项计算**：
-代入命题 1 导出的条件方差式：
-$$\mathbb{E}\left[ \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \;\middle|\; n \right] = \frac{\mathbb{E}[R_t \mid n]}{\rho n} + \frac{\mathbb{E}[R_t^2 \mid n]}{kn}$$
-由二阶矩与方差的基本代数关系：$\mathbb{E}[R_t^2 \mid n] = \operatorname{Var}(R_t \mid n) + (\mathbb{E}[R_t \mid n])^2 = v_R + \bar{R}^2$。
-代入得：
-$$= \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
-
-两项相加，得到定稿核心方差公式：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + \frac{1}{\rho n}\left[\bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}\right] = v_R + \frac{A}{m}$$
-**物理含义**：单期方差呈现严格的仿射结构 $v_R + A/m$。当 $m \to \infty$ 时，后项抽样方差消失，但前项宏观环境方差 $v_R$ 永远保留！
+应用全方差公式：
+$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right) + \mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]$$
+- 第一项：由无偏性，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$，故方差为 $\operatorname{Var}(R_t \mid n) = v_R$；
+- 第二项：代入命题 1 条件方差：
+  $$\mathbb{E}\left[ \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \;\middle|\; n \right] = \frac{\mathbb{E}[R_t \mid n]}{\rho n} + \frac{\mathbb{E}[R_t^2 \mid n]}{kn}$$
+  代入二阶矩恒等式 $\mathbb{E}[R_t^2 \mid n] = \operatorname{Var}(R_t) + (\mathbb{E}[R_t])^2 = v_R + \bar{R}^2$：
+  $$= \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
+两项相加，整理为仿射结构：
+$$\operatorname{Var} = v_R + \frac{1}{\rho n}\left[ \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k} \right] \equiv v_R + \frac{A}{m}$$
+其中令 $m = \rho n$，标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$。
 
 ---
 
-### 3.3 命题 3：监测杠杆的理论非对称性
+### 3.4 命题 4 与推论 1：AR(1) 错位相减级数求和与 Cochran 对偶证明
 
-#### 3.3.1 定理陈述
-将单期方差中的抽样项展开：
-$$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1-\rho)\bar{R}}{\rho n}$$
-总方差二元函数 $V(n, \rho)$ 满足：
-1. 报告率极限（$\rho \to 1$）：$\lim_{\rho \to 1} V(n, \rho) = v_R + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$；
-2. 风险集基数极限（$n \to \infty$）：$\lim_{n \to \infty} V(n, \rho) = v_R$。
+#### 3.4.1 AR(1) 双重协方差级数求和的错位相减法展开
+在 AR(1) 自相关下，要求解级数：
+$$S \triangleq \sum_{s=1}^{T-1} (T-s) r^s = (T-1)r + (T-2)r^2 + \dots + 1 \cdot r^{T-1}$$
+两端同乘公比 $r$：
+$$r S = (T-1)r^2 + (T-2)r^3 + \dots + 1 \cdot r^T$$
+两式相减：
+$$(1-r)S = (T-1)r - \left[ r^2 + r^3 + \dots + r^{T-1} \right] - r^T = T r - \sum_{s=1}^T r^s = T r - \frac{r(1 - r^T)}{1 - r}$$
+两端除以 $(1-r)$：
+$$S = \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2}$$
+代入环境总方差：
+$$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R S = T v_R + 2 v_R \left[ \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2} \right] = v_R T \left[ 1 + \frac{2r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
+通分化简括号内前两项：$1 + \frac{2r}{1-r} = \frac{1-r+2r}{1-r} = \frac{1+r}{1-r}$：
+$$= v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
+两端除以 $T^2$，严格导出命题 4(ii) 式 (16)！
 
-#### 3.3.2 严密分步极限推导
-- **对报告率 $\rho \to 1$ 求极限**：
-  $$\lim_{\rho \to 1} V(n, \rho) = v_R + \lim_{\rho \to 1} \frac{(1-\rho)\bar{R}}{\rho n} + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$$
-  **解释**：完全消除漏报只能干掉 $\frac{(1-\rho)\bar{R}}{\rho n}$，但人群内部固有的完全报告泊松计数波动 $\bar{R}/n$ 和超级传播子代抽样波动 $\frac{\bar{R}^2+v_R}{kn}$ 均依赖于有限样本量 $n$，无法靠提升报告率解决。
-- **对人群基数 $n \to \infty$ 求极限**：
-  $$\lim_{n \to \infty} V(n, \rho) = v_R + \lim_{n \to \infty}\frac{1}{n} \left[ \frac{\bar{R}}{\rho} + \frac{\bar{R}^2 + v_R}{k} \right] = v_R + 0 = v_R$$
-  **解释**：扩大基数 $n$ 分母趋于无穷大，利用大数定律将所有微观层面的抽样波动彻底消除。
-
----
-
-### 3.4 命题 4 与推论 1：成本预算与监测设计运筹优化
-
-#### 3.4.1 命题 4（多期时间平均与 AR(1) 修正）
-设总样本输入规模预算为 $B = T \cdot m = T \rho n_T$。设计方案为 $\mathcal{D}_T = (T, n_T)$。
-对跨期样本均值 $\overline{\widehat{R}}_T = \frac{1}{T}\sum_{t=1}^T \widehat{R}_t$ 求方差：
-$$\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2}\sum_{t=1}^T \operatorname{Var}(\widehat{R}_t \mid R_t) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2} \cdot T \frac{A}{m}$$
-代入 $T m = B$：
-$$\text{第二项（抽样项）} = \frac{A}{T m} = \frac{A}{B} \quad (\text{恒为常数！})$$
-**惊人结论**：在固定总样本预算下，无论你分多少期，抽样误差项永远是常数 $A/B$！
-要想降低总方差，**唯一的方法是拉长期数 $T$ 去压制第一项（环境项）**！
-- 独立环境下：第一项为 $\frac{v_R}{T}$，方差以 $O(1/T)$ 严格递减；
-- AR(1) 自相关环境下（相关系数 $r$）：
-  $$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R \sum_{s=1}^{T-1}(T-s)r^s = v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1-r^T)}{T(1-r)^2} \right]$$
-  当观测期远大于环境自相关记忆时长（$T \gg \frac{1}{1-r}$）时，有效独立期数退化为 $T_{\mathrm{eff}} \approx T \frac{1-r}{1+r}$。
-
-#### 3.4.2 推论 1（成本约束下的闭式解与 Cochran 对偶）
-设每期固定运转维持成本为 $c_0$，每报告一例边际成本为 $c_1$。总经费预算为 $\mathcal{B} = T(c_0 + c_1 m)$。
-代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$ 到目标方差函数：
-$$f(m) = \operatorname{Var}(\overline{\widehat{R}}_T) = \frac{v_R}{\frac{\mathcal{B}}{c_0 + c_1 m}} + \frac{A}{\frac{\mathcal{B}}{c_0 + c_1 m} m} = \frac{c_0 + c_1 m}{\mathcal{B}} \left( v_R + \frac{A}{m} \right) = \frac{1}{\mathcal{B}} \left[ c_0 v_R + c_1 v_R m + \frac{c_0 A}{m} + c_1 A \right]$$
-**求一阶导数**：
+#### 3.4.2 推论 1 成本优化一阶导与二阶导完整展开
+目标函数代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$：
+$$f(m) = \frac{c_0 + c_1 m}{\mathcal{B}} \left( v_R + \frac{A}{m} \right) = \frac{1}{\mathcal{B}} \left[ c_0 v_R + c_1 v_R m + \frac{c_0 A}{m} + c_1 A \right]$$
+**一阶导数**：
 $$f'(m) = \frac{1}{\mathcal{B}} \left[ c_1 v_R - \frac{c_0 A}{m^2} \right] = 0 \implies m^2 = \frac{c_0 A}{c_1 v_R} = \frac{c_0}{c_1} m_\times \implies m^* = \sqrt{\frac{c_0}{c_1} m_\times}$$
-**求二阶导数**：
-$$f''(m) = \frac{2 c_0 A}{\mathcal{B} m^3} > 0 \quad (\text{对一切 } m>0 \text{ 恒正，函数严格凸！})$$
-**学术高度**：这在数学结构上与抽样调查鼻祖 Cochran (1977) 第 10 章的两阶段抽样最优次级样本量公式完全同构！初级抽样单元对应期数 $T$，次级抽样单元对应单期病例 $m$。
+**二阶导数**：
+$$f''(m) = \frac{1}{\mathcal{B}} \frac{d}{dm}\left( c_1 v_R - c_0 A m^{-2} \right) = \frac{2 c_0 A}{\mathcal{B} m^3} > 0 \quad (\text{严格凸函数，唯一全局极小值点！})$$
 
 ---
 
-### 3.5 命题 5：当期超临界增长判定的精确检验与离散功效锯齿
+### 3.5 命题 5：单调似然比（MLR）一阶差分严格为正证明
 
-#### 3.5.1 检验构建与单调似然比（MLR）
-单侧假设检验：$H_0: R_t \le 1 \quad \text{vs} \quad H_1: R_t > 1$。
-对任意 $R_1 > R_0$，似然比为：
-$$\frac{\Pr_{R_1}(C_t = j)}{\Pr_{R_0}(C_t = j)} = \left(\frac{p^*(R_1)}{p^*(R_0)}\right)^{nk} \left(\frac{1 - p^*(R_1)}{1 - p^*(R_0)}\right)^j$$
-由于 $1 - p^*(R) = \frac{\rho R}{k + \rho R}$ 关于 $R$ 严格单调递增，底数 $\frac{1 - p^*(R_1)}{1 - p^*(R_0)} > 1$。
-因此，似然比关于充分统计量 $C_t$ **严格单调递增**（满足 MLR 性质）。
-由经典统计推断理论（Karlin–Rubin 定理），上尾拒绝域 $\{C_t \ge c_\alpha\}$ 在复合原假设下，一类错误率严格在上确界点（边界点 $R_t = 1$）达到最大：
-$$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$$
-离散临界值由 $c_\alpha = \min \{c \in \mathbb{N} : \Pr_{R_t=1}(C_t \ge c) \le \alpha\}$ 唯一确定。
-
-#### 3.5.2 为什么功效曲线呈现锯齿状（Sawtooth Wave）？
-因为观测计数 $C_t$ 只能取整数，临界值 $c_\alpha(n)$ 随样本量 $n$ 呈阶梯状跳变：
-- 当 $n$ 在某个区间连续微增时，临界值 $c_\alpha$ 保持不变，由于样本量变大，功效连续上升；
-- 一旦 $n$ 跨过某个临界点，为了控制显著性水平 $\alpha$，$c_\alpha$ 突然跳跃到 $c_\alpha + 1$，拒绝门槛突然拔高，导致统计功效瞬间出现向下跳跃！
-- 这解释了图 2 模拟中为什么连续增加病例数，功效曲线会出现特有的锯齿波动，证实了离散枚举求解最小样本量的必要性。
+对任意备择强度 $R_1 > R_0$，似然比对数形式为：
+$$\ln \frac{\Pr_{R_1}(C_t = j)}{\Pr_{R_0}(C_t = j)} = nk \ln \frac{p^*(R_1)}{p^*(R_0)} + j \ln \frac{1 - p^*(R_1)}{1 - p^*(R_0)}$$
+计算对计数值 $j$ 的一阶差分：
+$$\Delta(j) \triangleq \ln \frac{\Pr_{R_1}(j+1)}{\Pr_{R_0}(j+1)} - \ln \frac{\Pr_{R_1}(j)}{\Pr_{R_0}(j)} = \ln \frac{1 - p^*(R_1)}{1 - p^*(R_0)}$$
+代入 $1 - p^*(R) = \frac{\rho R}{k + \rho R}$：
+$$\frac{1 - p^*(R_1)}{1 - p^*(R_0)} = \frac{\frac{\rho R_1}{k + \rho R_1}}{\frac{\rho R_0}{k + \rho R_0}} = \frac{R_1(k + \rho R_0)}{R_0(k + \rho R_1)} = \frac{k R_1 + \rho R_0 R_1}{k R_0 + \rho R_0 R_1}$$
+由于 $R_1 > R_0$，显然分子 $k R_1 + \rho R_0 R_1 > k R_0 + \rho R_0 R_1$ 分母，该比值严格大于 1！
+取自然对数后，一阶差分 $\Delta(j) > 0$ 恒成立！
+证明了似然比关于充分统计量 $C_t$ **严格单调递增**，Karlin–Rubin 定理严格适用！
 
 ---
 
 ## 第四部分：数值模拟的深层设计与三幅图的精读密码
 
 ### 4.1 图 1（理论方差分解与 50,000 次蒙特卡洛验证）
-- **验证目的**：直接在无时序延迟的单代分支模型下，用 50,000 次完全随机模拟，核验命题 1 与命题 2 的代数解析式是否准确无误。
-- **图面精读**：
-  - 蓝色曲线（估计当期 $R_t$）：在双对数坐标轴下是一条斜率为 $-1$ 的直线，随着 $m$ 增大一路单调趋于零；
-  - 红色曲线（估计跨期 $\bar{R}$）：在小样本时沿 $-1$ 斜率下降，越过交叉点 $m_\times = 53.1$ 后，迅速弯曲变平，严丝合缝地贴在水平渐近虚线 $v_R = 0.04$ 上；
-  - 散点（仿真值）与实线（解析解）比值处于 0.988–1.017 之间，证明理论代数推导 100% 紧致正确。
+- **双对数坐标轴下的两条轨迹**：
+  - 蓝色曲线（估计当期 $R_t$）：斜率为 $-1$ 的直线，随 $m$ 增大单调趋零；
+  - 红色曲线（估计跨期 $\bar{R}$）：小样本时沿 $-1$ 斜率下降，越过交叉点 $m_\times = 53.1$ 后，迅速弯曲变平，严丝合缝贴在水平渐近虚线 $v_R = 0.04$ 上；
+  - 散点与解析解比值处于 0.988–1.017 之间，证明理论代数推导 100% 紧致正确。
 
 ### 4.2 图 2（增长检测功效与 Wald 检验失真）
-- **验证目的**：检验常规渐近正态 Wald 检验在传染病暴发早期小计数时的失效，并展示超传播对样本量需求的惩罚。
-- **图面精读**：
-  - 虚线（Wald 检验）：在小样本且强超传播（$k=0.1$）时，实际一类错误率最高达到 8.1%（严重虚警）；
-  - 实线（离散精确负二项检验）：全域严格压在 0.05 以下；
-  - 超传播的代价：达到 80% 功效所需的病例数，从轻度超传播（$k=1.0$）的 142 例激增至重度超传播（$k=0.1$）的 415 例，暴增近 3 倍！
+- 虚线（Wald 检验）：在小样本且强超传播（$k=0.1$）时，实际一类错误率最高达到 8.1%（严重虚警）；
+- 实线（离散精确负二项检验）：全域严格受控于 0.05 以下；
+- 超传播的代价：达到 80% 功效所需的病例数，从轻度超传播（$k=1.0$）的 142 例激增至重度超传播（$k=0.1$）的 415 例，暴增近 3 倍！
 
 ### 4.3 图 3（更新过程时序卷积与单步预测误差的双口径解密）
-- **核心争议与双口径彻底搞通**：
-  - **为什么按初始规模看是 0.75–0.98 倍？** 模拟生成时横轴标示的是第 0 周的初始规模 $m$。因为设定了 $\bar{R} = 1.15 > 1$（疫情处于增长态势），到了第 4–29 周评估时，实际的周病例数已经自发增长到了初始值的 1.7–2.4 倍（中位数口径，均值口径约 2.6–3.2 倍）！拿增长后的大病例数去对比初始小规模的理论值，表观比值自然显得略低；
-  - **为什么按实际规模看是不低于下界的 1.01–1.17 倍（按组 1.00–1.45 倍）？** 只要按照评价周实际发生的病例暴露规模重核参照线，经验预测误差就**严格不低于单代静态下界**！
-  - **理论大获全胜**：这直接印证了命题 6 和式 (29) 的条件分解定理——更新过程因为只能用历史报告代替真实感染压力，必然叠合一个非负的预测偏差项 $(\mu/D - \bar{R})^2 \ge 0$！
+- **为什么初始参数看是 0.75–0.98 倍？** 模拟横轴标示的是第 0 周的初始规模 $m$。因为 $\bar{R} = 1.15 > 1$（疫情自发增长），到了第 4–29 周评估时，实际病例数自发增长至初始值的 1.7–2.4 倍（中位数口径，均值口径约 2.6–3.2 倍）！拿增长后的大病例数对比初始小规模理论值，表观比值自然偏低；
+- **为什么实际规模看是不低于下界的 1.01–1.17 倍（按组 1.00–1.45 倍）？** 按实际发生规模重核参照线，经验预测误差**严格不低于单代静态下界**，直接证实了式 (29) 预言的额外预测偏差项 $(\mu/D - \bar{R})^2 \ge 0$！
 
 ---
 
