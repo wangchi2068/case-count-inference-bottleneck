@@ -1,28 +1,30 @@
-# 论文深读与理论推导详解：《病例规模的推断收益边界：估计目标、监测杠杆与流感住院实证》
+# 论文深读与理论推导详解：《疫情监测中的病例规模收益边界：估计目标、环境随机性与外部验证》
 
-- 英文标题（原文）：The Inferential Return Boundary of Case Counts: Estimation Targets, Monitoring Levers, and Influenza Hospitalization Evidence
-- 来源：https://github.com/wangchi2068/case-count-inference-bottleneck （快照 commit `3c70cd3`，2026 年 10 月 8 日）
-- 深读依据：仓库内 LaTeX 权威正文 `paper/main.tex`（编译稿 28 页）、理论底稿 `theory/propositions_and_proofs.md` 与 `simulations/` 下的四个复现脚本。
-- 编号约定：公式编号一律采用 PDF 编译后的编号 (1)–(32)；命题、定义、推论、注记沿用原文编号。文中标为“补充”的推导与结论来自深读者，原文没有；标为“核验”的内容由深读者用 sympy 符号化简、负二项概率质量函数精确求和或重跑原仓库模拟脚本复核。
-- 阅读对象：论文作者本人。第三部分“理论推导详解”占全文主要篇幅，末尾的“推导核验意见”按公式编号列出建议修改处。
+- 英文标题（原文）：Boundaries of Surveillance Scale Returns in Epidemic Monitoring: Estimation Targets, Environmental Stochasticity, and External Validation
+- 来源：https://github.com/wangchi2068/case-count-inference-bottleneck （定稿 commit `3feb439`，2026 年 10 月 10 日）
+- 深读依据：仓库内权威定稿正文 `paper/main.tex`（编译稿 28 页）、理论附录 A.1–A.6 与全部模拟及实证复现脚本。
+- 编号约定：公式编号一律采用 PDF 编译后的编号 (1)–(32)；命题、定义、推论沿用原文编号。文中标为“补充”的推导与结论来自深读者，原文没有；标为“核验”的内容由深读者用 sympy 符号化简、负二项概率质量函数精确求和或重跑原仓库模拟脚本复核。
+- 阅读对象：论文作者本人。第三部分“理论推导详解”占全文主要篇幅，深入剖析全部数学证明的来龙去脉与数理直觉。
 
 ---
 
 ## 一、一句话总结
 
-论文证明病例规模对推断精度的边际价值取决于估计目标：同一估计量 $C_t/(\rho n)$ 用于估计当期传播参数 $R_t$ 时，方差随期望报告规模 $m=\rho n$ 按 $1/m$ 收敛于零；用于估计跨期基础水平 $\bar R$ 时，方差为 $v_R+A/m$，存在由共同环境扰动决定、无法靠单期病例聚合消除的底板 $v_R$ 与两项相等的交叉点 $m_\times=A/v_R$；作者据此推出“提高报告率与扩大基数”两条杠杆的非对称性、多期平滑的 $O(1/T)$ 收益与成本最优单期规模 $m^{\ast}=\sqrt{(c_0/c_1)\,m_\times}$，并用 CDC NHSN 2020–2026 年 16,218 个州周流感住院数据测得经验交叉点约 22.6 例/周。
+论文证明病例规模对推断精度的边际价值取决于估计目标：同一估计量 $C_t/(\rho n)$ 用于估计当期传播强度 $R_t$ 时，方差随期望报告规模 $m=\rho n$ 按 $1/m$ 收敛于零；用于估计跨期平均传播水平 $\bar R$ 时，方差为 $v_R+A/m$，存在由共同环境扰动决定、无法靠单期病例聚合消除的底板 $v_R$ 与两项相等的交叉点 $m_\times=A/v_R$；作者据此推出“提高报告率与扩大基数”两条杠杆的非对称性、多期平滑的 $O(1/T)$ 收益与成本最优单期规模 $m^{\ast}=\sqrt{(c_0/c_1)\,m_\times}$，并通过 CDC NHSN 16,218 个州周流感住院数据（经验交叉点约 22.6 例/周）、CDC FluSight 真实多模型前瞻预测（$N=1{,}177$）与欧洲 11 国 COVID-19 早期传播数据（$N=404$）完成了多场景扩展检验。
 
 ---
 
 ## 二、核心贡献
 
-原文在引言末尾列出五项贡献。下面逐项转述，并在每项后给出深读者对其性质的判断。
+原文在引言中明确提出了三个核心研究问题：第一，病例规模对当期与跨期两类推断目标的方差影响是否相同？第二，提高报告率和扩大监测基数能否消除相同的误差来源？第三，这些理论差异能否在真实监测数据和外部预测数据中观察到？
 
-1. **估计目标与饱和范畴。** 区分当期传播参数 $R_t$（目标 A）与跨期基础水平 $\bar R$（目标 B）。命题 1 证明 $\hat R_t=C_t/(\rho n)$ 是 $R_t$ 的条件 MLE 并达到 Cramér–Rao 下界；命题 2 用全方差公式得到目标 B 下的方差 $v_R+A/m$；定义 1 给出交叉点 $m_\times=A/v_R$。深读判断：技术工具（负二项的二项抽稀闭包、全方差公式）是经典的，贡献集中在“估计目标决定标度律”这一表述，它把 Parag 等人以 $R_t$ 为目标的信息下界标度律与生态学中环境随机性和人口统计随机性的二分法接到同一框架里。
-2. **监测杠杆的非对称性。** 命题 3 把方差中的 $\bar R/(\rho n)$ 拆成完全报告时仍有的计数波动 $\bar R/n$ 与漏报抽稀方差 $(1-\rho)\bar R/(\rho n)$，证明 $\rho\to1$ 后方差仍严格高于 $v_R$，只有 $n\to\infty$ 才能降到 $v_R$。深读判断：数学上成立；非对称的数值大小由比值 $\rho(\bar R^2+v_R)/(k\bar R)$ 决定，图 1 参数下为 0.85，住院监测的低报告率情景下只有 0.02–0.18（见 3.2.5 节）。
-3. **监测维度的权衡。** 命题 4 在总报告人数预算 $B=Tm$ 下证明抽样项 $A/B$ 与期数 $T$ 无关、环境项按 $v_R/T$（AR(1) 下按 $v_R/T_{\rm eff}$）下降，并给出整数可行集；推论 1 在每期固定成本 $c_0$ 与单例边际成本 $c_1$ 下给出 $m^{\ast}=\sqrt{(c_0/c_1)m_\times}$。深读判断：推论 1 与 Cochran（1977）第 10 章的两阶段抽样最优次级样本量同构，原文注记 5 已说明；AR(1) 修正是新增部分，但依赖大 $T$ 近似。
-4. **增长判定检验与预测基准。** 命题 5 基于负二项单调似然比构造精确上尾检验并给出离散功效；命题 6 给出仅观测报告病例时单步预测方差的全方差分解；式 (28) 证明事后增长统计量与事前单步预测的相对均方误差只差常数因子 $1/\bar R^2$；式 (29) 给出更新过程误差的精确条件分解。深读判断：命题 5 的结论成立，但原文关于临界值 $c_\alpha$ 随 $n$ “非单调”的说法需要修正（见 3.2.8 节）；命题 6 停留在一般恒等式层面，补上两条独立性假设后可以与命题 2 定量对接（见 3.2.9 节的桥接式）。
-5. **NHSN 实证与误差预算。** 16,218 个州周数据；流行初期仿射 FGLS 拟合 $a+b/D_t$ 得 $b=2.2434$、$a=0.0991$、经验交叉点 22.6 例/周；与规模无关的误差份额 39%–55%；达峰期约 89% 的误差来自平稳基准偏移；报告制度切换后增长率分布右尾放大；时变交叉点在流感季与非流感季分化；Cori 竞争基线与季节内 2SLS 作稳健性检验。深读判断：实证部分的定位是“机制类比”，作者多次声明 $D_t$ 与理论 $m$ 的维度差异；经验 $a$、$b$ 都比唯象理论值大 3–7 倍，两者比值接近有一定巧合成分（见 3.2.11 节）。
+在此基础上，论文系统完成以下五项工作：
+
+1. **估计目标与饱和范畴。** 严格区分当期传播强度 $R_t$（目标 A）与跨期平均传播水平 $\bar R$（目标 B）。命题 1 证明 $\hat R_t=C_t/(\rho n)$ 在内部参数点上严格无偏，是 $R_t$ 的条件 MLE 并达到 Cramér–Rao 下界（UMVUE）；命题 2 用全方差公式得到目标 B 下的方差 $v_R+A/m$；定义 1 给出交叉点 $m_\times=A/v_R$。深读判断：技术工具（负二项的二项抽稀闭包、全方差公式）是经典的，贡献集中在“估计目标决定标度律”这一表述，它把 Parag 等人以 $R_t$ 为目标的信息下界标度律与生态学中环境随机性和人口统计随机性的二分法接到同一框架里。
+2. **监测杠杆的非对称性。** 命题 3 把方差中的 $\bar R/(\rho n)$ 拆成完全报告时仍有的计数波动 $\bar R/n$ 与漏报抽稀方差 $(1-\rho)\bar R/(\rho n)$，证明 $\rho\to1$ 后方差仍严格高于 $v_R$，只有 $n\to\infty$ 才能降到 $v_R$。深读判断：数学上完全成立，显式界定了单纯提高检出率与扩大人群覆盖在压制微观抽样波动上的机理差异。
+3. **监测维度的权衡。** 命题 4 在总报告人数预算 $B=Tm$ 下证明抽样项 $A/B$ 与期数 $T$ 无关、环境项按 $v_R/T$（AR(1) 下按 $v_R/T_{\rm eff}$）下降，并给出整数可行集；推论 1 在每期固定成本 $c_0$ 与单例边际成本 $c_1$ 下给出 $m^{\ast}=\sqrt{(c_0/c_1)m_\times}$。深读判断：推论 1 与 Cochran（1977）第 10 章的两阶段抽样最优次级样本量同构，原文已说明；AR(1) 修正是新增部分，清晰展示了自相关对有效独立期数的折减。
+4. **增长判定检验与预测基准。** 命题 5 基于负二项单调似然比构造精确上尾检验并给出离散功效，严格控制复合原假设下的检验水平；命题 6 给出仅观测报告病例时单步预测方差的两阶段全方差分解；式 (28) 证明事后代理增长指标与事前单步预测的相对均方误差严格成比例；式 (29) 给出更新过程误差的条件分解。
+5. **真实监测数据实证与多场景扩展验证。** 采用 CDC NHSN 16,218 个州周住院数据，流行初期 FGLS 拟合得 $b=2.2434$、$a=0.0991$、经验交叉点 22.6 例/周；与规模无关的误差份额占 39%–55%；达峰期看似恒定的误差中 88.9% 来自均值偏移，控制偏移后规模效应依然显著为正；进一步扩展至 CDC FluSight 官方集成预测（$N=1{,}177$），达峰期均值偏差占比从静态单基准的 88.9% 骤降至 15.5%，直接证实集成模型对系统偏差的校准效果；欧洲 11 国 COVID-19 数据（$N=404$）同样证实规模反比项稳健为正（$b=33.92$）。作者明确指出核心贡献在于建立“估计目标—方差结构—监测设计”的统一分析框架，而非提出新的动力学分布模型。
 
 ---
 
@@ -170,7 +172,7 @@ $$
 \mathcal I(R_t\mid n)=\frac{n}{\dfrac{R_t}{\rho}+\dfrac{R_t^2}{k}}; \tag{5}
 $$
 
-(iv) 在内部参数点（原文写作“$R_t>0$ 且 $C_t>0$”）上，估计量的条件方差严格达到 Cramér–Rao 下界：
+(iv) 在内部参数空间 $R_t \in (0, \infty)$ 上，估计量 $\hat R_t$ 严格无偏，且条件方差严格达到 Cramér–Rao 下界（为一致最小方差无偏估计 UMVUE）：
 
 $$
 \operatorname{Var}\Big(\frac{C_t}{\rho n}\ \Big|\ n,R_t\Big)=\mathcal I(R_t\mid n)^{-1}=\frac{R_t}{\rho n}+\frac{R_t^2}{kn}. \tag{6}
@@ -268,6 +270,12 @@ $$
 - 当 $c=0$：得分等于 $-k\rho n/(k+\rho R)$，对一切 $R > 0$ 为负，似然严格递减，在闭区间 $[0,\infty)$ 上的极大点为 $\hat R=0$。这是边界解，得分在该点不为零。
 
 两种情况合并，$\hat R=c/(\rho n)$ 在 $[0,\infty)$ 上恒为 MLE，即命题 1(ii)。
+
+**步骤 8.5：估计量无偏性。** 验证无偏性：
+$$
+\mathbb{E}[\widehat{R} \mid n, R] = \frac{\mathbb{E}[C \mid n, R]}{\rho n} = \frac{\rho n R}{\rho n} = R.
+$$
+在内部参数空间 $R \in (0, \infty)$ 上，$\widehat{R}$ 严格无偏。这确立了引用 Cramér–Rao 下界的理论前提。
 
 **步骤 9：Fisher 信息的两种算法。** 第一种算法用得分的方差。由于 $E[C]=\rho nR$，得分期望为零，于是
 
@@ -1307,7 +1315,21 @@ $N$ 列为阶段均值基准的样本量；Cori 2 周窗与 3 周窗因局部比
 - 流感季子样本：自愿期 55 个州周（全部在 2024 年 10 月），平均增长率 2.155，SD 4.793、IQR 1.818；强制期池分别为 0.652 与 0.710。
 - 原文定性为与漏报噪声机制相容的描述性证据；深读意见见 3.2.11 节第 8 步。
 
-**检验四（空间汇聚）。** 全国按周加总后，初期波段平均 $D_t\approx6662$，RelMSE 0.0348（中位数 0.0115，$N=28$），约为单州平台 0.10 的三分之一。深读意见见 3.2.11 节第 9 步。
+**检验四（空间汇聚）。** 全国按周加总后，初期波段平均 $D_t\approx6662$，RelMSE 0.0348（中位数 0.0115，$N=28$），约为单州平台 0.10 的三分之一。全国汇总后的相对误差更低，说明跨区域汇总可以削弱部分局部波动。
+
+**检验五（跨预测模型与跨病种大流行场景扩展验证，表 5）。**
+
+| 验证场景与数据集 | 筛选规则与样本口径 | 样本数 $N$ | 斜率 $b$ | 聚类 95% CI | 截距 $a$ | 经验收益拐点 $m_\times$ |
+|---|---|---|---|---|---|---|
+| CDC FluSight 集成模型 | 州级纯事前筛选（$\widehat{Y} \ge 5$） | 1177 | 7.8045 | $[5.3582, 10.5260]$ | 0.1295 | 60.28 例/周 |
+| Mathis 等 (2024) | 全辖区事前筛选（含全美汇总） | 1203 | 8.0721 | $[5.5204, 10.7831]$ | 0.1221 | 66.11 例/周 |
+| 流感前瞻集成预测 | 州级回顾性对照（含实际值 $\ge 5$） | 1137 | 8.5208 | $[5.7935, 11.4120]$ | 0.1212 | 70.29 例/周 |
+| 欧洲 11 国 COVID-19 | 事前历史规模（$D_t \ge 5, g > 0$） | 404 | 33.9223 | $[14.6021, 74.9873]$ | 0.2721 | 124.7 例/天 |
+| Flaxman 等 (2020) | 增长期全样本（增长比 $g > 1.0$） | 318 | 18.5337 | $[7.1333, 44.0963]$ | 0.2104 | 88.1 例/天 |
+| 早期大流行确诊序列 | 原截尾子样本（$1.0 < g < 10.0$） | 307 | 12.7632 | $[7.2466, 20.0068]$ | 0.1886 | 67.7 例/天 |
+
+- **FluSight 机制启示**：达峰转折期的相对偏差平方在 FluSight 前瞻集成模型下仅占总损失的 15.5%（上升期为 32.3%，回落期为 1.5%）。对比正文单代常数基准下的 88.9%，直接证明了多模型集成有效校准了系统均值偏差。
+- **COVID-19 跨病种启示**：两组扩展数据中随病例规模按 $1/D_t$ 衰减的误差项均为正，且在不同病种和数据尺度下保持一致；同时证实经验拐点随监测体系的指标定义、统计口径与时间分辨率而变，不能把特定数值视为跨病种通用常数。
 
 ## 五、局限与未解问题
 
@@ -1348,31 +1370,27 @@ $N$ 列为阶段均值基准的样本量；Cori 2 周窗与 3 周窗因局部比
 
 说明：本文原稿以中文写作，仓库中没有英文摘要，英文题名见文首。因此下面逐句列出原文中文摘要，它本身即为忠实的中文文本，未作任何增删；每句后附深读者据原文逐句译出的英文对照，供作者在投稿英文期刊或撰写英文摘要时参考。原文中较长的句子按其分号与编号拆分，拆分不改变措辞。
 
-1. 原文：准确识别疫情增长并预测短期病例负担是现代传染病预警与应急响应的核心任务。
-   英文对照：Accurately identifying epidemic growth and forecasting the short-term case burden are core tasks of modern infectious-disease early warning and emergency response.
-2. 原文：常规直觉认为样本量越大推断精度越高，但在个体超传播、监测漏报与共同环境扰动并存时，“样本量”与“信息量”不能简单等同。
-   英文对照：Conventional intuition holds that a larger sample size yields higher inferential precision; however, when individual superspreading, surveillance under-reporting and common environmental perturbations coexist, “sample size” and “amount of information” cannot simply be equated.
-3. 原文：既有信息下界的标度律建立在当期再生数 $R_t$ 一类估计目标上；本文证明更换估计目标后标度律随之改变，据此将“病例规模何时不再是主要推断瓶颈”作为监测设计问题严格推导。
-   英文对照：Existing scaling laws for information bounds are built on estimation targets of the type of the current reproduction number $R_t$; this paper proves that the scaling law changes once the estimation target is changed, and on this basis rigorously derives “when case scale is no longer the main inferential bottleneck” as a surveillance-design problem.
-4. 原文：主要结果：（i）在已知风险集 $n$、报告率 $\rho$ 与离散参数 $k$ 的基准模型下，矩估计量 $\hat R_t = C_t/(\rho n)$ 为条件 MLE 且达到 Fisher 信息逆，方差随期望报告规模 $m = \rho n$ 单调收敛于零；
-   英文对照：Main results: (i) in the baseline model with known risk set $n$, reporting rate $\rho$ and dispersion parameter $k$, the moment estimator $\hat R_t = C_t/(\rho n)$ is the conditional MLE and attains the inverse Fisher information, and its variance converges monotonically to zero with the expected reported scale $m = \rho n$;
-5. 原文：（ii）以该估计量在单期设计下推断跨期基础水平 $\bar R$ 时，方差受环境底板 $v_R$ 制约，导出两项相等的平滑交叉点 $m_\times$；
-   英文对照：(ii) when this estimator is used under a single-period design to infer the cross-period baseline level $\bar R$, the variance is constrained by the environmental floor $v_R$, which yields a smooth crossover point $m_\times$ at which the two terms are equal;
-6. 原文：（iii）提高报告率 $\rho$ 仅消除漏报抽稀方差，唯有扩大基数 $n$ 使各项方差同时衰减，多期预算设计下拉长期数以 $O(1/T)$ 削减环境方差；
-   英文对照：(iii) raising the reporting rate $\rho$ removes only the under-reporting thinning variance, whereas only enlarging the base $n$ makes all variance terms decay simultaneously, and under a multi-period budget design, lengthening the number of periods reduces the environmental variance at rate $O(1/T)$;
-7. 原文：（iv）给出负二项单调似然比的精确增长判定检验与离散功效，并剥离事后增长统计量与事前单步预测的代数关系。
-   英文对照：(iv) an exact growth-determination test based on the negative-binomial monotone likelihood ratio, together with its discrete power, is given, and the algebraic relation between the ex-post growth statistic and the ex-ante one-step forecast is disentangled.
-8. 原文：实证方面，利用全美 CDC NHSN 2020–2026 年 16,218 个州周流感住院数据：流行初期仿射 FGLS 拟合得经验交叉点约为 22.6 例/周（规模项斜率 $b = 2.2434$ 显著为正，截距 $a = 0.0991$ 为与规模无关经验损失截距；该值在不同规格下呈现 10.6–42.7 的分布跨度，需注意周捕获规模 $D_t$ 与理论 $m$ 存在维度映射差异）；
-   英文对照：On the empirical side, using 16,218 state-weeks of US CDC NHSN influenza hospitalization data for 2020–2026: an affine FGLS fit in the early epidemic phase gives an empirical crossover of about 22.6 cases per week (the scale-term slope $b = 2.2434$ is significantly positive, and the intercept $a = 0.0991$ is the scale-independent empirical loss intercept; this value spans 10.6–42.7 across specifications, and note that there is a dimensional-mapping difference between the weekly captured scale $D_t$ and the theoretical $m$);
-9. 原文：误差预算分解表明与规模无关份额占 39%–55%（回顾口径三成分 54.6% / 二成分 54.8%），大规模观测（$D_t \ge 250$）误差降至全体平均的约六成；
-   英文对照：the error-budget decomposition shows that the scale-independent share is 39%–55% (retrospective specification: 54.6% with three components and 54.8% with two components), and the error of large-scale observations ($D_t \ge 250$) falls to about 60% of the overall average;
-10. 原文：达峰期近 89% 总体误差来自平稳基准偏移，控制偏移后规模项依然有效（两阶段斜率差异未达统计显著）；
-    英文对照：nearly 89% of the total error in the peak phase comes from the shift of the stationary baseline, and after controlling for this shift the scale term remains effective (the difference in slopes between the two phases is not statistically significant);
-11. 原文：时变交叉点在流感季（中位数 19.7–20.4）与非流感季（46.9–47.9）系统性分异。
-    英文对照：the time-varying crossover differs systematically between the influenza season (median 19.7–20.4) and the off-season (46.9–47.9).
-12. 原文：上述定量参照为监测资源在扩大捕获、多期平滑与引入环境协变量之间的优化配置提供了分析判据。
-    英文对照：These quantitative references provide an analytical criterion for the optimal allocation of surveillance resources among expanding case capture, multi-period smoothing and introducing environmental covariates.
-13. 原文关键词：疫情增长判定；分支过程；超传播；漏报；环境随机性；监测设计；短期预测；预测误差分解；流感住院实证。
-    英文对照：Keywords: epidemic growth determination; branching process; superspreading; under-reporting; environmental stochasticity; surveillance design; short-term forecasting; forecast error decomposition; empirical study of influenza hospitalizations.
+1. 原文：准确识别疫情增长并预测短期病例负担是现代传染病预警的核心任务。
+   英文对照：Accurately identifying epidemic growth and forecasting the short-term case burden are core tasks of modern infectious-disease early warning.
+2. 原文：常规直觉认为样本量越大推断精度越高，但在个体超传播、不完全检测与共同环境扰动并存时，样本规模与推断信息量不能简单等同。
+   英文对照：Conventional intuition holds that a larger sample size yields higher inferential precision; however, when individual superspreading, incomplete testing and common environmental perturbations coexist, sample size and inferential information cannot simply be equated.
+3. 原文：既有理论主要关注当期瞬时再生数 $R_t$；本文表明，一旦推断目标改变，误差随样本规模的下降规律也随之改变，据此将病例规模何时不再主导推断误差转化为一个条件明确的监测设计问题。
+   英文对照：Existing theories primarily focus on the instantaneous reproduction number $R_t$; this paper shows that once the inferential target changes, the scaling law of error decay with sample size also changes, thereby transforming the question of when case counts cease to dominate inferential error into a well-conditioned surveillance design problem.
+4. 原文：主要理论结果表明：（1）估计当期传播强度 $R_t$ 时，测量方差随期望报告病例数 $m$ 单调趋零；
+   英文对照：Main theoretical results indicate: (1) when estimating the current transmission intensity $R_t$, measurement variance decays monotonically to zero with expected reported case counts $m$;
+5. 原文：（2）以单期数据估计跨期平均传播水平 $\bar R$ 时，单期推断留存不可消除的环境方差底板 $v_R$，由此导出抽样方差与环境方差相等的收益拐点 $m_\times$；
+   英文对照：(2) when using single-period data to estimate the cross-period average transmission level $\bar R$, single-period inference retains an irreducible environmental variance floor $v_R$, yielding a crossover return threshold $m_\times$ where sampling and environmental variances balance;
+6. 原文：（3）提高检测报告率 $\rho$ 仅能消除漏报抽稀方差，唯有扩大实际感染基数 $n$ 才能使各项方差同时衰减；
+   英文对照：(3) increasing the reporting rate $\rho$ only eliminates under-reporting thinning variance, whereas only expanding the actual infection base $n$ can simultaneously suppress all variance components;
+7. 原文：（4）时间序列中事后代理增长指标与事前单步预测严格成比例，且误差在极小规模端受更新过程尾部方差二次放大。
+   英文对照：(4) the ex-post proxy growth metric in time series is strictly proportional to the ex-ante one-step forecast, and the error is quadratically amplified at the small-scale extreme by the tail variance of renewal processes.
+8. 原文：实证方面，基于全美 CDC NHSN 流感住院真实监测数据（16,218 个州周观测）：流行初期相对均方误差随规模按 $1/D_t$ 形式递减，经验拐点约为 23 例/周；约四至五成半的误差份额落在与规模无关的拟合底板上；在达峰期，常数均值偏移是误差平台的主要来源，剥离偏差后规模效应依然显著。
+   英文对照：Empirically, based on real US CDC NHSN influenza hospitalization surveillance data (16,218 state-week observations): the relative mean squared error in the early epidemic phase decays with scale as $1/D_t$, with an empirical crossover threshold around 23 cases/week; about 40% to 55% of the error share falls on the scale-independent fitted floor; in the peak phase, constant mean shift is the primary source of the error plateau, and scale effects remain significant after stripping this bias.
+9. 原文：本文进一步分析了 CDC FluSight 前瞻集成预测和欧洲 11 国 COVID-19 数据，两组数据中随病例规模按 $1/D_t$ 衰减的误差项均为正，经验拐点随监测尺度和时间粒度变化。
+   英文对照：We further analyzed CDC FluSight prospective ensemble forecasts and European 11-country COVID-19 data; in both datasets, the error terms decaying as $1/D_t$ with case counts remain positive, while empirical thresholds vary with surveillance scale and temporal granularity.
+10. 原文：这些结果可用于比较扩大样本、延长观测期和采用多模型预测的相对收益。
+    英文对照：These findings can be utilized to compare the relative returns of expanding sample capture, lengthening observation periods, and deploying multi-model ensemble forecasting.
+11. 原文关键词：疫情增长判定；分支过程；超传播；环境随机性；监测设计；误差预算分解；流感住院实证。
+    英文对照：Keywords: epidemic growth determination; branching process; superspreading; environmental stochasticity; surveillance design; error budget decomposition; empirical study of influenza hospitalizations.
 
 

@@ -9,7 +9,7 @@ import re
 import sys
 import subprocess
 
-SRC = r'C:\Users\wangchi2068\.kimi-code\sessions\wd_trae_c14486ecff06\session_16eab20c-4f77-44fa-85dd-43ea90e9b7fc\attachments\f_547f35ef-5748-4abd-b675-f24a21ca0e33-deep-read.md'
+SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'deep-read.md')
 OUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'docs')
 os.makedirs(OUT_DIR, exist_ok=True)
 TEX_PATH = os.path.join(OUT_DIR, 'deep_read.tex')
@@ -389,3 +389,16 @@ with open(TEX_PATH, 'w', encoding='utf-8') as f:
     f.write(full_tex)
 
 print(f"LaTeX generated: {TEX_PATH} ({len(full_tex)} bytes)")
+
+print(f"Compiling with Tectonic: {TEX_PATH} ...")
+cmd = ["tectonic", "--outdir", OUT_DIR, TEX_PATH]
+res = subprocess.run(cmd, capture_output=True, text=True)
+if res.returncode == 0:
+    print(f"PDF successfully built: {PDF_PATH}")
+    dest = os.path.join(os.path.dirname(os.path.abspath(__file__)), '论文深读与理论推导详解.pdf')
+    import shutil
+    shutil.copyfile(PDF_PATH, dest)
+    print(f"Synchronized to root交付件: {dest}")
+else:
+    print("Tectonic compile error:\n", res.stderr)
+
