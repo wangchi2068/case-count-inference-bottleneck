@@ -1086,8 +1086,8 @@ def build_slide_8_empirical(slide):
     create_card(slide, x_right, y_card, w_right, card_h)
     
     fig_w = Cm(16.5)
-    fig_h = Cm(8.30)
-    create_card(slide, x_right + Cm(0.53), y_card + Cm(0.45), fig_w, fig_h, fill_color=C_WHITE, border_color=C_CARD_BORDER)
+    fig_h = Cm(6.80)
+    create_card(slide, x_right + Cm(0.53), y_card + Cm(0.40), fig_w, fig_h, fill_color=C_WHITE, border_color=C_CARD_BORDER)
     
     pic_fig4 = os.path.join(FIGURES_DIR, "fig4_empirical_falsification.png")
     if not os.path.exists(pic_fig4):
@@ -1095,8 +1095,8 @@ def build_slide_8_empirical(slide):
     if os.path.exists(pic_fig4):
         im = Image.open(pic_fig4)
         aspect = im.size[0] / im.size[1]
-        pad_v = Cm(0.15)
-        pad_h = Cm(0.25)
+        pad_v = Cm(0.12)
+        pad_h = Cm(0.20)
         avail_w = fig_w - 2 * pad_h
         avail_h = fig_h - 2 * pad_v
         if avail_w / avail_h > aspect:
@@ -1106,18 +1106,24 @@ def build_slide_8_empirical(slide):
             target_w = avail_w
             target_h = target_w / aspect
         p_x = x_right + Cm(0.53) + (fig_w - target_w) / 2
-        p_y = y_card + Cm(0.45) + (fig_h - target_h) / 2
+        p_y = y_card + Cm(0.40) + (fig_h - target_h) / 2
         slide.shapes.add_picture(pic_fig4, p_x, p_y, width=target_w, height=target_h)
         
-    tb_fig4_cap = slide.shapes.add_textbox(x_right + Cm(0.6), y_card + Cm(8.90), w_right - Cm(1.2), Cm(0.45))
+    tb_fig4_cap = slide.shapes.add_textbox(x_right + Cm(0.6), y_card + Cm(7.35), w_right - Cm(1.2), Cm(0.45))
     tf_fig4_cap = tb_fig4_cap.text_frame
     p_cap4 = tf_fig4_cap.paragraphs[0]
     r_cap4 = p_cap4.add_run()
     format_run(r_cap4, "图 4：全美流感住院实证拟合、分箱分布与机制分解", size_pt=11.2, bold=True, color=C_PRIMARY_BLUE)
     
-    add_takeaway_card(slide, x_right + Cm(0.6), y_card + Cm(9.50), w_right - Cm(1.2), Cm(5.20),
-                      "【实证检验总结与大论文论证闭环】",
-                      "实证完全支持理论预测形态：(a) FGLS 仿射线与分箱均值紧密契合；(b) 离散度 var/mean^2 从 5.32 降至 0.99；(c) 达峰期 88.9% 误差由基准漂移解释，控制后规模项仍显著为正；(d) 政策冲击与全国汇总（RelMSE=0.0348）验证了空间汇聚对偶收益。全套实证经受住事前信息集与 213 项一致性回归检验。",
+    s8_tag = "【实证检验总结与大论文论证闭环】"
+    s8_body = (
+        "• 仿射拟合高度显著：FGLS 证实 1/D 衰减项客观存在 (b=2.24 极显著，p<10^-4，平衡点 22.6 例/周)\n"
+        "• 达峰机制彻底反转：88.9% 误差由基准漂移解释，控制后规模项仍显著为正，推翻失效误读\n"
+        "• 空间汇聚突破底板：全国 51 辖区加总方差降至 0.0348，验证弱相关空间汇聚对偶收益\n"
+        "• 严格质量保证：实证完全经受住纯事前筛选与 213 项一致性回归检验，全链条自洽"
+    )
+    add_takeaway_card(slide, x_right + Cm(0.6), y_card + Cm(7.90), w_right - Cm(1.2), Cm(6.80),
+                      s8_tag, s8_body,
                       bg_color=C_HIGHLIGHT_BG, border_color=C_HIGHLIGHT_BD)
     sanitize_all_slide_shapes(slide)
 
