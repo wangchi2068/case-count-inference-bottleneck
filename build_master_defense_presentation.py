@@ -293,88 +293,68 @@ def build_slide_1_cover(slide):
 # ==============================================================================
 def build_slide_2_overview(slide):
     clear_slide(slide)
-    add_header(slide, "00 / 课题全景与大论文架构  •  THESIS STRUCTURE & MID-TERM PROGRESS", "大论文七章体系与中期进展全景", "02 / 11")
+    add_header(slide, "00 / 课题全景与大论文架构  •  THESIS STRUCTURE & MID-TERM PROGRESS", "大论文七章体系与技术路线全景 (85页规划)", "02 / 11")
 
     y_card = Cm(2.65)
-    card_h = Cm(15.2)
-
-    # Left Column: The 7-Chapter Structure Tree
+    total_w = Cm(30.87)
     x_left = Cm(1.5)
-    w_left = Cm(15.0)
-    create_card(slide, x_left, y_card, w_left, card_h)
 
-    tb_l = slide.shapes.add_textbox(x_left + Cm(0.6), y_card + Cm(0.45), w_left - Cm(1.2), Cm(0.6))
-    tf_l = tb_l.text_frame
-    p_l = tf_l.paragraphs[0]
-    r_l = p_l.add_run()
-    format_run(r_l, "大论文七大主体章节规划（预计 80~85 页）", size_pt=14, bold=True, color=C_PRIMARY_BLUE)
-
-    # Left Box: High-Resolution Technical Roadmap Schematic
-    card_map = create_card(slide, x_left + Cm(0.5), y_card + Cm(1.2), w_left - Cm(1.0), Cm(13.5), fill_color=C_WHITE, border_color=C_CARD_BORDER)
+    # Top Section: Grand Landscape Technical Roadmap Box (height 9.4cm)
+    h_top = Cm(9.4)
+    card_map = create_card(slide, x_left, y_card, total_w, h_top, fill_color=C_WHITE, border_color=C_CARD_BORDER)
     pic_map = os.path.join(FIGURES_DIR, "fig0_technical_roadmap.png")
     if os.path.exists(pic_map):
         im_m = Image.open(pic_map)
         asp = im_m.size[0] / im_m.size[1]
-        avail_w = w_left - Cm(1.6)
-        avail_h = Cm(13.1)
+        avail_w = total_w - Cm(0.6)
+        avail_h = h_top - Cm(0.6)
         if avail_w / avail_h > asp:
             tgt_h = avail_h
             tgt_w = tgt_h * asp
         else:
             tgt_w = avail_w
             tgt_h = tgt_w / asp
-        p_x = x_left + Cm(0.5) + (w_left - Cm(1.0) - tgt_w) / 2
-        p_y = y_card + Cm(1.2) + (Cm(13.5) - tgt_h) / 2
+        p_x = x_left + (total_w - tgt_w) / 2
+        p_y = y_card + (h_top - tgt_h) / 2
         slide.shapes.add_picture(pic_map, p_x, p_y, width=tgt_w, height=tgt_h)
 
-    # Right Column: Mid-term Progress Radar & Quantitative Milestones
-    x_right = Cm(17.3)
-    w_right = Cm(15.07)
-    create_card(slide, x_right, y_card, w_right, card_h)
-
-    tb_r = slide.shapes.add_textbox(x_right + Cm(0.6), y_card + Cm(0.45), w_right - Cm(1.2), Cm(0.6))
-    tf_r = tb_r.text_frame
-    p_r = tf_r.paragraphs[0]
-    r_r = p_r.add_run()
-    format_run(r_r, "中期完成度指标与核心学术储备", size_pt=14, bold=True, color=C_PRIMARY_BLUE)
+    # Bottom Section: 4 Horizontal KPI Milestone Cards (height 5.4cm)
+    y_bot = y_card + h_top + Cm(0.35)
+    h_bot = Cm(5.4)
+    w_kpi = (total_w - Cm(0.9)) / 4 # 4 columns
+    gap_kpi = Cm(0.3)
 
     kpis = [
-        ("理论推导闭环", "6 大命题 + 1 核心推论", "PGF 复合封闭、Score 方程、无偏性验证、Fisher 信息双套算法、Cochran 对偶全闭式解"),
-        ("真实实证样本", "16,218 原始记录", "严格客观筛选 D_t ≥ 5，10,303 活跃周样本，三大历史制度期 6009+420+3874 算术严密闭环"),
-        ("回归校验套件", "213 项全域数字检验", "包含多重聚类 Bootstrap CI [-2.33, 0.59]、仿射参数 22.6 等全量测试 100% 绿色通过"),
-        ("前期成果基础", "28 页高水平期刊稿", "小论文全文定稿，获高分审稿评价；大论文框架已成型，已具备 80 页展开的坚实基石")
+        ("理论体系闭环", "6 大命题 + 1 核心推论", "PGF复合封闭、CRLB UMVUE达到、杠杆非对称性、Cochran对偶闭式解"),
+        ("真实大数据实证", "16,218 原始 -> 10,303 样本", "客观筛选无覆盖率偏误，三大制度期 6009+420+3874=10303 严密自洽闭环"),
+        ("双重质量检验", "213 项全域回归测试全绿", "多重聚类Bootstrap CI [-2.33, 0.59]、仿射参数 22.6 等一致性核验 100% 通过"),
+        ("大论文推进进度", "整整 85 页大论文定稿", "七大主体章节+保姆级附录+80篇文献全面就绪，具备优秀硕士学位论文坚实骨架")
     ]
 
-    y_kpi = y_card + Cm(1.25)
-    for head, val, detail in kpis:
-        card_k = create_card(slide, x_right + Cm(0.5), y_kpi, w_right - Cm(1.0), Cm(2.4), fill_color=C_WHITE, border_color=C_CARD_BORDER)
-        tb_k = slide.shapes.add_textbox(x_right + Cm(0.8), y_kpi + Cm(0.2), w_right - Cm(1.6), Cm(2.0))
+    for i, (head, val, detail) in enumerate(kpis):
+        xk = x_left + i * (w_kpi + gap_kpi)
+        card_k = create_card(slide, xk, y_bot, w_kpi, h_bot, fill_color=C_CARD_BG, border_color=C_CARD_BORDER)
+        tb_k = slide.shapes.add_textbox(xk + Cm(0.3), y_bot + Cm(0.25), w_kpi - Cm(0.6), h_bot - Cm(0.5))
         tf_k = tb_k.text_frame
         tf_k.word_wrap = True
         
         p1 = tf_k.paragraphs[0]
         r1_h = p1.add_run()
-        format_run(r1_h, head + "：", size_pt=11, bold=True, color=C_TEXT_DARK)
-        r1_v = p1.add_run()
+        format_run(r1_h, head, size_pt=11.0, bold=True, color=C_NAVY_DARK)
+        
+        p_val = tf_k.add_paragraph()
+        p_val.space_before = Pt(2)
+        r1_v = p_val.add_run()
         format_run(r1_v, val, size_pt=11.5, bold=True, color=C_PRIMARY_BLUE)
         
         p2 = tf_k.add_paragraph()
-        p2.line_spacing = 1.2
+        p2.line_spacing = 1.15
         p2.space_before = Pt(3)
         r2 = p2.add_run()
         format_run(r2, detail, size_pt=9.2, color=C_TEXT_BODY)
-        
-        y_kpi += Cm(2.55)
 
-    add_takeaway_card(slide, x_right + Cm(0.5), y_card + Cm(11.8), w_right - Cm(1.0), Cm(2.9),
-                      "【中期考核自评与工作定位】",
-                      "本课题已完成全部数学命题定理推导、蒙特卡洛数值仿真及全美流感与欧洲 COVID-19 实证检验，工作量高度饱满。目前已全面启动 80~85 页大论文分章撰写，各章节内容骨架扎实，完全符合硕士研究生中期考核与优秀学位论文培养标准。",
-                      bg_color=C_HIGHLIGHT_BG, border_color=C_HIGHLIGHT_BD)
     sanitize_all_slide_shapes(slide)
 
-# ==============================================================================
-# Slide 3: 第一章 绪论 · 研究背景与核心设问 (Chapter 1)
-# ==============================================================================
 def build_slide_3_intro(slide):
     clear_slide(slide)
     add_header(slide, "01 / 绪论：研究背景与核心设问  •  RESEARCH MOTIVATION & OBJECTIVES", "常识直觉与统计本质：监测规模越大越好吗？", "03 / 11")
