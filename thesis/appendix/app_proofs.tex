@@ -1,0 +1,85 @@
+\chapter{数学命题保姆级代数推导补充}\label{app:proofs}
+
+本附录为正文第三章与第四章的所有理论命题与推论提供不跳步的教科书级保姆式代数推导细节，以满足基础数学与数理统计学严格规范。
+
+\section{命题 1 中得分函数负二阶导期望的逐步代数推导}\label{app:sec_prop1_fisher}
+在第三章命题 1 的式~\eqref{eq:fisher_alg2} 中，需要计算：
+\begin{equation}
+\mathcal{I}(R_t \mid n) = \E\left[ \frac{C_t}{R_t^2} - \frac{\rho^2(nk + C_t)}{(k + \rho R_t)^2} \;\middle|\; n, R_t \right].
+\end{equation}
+由期望的线性性质：
+\begin{equation}
+\mathcal{I}(R_t \mid n) = \frac{\E[C_t]}{R_t^2} - \frac{\rho^2 nk + \rho^2 \E[C_t]}{(k + \rho R_t)^2}.
+\end{equation}
+代入条件期望 $\E[C_t \mid n, R_t] = \rho n R_t$：
+\begin{align}
+\mathcal{I}(R_t \mid n) &= \frac{\rho n R_t}{R_t^2} - \frac{\rho^2 nk + \rho^3 n R_t}{(k + \rho R_t)^2} \notag \\
+&= \frac{\rho n}{R_t} - \frac{\rho^2 n(k + \rho R_t)}{(k + \rho R_t)^2} \notag \\
+&= \frac{\rho n}{R_t} - \frac{\rho^2 n}{k + \rho R_t}.
+\end{align}
+进行两分式通分，公分母为 $R_t(k + \rho R_t)$：
+\begin{align}
+\mathcal{I}(R_t \mid n) &= \frac{\rho n(k + \rho R_t) - \rho^2 n R_t}{R_t(k + \rho R_t)} \notag \\
+&= \frac{\rho n k + \rho^2 n R_t - \rho^2 n R_t}{R_t(k + \rho R_t)} \notag \\
+&= \frac{k \rho n}{R_t(k + \rho R_t)}.
+\end{align}
+代数对消完全恒等，确认 Fisher 信息量严格成立。
+
+\section{命题 4 中 AR(1) 错位相减求和级数推导补遗}\label{app:sec_prop4_ar1}
+在式~\eqref{eq:series_S} 中求解：
+\begin{equation}
+S = \sum_{s=1}^{T-1} (T - s) r^s = (T-1)r + (T-2)r^2 + \dots + 2 r^{T-2} + 1 \cdot r^{T-1}.
+\end{equation}
+两端乘 $r$：
+\begin{equation}
+r S = (T-1)r^2 + (T-2)r^3 + \dots + 2 r^{T-1} + 1 \cdot r^T.
+\end{equation}
+两式对应同次项相减：
+\begin{align}
+(1 - r) S &= (T-1)r + \big[ (T-2) - (T-1) \big] r^2 + \big[ (T-3) - (T-2) \big] r^3 + \dots + \big[ 1 - 2 \big] r^{T-1} - r^T \notag \\
+&= (T-1)r - r^2 - r^3 - \dots - r^{T-1} - r^T \notag \\
+&= Tr - r - r^2 - r^3 - \dots - r^T \notag \\
+&= Tr - \sum_{s=1}^T r^s.
+\end{align}
+由等比数列前 $T$ 项和公式 $\sum_{s=1}^T r^s = \frac{r(1 - r^T)}{1 - r}$，直接代入：
+\begin{equation}
+(1 - r) S = Tr - \frac{r(1 - r^T)}{1 - r}.
+\end{equation}
+两端除以非零常数 $(1 - r)$：
+\begin{equation}
+S = \frac{Tr}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2}.
+\end{equation}
+代数展开完全封闭且无跳步。
+
+\section{推论 1 成本优化函数一阶导驻点与二阶导符号判定}\label{app:sec_cor1_convex}
+目标函数为：
+\begin{equation}
+f(m) = \frac{1}{\mathcal{B}} \left( c_0 v_R + c_1 v_R m + \frac{c_0 A}{m} + c_1 A \right).
+\end{equation}
+利用幂函数求导法则：
+\begin{equation}
+\frac{d}{dm}(m) = 1, \quad \frac{d}{dm}\left( \frac{1}{m} \right) = -\frac{1}{m^2}, \quad \frac{d}{dm}\left( -\frac{1}{m^2} \right) = \frac{2}{m^3}.
+\end{equation}
+因此一阶导数为：
+\begin{equation}
+f'(m) = \frac{1}{\mathcal{B}} \left( c_1 v_R - \frac{c_0 A}{m^2} \right).
+\end{equation}
+令 $f'(m) = 0 \implies c_1 v_R = \frac{c_0 A}{m^2} \implies m^2 = \frac{c_0 A}{c_1 v_R}$。
+由于规模 $m$ 代表期望报告病例数，必须取正实数 $m > 0$，故排除负根，唯一驻点为：
+\begin{equation}
+m^* = \sqrt{\frac{c_0 A}{c_1 v_R}} = \sqrt{\frac{c_0}{c_1} m_\times}.
+\end{equation}
+
+对 $f'(m)$ 再次求导：
+\begin{equation}
+f''(m) = \frac{1}{\mathcal{B}} \left( 0 - c_0 A \cdot \left( -\frac{2}{m^3} \right) \right) = \frac{2 c_0 A}{\mathcal{B} m^3}.
+\end{equation}
+由于物理与经济参数均为严格正实数：
+\begin{equation}
+c_0 > 0, \quad A = \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k} > 0, \quad \mathcal{B} > 0, \quad m > 0.
+\end{equation}
+因此分子 $2 c_0 A > 0$ 且分母 $\mathcal{B} m^3 > 0$，故对一切 $m \in (0, \infty)$：
+\begin{equation}
+f''(m) > 0.
+\end{equation}
+根据凸分析经典定理，二阶导在开区间上恒正充分且必要地保证了 $f(m)$ 为严格凸函数，唯一驻点为全局唯一最小值点。

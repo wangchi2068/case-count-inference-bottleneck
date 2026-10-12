@@ -1,0 +1,180 @@
+\chapter{核心模拟与计量回归 Python 源码清单}\label{app:codes}
+
+本附录提供论文第四章与第五章核心数值模拟、假设检验功效枚举、FGLS 迭代加权回归及按州聚类 Bootstrap 的核心 Python 算法源码实现，以确保全书所有经验结果与图表具备 100\% 的可复现性。
+
+\section{负二项分支过程与二项报告抽稀离散仿真实现}\label{app:code_branching}
+\begin{lstlisting}[language=Python, caption={两阶段负二项分支过程与二项抽稀模拟核心函数}]
+import numpy as np
+from scipy import stats
+
+def simulate_branching_thinning(n, R_t, k, rho, num_replications=50000, seed=20260923):
+    """
+    两阶段分层数据生成机制的蒙特卡洛随机模拟
+    输入参数:
+        n: 上一代真实风险集规模
+        R_t: 当期瞬时再生数
+        k: 生物学过度离散参数
+        rho: 条件二项报告抽样率
+        num_replications: 蒙特卡洛独立重复试验次数
+    返回:
+        I_t: 真实感染病例数样本数组
+        C_t: 观测报告病例数样本数组
+        R_hat: 瞬时再生数矩估计量样本数组
+    """
+    rng = np.random.default_rng(seed)
+    
+    # 形状参数与成功概率映射
+    r_shape = n * k
+    p_success = k / (k + R_t)
+    
+    # 第一阶段: 微观负二项感染总数生成
+    I_t = rng.negative_binomial(n=r_shape, p=p_success, size=num_replications)
+    
+    # 第二阶段: 宏观条件二项报告抽稀过程
+    C_t = rng.binomial(n=I_t, p=rho)
+    
+    # 目标 A: 矩估计量计算
+    m = rho * n
+    R_hat = C_t / m
+    
+    return I_t, C_t, R_hat
+
+def verify_cramer_rao(n=100, R_t=1.2, k=0.35, rho=0.25):
+    """验证 Cramér-Rao 下界与仿真方差的比值收敛性"""
+    _, _, R_hat = simulate_branching_thinning(n, R_t, k, rho)
+    emp_var = np.var(R_hat, ddof=1)
+    theo_var = (R_t / (rho * n)) + (R_t**2 / (k * n))
+    ratio = emp_var / theo_var
+    print(f"仿真方差: {emp_var:.6f}, 解析 CRLB: {theo_var:.6f}, 比值: {ratio:.4f}")
+    assert 0.98 <= ratio <= 1.02, "方差偏离超出理论置信区间！"
+\end{lstlisting}
+
+\section{命题 5 超临界增长精确检验与临界值枚举算法}\label{app:code_testing}
+\begin{lstlisting}[language=Python, caption={精确负二项 UMP 检验临界值搜索与功效枚举算法}]
+def compute_critical_threshold(n, k, rho, alpha=0.05):
+    """
+    基于边界点 R_t = 1 精确搜索离散拒绝阈值 c_alpha
+    使一类错误率上确界严格满足 sup Pr(C_t >= c_alpha) <= alpha
+    """
+    r_shape = n * k
+    p_null = k / (k + rho * 1.0)
+    
+    # 利用生存函数 (sf) 进行离散整数单调搜索
+    # stats.nbinom.sf(c - 1, r, p) 计算 Pr(Y >= c)
+    c = int(np.floor(rho * n * 1.0)) # 初始猜测起点
+    while stats.nbinom.sf(c - 1, r_shape, p_null) > alpha:
+        c += 1
+    return c
+
+def enumerate_exact_power(n_grid, delta=0.25, k=0.35, rho=0.25, alpha=0.05):
+    """
+    计算给定备择强度 R_t = 1 + delta 下的精确统计功效曲线
+    """
+    powers = []
+    c_thresholds = []
+    
+    for n in n_grid:
+        c_alpha = compute_critical_threshold(n, k, rho, alpha)
+        r_shape = n * k
+        p_alt = k / (k + rho * (1.0 + delta))
+        
+        # 精确功效计算: 1 - I_p(nk, c_alpha)
+        power = stats.nbinom.sf(c_alpha - 1, r_shape, p_alt)
+        powers.append(power)
+        c_thresholds.append(c_alpha)
+        
+    return np.array(c_thresholds), np.array(powers)
+\end{lstlisting}
+
+\section{两阶段可行广义最小二乘法 (FGLS) 迭代回归算法}\label{app:code_fgls}
+\begin{lstlisting}[language=Python, caption={基于残差平方倒数加权的两阶段 FGLS 回归算法}]
+import statsmodels.api as sm
+
+def run_fgls_affine_regression(D, Loss, max_iter=10, tol=1e-6):
+    """
+    可行广义最小二乘法 (FGLS) 估计仿射参数: Loss = a + b / D + u
+    输入:
+        D: 有效暴露规模数组 (N 维)
+        Loss: 相对预测损失数组 (N 维)
+    输出:
+        a_hat: 不可约环境方差截距项
+        b_hat: 规模反比斜率项
+        crossover: 经验特征规模平衡点 b / a
+    """
+    X = np.column_stack([np.ones_like(D), 1.0 / D])
+    
+    # 第一阶段: 普通 OLS 初始一致估计
+    ols_model = sm.OLS(Loss, X).fit()
+    params = ols_model.params
+    
+    for iteration in range(max_iter):
+        fitted_loss = np.dot(X, params)
+        # 截断保护以防止非正权重
+        fitted_loss = np.maximum(fitted_loss, 1e-4)
+        
+        # 构造对角方差权重: w_i = 1 / (mu_i)^2
+        weights = 1.0 / (fitted_loss ** 2)
+        
+        # 第二阶段: 加权最小二乘求解 (WLS)
+        wls_model = sm.WLS(Loss, X, weights=weights).fit()
+        new_params = wls_model.params
+        
+        # 判定收敛性
+        if np.max(np.abs(new_params - params)) < tol:
+            params = new_params
+            break
+        params = new_params
+        
+    a_hat, b_hat = params[0], params[1]
+    crossover = b_hat / a_hat if a_hat > 0 else np.nan
+    return a_hat, b_hat, crossover, wls_model
+\end{lstlisting}
+
+\section{按州聚类非参数 Bootstrap 统计推断算法}\label{app:code_bootstrap}
+\begin{lstlisting}[language=Python, caption={按地理辖区聚类的非参数 Bootstrap 标准误估计}]
+import pandas as pd
+
+def cluster_bootstrap_fgls(df, state_col='state', B=1500, seed=20261010):
+    """
+    按州聚类的非参数 Bootstrap 抽样检验
+    输入:
+        df: 包含 state, D_t, Loss 列的面板数据框
+        B: 重抽样轮数 (基准 1500 次)
+    输出:
+        b_ci: 斜率项 95% 置信区间
+        m_x_ci: 特征平衡点 95% 置信区间
+        p_val: b <= 0 的单侧经验 p 值
+    """
+    rng = np.random.default_rng(seed)
+    unique_states = df[state_col].unique()
+    num_states = len(unique_states)
+    
+    b_bootstraps = []
+    crossover_bootstraps = []
+    
+    for b_idx in range(B):
+        # 按州整群重抽 (有放回抽样)
+        resampled_states = rng.choice(unique_states, size=num_states, replace=True)
+        
+        # 组装重抽样样本池
+        boot_df = pd.concat([df[df[state_col] == s] for s in resampled_states], ignore_index=True)
+        
+        # 重新内生计算达峰期均值与损失
+        D_boot = boot_df['D_t'].values
+        Loss_boot = boot_df['Loss'].values
+        
+        # 重新运行完整的 FGLS 迭代加权回归
+        a_b, b_b, m_b, _ = run_fgls_affine_regression(D_boot, Loss_boot)
+        b_bootstraps.append(b_b)
+        crossover_bootstraps.append(m_b)
+        
+    b_bootstraps = np.array(b_bootstraps)
+    crossover_bootstraps = np.array(crossover_bootstraps)
+    
+    # 计算百分位数置信区间
+    b_ci = np.percentile(b_bootstraps, [2.5, 97.5])
+    m_x_ci = np.percentile(crossover_bootstraps, [2.5, 97.5])
+    p_val = np.mean(b_bootstraps <= 0.0)
+    
+    return b_ci, m_x_ci, p_val
+\end{lstlisting}
