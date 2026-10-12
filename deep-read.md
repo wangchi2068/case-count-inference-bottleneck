@@ -1,9 +1,10 @@
 # 论文深读与理论推导详解：《疫情监测中的病例规模收益边界：估计目标、环境随机性与外部验证》
 
 - **英文标题（原文）**：Boundaries of Surveillance Scale Returns in Epidemic Monitoring: Estimation Targets, Environmental Stochasticity, and External Validation
-- **来源仓库**：https://github.com/wangchi2068/case-count-inference-bottleneck （最新定稿 commit `80e7d39`，2026 年 10 月 10 日）
+- **来源仓库**：https://github.com/wangchi2068/case-count-inference-bottleneck （最新定稿 commit `91ae6ab`，2026 年 10 月）
 - **深读依据**：仓库内权威定稿正文 `paper/main.tex`（28 页）、理论附录 A.1–A.6、全美 NHSN 流感实证、CDC FluSight 前瞻集成验证与欧洲 11 国 COVID-19 扩展实验。
-- **阅读对象**：应用统计专业硕士（MAS）及生物数学/动力学建模方向研究生。旨在不仅讲清公式“是什么”，更深度拆解“为什么这样推”、“直觉怎么理解”、“参数怎么设定与文献依据”、“实证样本量 N 是什么与怎么选的”以及“评委可能怎么问”。
+- **阅读对象**：应用统计专业硕士（MAS）及生物数学/动力学建模方向研究生。本文不仅讲清公式“是什么”，更深度拆解“为什么这样推”、“直觉怎么理解”、“用到某个结论时原文公式是什么”、“参数怎么设定与文献依据”、“实证样本量 N 是什么与怎么选的”以及“评委可能怎么问”。
+- **本版新增**：全文每一个推导节点均完整标注 **【正文公式编号与原文表达式】**，凡调用某结论处一律回填原公式原文，做到不自洽不说、闭环引用。
 
 ---
 
@@ -13,7 +14,7 @@
 
 1. **微观概率论支柱**：从经典生灭分支过程（Galton–Watson 过程）出发，引入生物学超传播机制（Gamma 混合泊松分布，即负二项分布）与宏观观测不完全性（二项报告抽样过程），建立了双层随机生成机制；
 2. **渐近统计推断支柱**：利用概率母函数（PGF）复合律证明了分布族闭包，计算得分函数与 Fisher 信息矩阵，严格证明了一致最小方差无偏估计（UMVUE）并达到 Cramér–Rao 下界；
-3. **运筹与抽样设计支柱**：将理论方差分解与流行病学监测资源预算结合，推导了时间与样本规模的二维权衡闭式解，在数学形式上同构于经典两阶段抽样模型（Cochran 费用分配模型）的同构关系；
+3. **运筹与抽样设计支柱**：将理论方差分解与流行病学监测资源预算结合，推导了时间与样本规模的二维权衡闭式解，在数学形式上同构于经典两阶段抽样模型（Cochran 费用分配模型）；
 4. **经验计量与实证支柱**：不满足于纯理论推导，而是采集全美 CDC NHSN 长达六年、涵盖 50 州及 DC 的 16,218 条真实住院周度记录，采用可行广义最小二乘法（FGLS）与聚类 Bootstrap 检验，破除了达峰期“样本量失效”的传统误读，并扩展至 CDC FluSight 与欧洲 COVID-19 多场景。
 
 读懂这篇论文的秘诀在于：**时刻牢记“推断目标决定规模收益”这一灵魂红线**。
@@ -108,9 +109,35 @@ $$\bar{\tau} = 1 \times 0.65 + 2 \times 0.25 + 3 \times 0.10 = 1.45 \text{ 周} 
 
 ---
 
+---
+
+## 理论工具箱速查：推导中调用的 12 大经典数理统计原公式
+
+为了保证全书推导的不跳步可读性，在展开命题证明前，本节集中列明全篇推导所反复调用的 12 个经典数理统计基础原公式：
+
+| 序号 | 经典定理 / 原公式名称 | 标准数理统计原公式表达 | 在本文推导中的调用位置 |
+| :---: | :--- | :--- | :--- |
+| **(1)** | **欧拉 Gamma 函数严格积分定义** | $\Gamma(\alpha) \equiv \int_0^\infty u^{\alpha-1} e^{-u} du$ | 命题 1 前置：Gamma 混合换元积分 |
+| **(2)** | **负二项分布标准 PGF 母函数** | $G_X(s) \equiv \mathbb{E}[s^X] = [p / (1 - (1-p)s)]^r$ | 命题 1：二代独立分支和母函数展开 |
+| **(3)** | **复合随机和母函数复合定理** | 若 $S = \sum_{i=1}^N X_i$，则 $G_S(s) = G_N(G_X(s))$ | 命题 1：二项报告抽稀保族封闭性证明 |
+| **(4)** | **负二项均值与方差标准公式** | $\mathbb{E}[X] = r(1-p)/p, \; \operatorname{Var}(X) = r(1-p)/p^2$ | 命题 1：观测二阶矩与超传播方差解构 |
+| **(5)** | **条件全期望公式 (塔式法则)** | $\mathbb{E}[Y] = \mathbb{E}_X[ \mathbb{E}[Y \mid X] ]$ | 命题 1：估计量极大似然全域无偏性证明 |
+| **(6)** | **条件全方差公式 (Law of Total Variance)** | $\operatorname{Var}(Y) = \operatorname{Var}(\mathbb{E}[Y \mid X]) + \mathbb{E}[\operatorname{Var}(Y \mid X)]$ | 命题 2 & 命题 6：跨期与更新过程方差正交分解 |
+| **(7)** | **二阶原点矩与方差恒等式** | $\mathbb{E}[Y^2] = \operatorname{Var}(Y) + (\mathbb{E}[Y])^2$ | 命题 2：代入不可约环境方差 $v_R + \bar{R}^2$ |
+| **(8)** | **Fisher 信息量双套标准定义** | $\mathcal{I}(\theta) = \operatorname{Var}(\partial \ln L / \partial \theta) = \mathbb{E}[-\partial^2 \ln L / \partial \theta^2]$ | 命题 1：信息量得分方差法与二阶导期望法验证 |
+| **(9)** | **Cramér–Rao 不等式与 UMVUE 判据** | 对任意无偏估计量 $\hat{\theta}$，$\operatorname{Var}(\hat{\theta}) \ge 1/\mathcal{I}(\theta)$ | 命题 1：证明单代估计量严格达到下界 |
+| **(10)** | **有限等比数列求和公式** | $\sum_{s=1}^T q^s = q(1 - q^T)/(1 - q)$ | 命题 4：AR(1) 错位相减级数求和闭式求解 |
+| **(11)** | **Cochran (1977) 两阶段费用分配模型** | $m_{\text{Cochran}} = \sqrt{c_1 S_2^2 / [c_2 (S_1^2 - S_2^2/M)]}$ | 推论 1：成本优化一阶驻点与抽样同构 |
+| **(12)** | **Karlin–Rubin 一致最优检验 (UMP) 定理** | 若分布族具单调似然比 (MLR)，则上尾拒绝域在边界上确界控制水平 | 命题 5：超临界增长精确 UMP 检验构建 |
+
+---
+
 ## 第三部分：数学命题教学级逐行拆解与深入证明（保姆级代数展开）
 
 本部分面向数学与统计学严格标准，将附录与正文中的每一个定理进行保姆级代数展开，绝不跳步。
+**凡调用某个已证结论时，均先回填【正文公式编号与原文表达式】，再展开。**
+
+---
 
 ### 3.1 命题 1 前置：Gamma–Poisson 混合积分逐行展开与“成功概率” $p$ 的物理本质
 
@@ -150,6 +177,13 @@ $$\Pr(X = x) = \frac{\Gamma(x+k)}{x! \Gamma(k)} p^k (1 - p)^x \equiv \operatorna
 
 ### 3.2 命题 1：条件似然、得分函数、无偏性与 Cramér–Rao 下界
 
+> **【调用 1 · 正文式 (1)】**
+> $$\mathbb{E}[X_{i,t} \mid R_t] = R_t, \qquad \operatorname{Var}(X_{i,t} \mid R_t) = R_t + \frac{R_t^2}{k} \tag{eq:nb\_branching}$$
+> 正文将个体继发感染的条件一阶矩与二阶矩合起来写为过离散负二项分支模型。
+
+> **【调用 2 · 正文式 (2)】**
+> $$C_t \mid I_t \sim \operatorname{Binomial}(I_t, \rho) \tag{eq:binomial\_obs}$$
+
 #### 3.2.1 PGF 复合律保族性逐行推导
 每个感染者独立以概率 $\rho$ 上报，报告数 $C_t = \sum_{j=1}^{I_t} B_j$，其中 $B_j \sim \operatorname{Bernoulli}(\rho)$，其 PGF 为 $G_B(s) = (1 - \rho) + \rho s$。
 上一代 $n$ 个人产生的感染总数 $I_t \sim \operatorname{NB}(nk, p)$，其 PGF 为：
@@ -163,6 +197,9 @@ $$G_{C_t}(s) = \left( \frac{\frac{p}{p + \rho(1-p)}}{1 - \frac{\rho(1-p)}{p + \r
 定义新成功概率 $p^* \triangleq \frac{p}{p + \rho(1-p)}$。代入 $p = \frac{k}{k+R_t}$ 与 $1-p = \frac{R_t}{k+R_t}$：
 $$p^* = \frac{\frac{k}{k + R_t}}{\frac{k}{k + R_t} + \rho \frac{R_t}{k + R_t}} = \frac{k}{k + \rho R_t}$$
 对比负二项标准 PGF 形式，直接证明了：**观测值 $C_t \mid n, R_t \sim \operatorname{NB}(nk, p^*)$ 严格保族封闭！**
+
+> **【回填 3 · 正文式 (4)】**
+> $$C_t \mid n, R_t \sim \operatorname{NB}\!\left(\text{均值} = \rho n R_t, \; \text{形状参数} = nk\right) \tag{eq:nb\_thinning}$$
 
 #### 3.2.2 负二项方差公式化简
 由负二项分布方差公式，形状参数为 $nk$，成功概率为 $p^*$：
@@ -187,23 +224,32 @@ $$\mathbb{E}[\widehat{R}_t \mid n, R_t] = \frac{1}{\rho n} \cdot \rho (n R_t) = 
 
 #### 3.2.5 Fisher 信息量与 Cramér–Rao 下界确立
 $$\mathcal{I}(R_t \mid n) = \operatorname{Var}(S(R_t)) = \frac{k^2 \operatorname{Var}(C_t)}{R_t^2(k + \rho R_t)^2} = \frac{k^2 \cdot \frac{n \rho R_t (k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n}{R_t(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}$$
+
+> **【回填 4 · 正文式 (5)】**
+> $$\mathcal{I}(R_t \mid n) = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}} \tag{eq:fisher\_info}$$
+
 取倒数得下界：
 $$\mathcal{I}^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \equiv \operatorname{Var}(\widehat{R}_t \mid n, R_t)$$
+
+> **【回填 5 · 正文式 (6)】**
+> $$\operatorname{Var}\!\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) = \mathcal{I}(R_t \mid n)^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{k n} \tag{eq:var\_prop1}$$
+
 无偏估计量方差达到 Cramér–Rao 下界，确立其为 UMVUE！
 
 ---
 
 ### 3.3 命题 2：跨期基础水平的边际方差分解与仿射式推导
 
-> **【核心观察：不可约环境方差 v_R 的双重身份】**
-> 在推导方差前，必须认清 v_R 的物理本质分化：
-> • **对目标 A（当期瞬态）而言**：环境波动正是待测对象本身，其跨期变异不构成误差，单期方差按 O(1/m) 无界衰减；
-> • **对目标 B（跨期平稳）而言**：同一波动退化为不可消除的误差源，单期样本无论多大都无法消除全员共享的单次环境实现！
+> **【核心观察 · 前置洞见：不可约环境方差 $v_R$ 的双重身份】**
+> 在推导方差前，必须认清 $v_R$ 的物理本质分化：
+> - **对目标 A（当期瞬态）而言**：环境波动正是待测对象本身，其跨期变异不构成误差，单期方差按 $O(1/m)$ 无界衰减；
+> - **对目标 B（跨期平稳）而言**：同一波动退化为不可消除的误差源，单期样本无论多大都无法消除全员共享的单次环境实现！
 
-
+> **【调用 6 · 正文式 (3)】**
+> $$\mathbb{E}[R_t \mid n] = \bar{R}, \qquad \operatorname{Var}(R_t \mid n) = v_R > 0 \tag{eq:env\_conditional\_moment}$$
 
 应用全方差公式：
-$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right) + \mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]$$
+$$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right) + \mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right)$$
 - 第一项：由无偏性，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$，故方差为 $\operatorname{Var}(R_t \mid n) = v_R$；
 - 第二项：代入命题 1 条件方差：
   $$\mathbb{E}\left[ \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \;\middle|\; n \right] = \frac{\mathbb{E}[R_t \mid n]}{\rho n} + \frac{\mathbb{E}[R_t^2 \mid n]}{kn}$$
@@ -211,45 +257,64 @@ $$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorna
   $$= \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
 两项相加，整理为仿射结构：
 $$\operatorname{Var} = v_R + \frac{1}{\rho n}\left[ \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k} \right] \equiv v_R + \frac{A}{m}$$
+
+> **【回填 7 · 正文式 (7)】**
+> $$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn} \equiv v_R + \frac{A}{m} \tag{eq:var\_prop2}$$
+
 其中令 $m = \rho n$，标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$。
 
+#### 3.3.1 特征规模平衡点 $m_\times$ 的导出
+联立抽样方差与环境方差，解出两类方差各占 50\% 的临界规模：
+
+> **【回填 8 · 正文式 (8)】**
+> $$\frac{A}{m_\times} = v_R \implies m_\times \equiv \frac{A}{v_R} = \frac{\bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}}{v_R} \tag{eq:crossover\_def}$$
+
+> **【记号注记】**
+> 标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$ 自身仍显式依赖于报告率 $\rho$。因此两个监测系统即使处于相同的 $m = \rho n$，只要报告率 $\rho$ 不同，$A$ 与收益拐点 $m_\times$ 便不相同。$A$ 依赖 $\rho$ 的方式与依赖规模 $m$ 的反比衰减完全不同，这正是命题 3 监测杠杆非对称性的数理根源。
+
 ---
 
-### 3.4 命题 3：监测杠杆的理论非对称性（提高报告率 vs 扩大基数）
+### 3.4 命题 3：监测杠杆的理论非对称性
 
-#### 3.4.1 定理陈述与抽样项的代数拆解
-将命题 2 中的单期边际方差拆解为显式的二元函数 $V(n, \rho)$：
-$$V(n, \rho) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{kn}$$
-观察第二项中出现的 $\frac{\bar{R}}{\rho n}$，通过代数恒等变形分解为“完全报告项”与“漏报抽样惩罚项”：
-$$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1 - \rho)\bar{R}}{\rho n}$$
-代回总方差式，得到三层方差解析结构：
+> **【调用 9 · 正文式 (9)】**
+> $$V(n, \rho) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{k n} \tag{eq:var\_bivariate}$$
+
+> **【调用 10 · 正文式 (10)】**
+> $$\frac{\bar{R}}{\rho n} = \frac{\bar{R}}{n} + \frac{(1 - \rho)\bar{R}}{\rho n} \tag{eq:rho\_decomp}$$
+
+将抽样项拆解后，总方差呈现三层结构：
 $$V(n, \rho) = v_R + \underbrace{\frac{(1 - \rho)\bar{R}}{\rho n}}_{\text{漏报抽稀噪声}} + \underbrace{\frac{\bar{R}}{n}}_{\text{有限人群泊松计数波动}} + \underbrace{\frac{\bar{R}^2 + v_R}{kn}}_{\text{超级传播子代抽样波动}}$$
 
-#### 3.4.2 极限一：报告率极限（$\rho \to 1$）
-假设公共卫生部门投入极大代价，将监测网络的报告率提升至极限 $\rho \to 1$（完全无漏报）：
-$$\lim_{\rho \to 1} V(n, \rho) = v_R + \lim_{\rho \to 1}\frac{(1 - \rho)\bar{R}}{\rho n} + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$$
-**深刻物理结论**：完全消除漏报（$\rho \to 1$）**只能干掉第一项漏报抽稀噪声**！人群内部固有的泊松相遇离散度 $\frac{\bar{R}}{n}$ 和超级传播重尾波动 $\frac{\bar{R}^2 + v_R}{kn}$ 依然存在，因此单期推断方差存在一个**绝对无法突破的下界**，永远无法逼近不可约环境方差 $v_R$。
+**极限一：报告率极限 $\rho \to 1$**
+$$\lim_{\rho \to 1} V(n, \rho) = v_R + 0 + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{kn} > v_R$$
 
-#### 3.4.3 极限二：人群基数极限（$n \to \infty$）
-反之，保持任意固定的低报告率 $\rho > 0$ 不变，通过扩大地理覆盖面或监测基数使风险集 $n \to \infty$：
+> **【回填 11 · 正文式 (11)】**
+> $$\lim_{\rho \to 1} V(n, \rho) = v_R + \frac{\bar{R}}{n} + \frac{\bar{R}^2 + v_R}{k n} > v_R \tag{eq:rho\_limit}$$
+
+**极限二：人群基数极限 $n \to \infty$**
 $$\lim_{n \to \infty} V(n, \rho) = v_R + \lim_{n \to \infty} \frac{1}{n} \left[ \frac{\bar{R}}{\rho} + \frac{\bar{R}^2 + v_R}{k} \right] = v_R + 0 = v_R$$
-**深刻物理结论**：扩大基数 $n$ 分母趋于无穷大，利用大数定律将所有微观层面的抽样波动彻底消除。这从数理上严格确立了**“扩大基数具有对所有微观噪声的统摄消除能力，而提高报告率仅能消除漏报扰动”**的理论非对称性。
+
+**政策启示**：完全消除漏报只能干掉第一项漏报抽稀噪声；人群内部固有的泊松相遇离散度 $\bar{R}/n$ 与超级传播重尾离散 $\frac{\bar{R}^2+v_R}{kn}$ 永远无法被 $\rho$ 消除。唯有扩大监测的地理与人群基数 $n \to \infty$，大数定律才能统摄消除全部微观噪声。
 
 ---
 
-### 3.5 命题 4 与推论 1：多期时间平均、AR(1) 错位相减求和与 Cochran 对偶证明
+### 3.5 命题 4 与推论 1：多期时间抽样、AR(1) 求和与 Cochran 对偶
 
-#### 3.5.1 多期样本均值的方差分解与样本预算恒常性
-设总样本输入规模预算为 $B = T \cdot m = T \rho n_T$。设计方案为 $\mathcal{D}_T = (T, n_T)$。
-对跨期样本均值 $\overline{\widehat{R}}_T = \frac{1}{T}\sum_{t=1}^T \widehat{R}_t$ 求方差：
-$$\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2}\sum_{t=1}^T \operatorname{Var}(\widehat{R}_t \mid R_t) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2} \cdot T \frac{A}{m}$$
-代入 $T m = B$：
-$$\text{第二项（抽样项）} = \frac{A}{T m} = \frac{A}{B} \quad (\text{恒为常数！})$$
-**惊人结论**：在固定总样本预算下，无论你分多少期，抽样误差项永远是常数 $A/B$！
-要想降低总方差，**唯一的方法是拉长期数 $T$ 去压制第一项（环境项）**！
+#### 3.5.1 独立环境下的预算恒常性
+在总人数预算 $B = T \cdot m$ 约束下，跨期均值估计量的方差分解为：
+$$\operatorname{Var}(\overline{\widehat{R}}_T) = \frac{1}{T^2}\operatorname{Var}\left(\sum_{t=1}^T R_t\right) + \frac{1}{T^2}\sum_{t=1}^T \operatorname{Var}(\widehat{R}_t \mid R_t)$$
+代入单期条件抽样方差 $\frac{A}{m}$：
+$$\text{抽样项} = \frac{1}{T^2} \cdot T \frac{A}{m} = \frac{A}{Tm} = \frac{A}{B} \quad (\text{恒为常数！})$$
 
-#### 3.5.2 AR(1) 双重协方差级数求和的错位相减法展开
-在 AR(1) 自相关下，要求解级数：
+> **【回填 12 · 正文式 (12)】**
+> $$\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) = \frac{v_R}{T} + \frac{A}{B} \tag{eq:var\_budget\_indep}$$
+
+**惊人结论**：在固定总样本预算下，无论怎么分配 $T$ 与 $m$，抽样误差项永远是常数 $A/B$！要想降低总方差，**唯一的方法是拉长观测期数 $T$ 去平滑宏观不可约环境变异 $v_R$**。
+
+#### 3.5.2 AR(1) 环境自相关的双重级数求和（错位相减法逐行展开）
+在 AR(1) 自相关下，环境方差项展开为：
+$$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R \sum_{s=1}^{T-1} (T-s) r^s$$
+定义等差乘等比级数：
 $$S \triangleq \sum_{s=1}^{T-1} (T-s) r^s = (T-1)r + (T-2)r^2 + \dots + 1 \cdot r^{T-1}$$
 两端同乘公比 $r$：
 $$r S = (T-1)r^2 + (T-2)r^3 + \dots + 1 \cdot r^T$$
@@ -257,45 +322,64 @@ $$r S = (T-1)r^2 + (T-2)r^3 + \dots + 1 \cdot r^T$$
 $$(1-r)S = (T-1)r - \left[ r^2 + r^3 + \dots + r^{T-1} \right] - r^T = T r - \sum_{s=1}^T r^s = T r - \frac{r(1 - r^T)}{1 - r}$$
 两端除以 $(1-r)$：
 $$S = \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2}$$
-代入环境总方差：
+代回环境总方差：
 $$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R S = T v_R + 2 v_R \left[ \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2} \right] = v_R T \left[ 1 + \frac{2r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
 通分化简括号内前两项：$1 + \frac{2r}{1-r} = \frac{1-r+2r}{1-r} = \frac{1+r}{1-r}$：
-$$= v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
-两端除以 $T^2$，严格导出附录 A.4 的精确双重级数求和闭式；当 $T \gg \frac{1}{1-r}$ 时，正文式 (16) 给出有效独立期数折减 $T_{\mathrm{eff}} \approx T \frac{1-r}{1+r}$。
+$$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
+两端除以 $T^2$，得附录 A.4 精确双重级数求和闭式。当 $T \gg \frac{1}{1-r}$ 时，精确式良好近似为有效独立期数折减形式：
 
-#### 3.5.3 推论 1 成本优化一阶导与二阶导完整展开
-设每期固定运转维持成本为 $c_0$，每报告一例边际成本为 $c_1$。总经费预算为 $\mathcal{B} = T(c_0 + c_1 m)$。
-代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$ 到目标方差函数：
-$$f(m) = \frac{c_0 + c_1 m}{\mathcal{B}} \left( v_R + \frac{A}{m} \right) = \frac{1}{\mathcal{B}} \left[ c_0 v_R + c_1 v_R m + \frac{c_0 A}{m} + c_1 A \right]$$
-**一阶导数**：
-$$f'(m) = \frac{1}{\mathcal{B}} \left[ c_1 v_R - \frac{c_0 A}{m^2} \right] = 0 \implies m^2 = \frac{c_0 A}{c_1 v_R} = \frac{c_0}{c_1} m_\times \implies m^* = \sqrt{\frac{c_0}{c_1} m_\times}$$
-**二阶导数**：
-$$f''(m) = \frac{1}{\mathcal{B}} \frac{d}{dm}\left( c_1 v_R - c_0 A m^{-2} \right) = \frac{2 c_0 A}{\mathcal{B} m^3} > 0 \quad (\text{严格凸函数，唯一全局极小值点！})$$
-**学术高度**：这在数学结构上与抽样调查鼻祖 Cochran (1977) 第 10 章的两阶段抽样最优次级样本量公式完全同构！初级抽样单元对应期数 $T$，次级抽样单元对应单期病例 $m$。
+> **【回填 13 · 正文式 (13)：有效独立期数近似式】**
+> $$\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) \approx \frac{v_R}{T_{\operatorname{eff}}(T, r)} + \frac{A}{B}, \qquad T_{\operatorname{eff}}(T, r) \triangleq T \frac{1-r}{1+r} \tag{eq:var\_budget\_ar1}$$
+
+#### 3.5.3 离散可行设计集合
+当要求各期风险集相同且为正整数，并精确用尽总预算 $B$ 时：
+
+> **【回填 14 · 正文式 (14)】**
+> $$\mathcal{T}(B, \rho) \triangleq \left\{ T \in \mathbb{N}_+ \;:\; \frac{B}{\rho T} \in \mathbb{N}_+ \right\} \tag{eq:feasible\_T}$$
+
+#### 3.5.4 推论 1：成本约束下的最优单期规模与 Cochran 对偶
+在总经费预算 $\mathcal{B} = T(c_0 + c_1 m)$ 约束下，代入 $T = \frac{\mathcal{B}}{c_0 + c_1 m}$，目标方差函数关于 $m$ 严格凸。唯一内部最优单期规模直接给出：
+
+> **【回填 15 · 正文式 (15)】**
+> $$m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\times} \tag{eq:optimal\_scale}$$
+
+**Cochran (1977) 抽样对偶**：推论 1 中的方差与总成本结构，在数学形式上同构于经典两阶段抽样（Two-stage Sampling）的费用分配模型：时间观测期数 $T$ 对应初级抽样单元数，单期期望捕获规模 $m$ 对应次级样本量。二阶导数 $\frac{2c_0 A}{\mathcal{B} m^3} > 0$ 严格保证了最优解的全局唯一性。
 
 ---
 
-### 3.6 命题 5：超临界增长精确检验、单调似然比（MLR）一阶差分与离散功效锯齿
+### 3.6 命题 5：增长判定的单调似然比（MLR）一阶差分与离散功效
 
-#### 3.6.1 单调似然比（MLR）一阶差分严格为正证明
-单侧假设检验：$H_0: R_t \le 1 \quad \text{vs} \quad H_1: R_t > 1$。
+#### 3.6.1 MLR 一阶差分严格为正证明
+单侧假设检验：
+$$H_0: R_t \le 1 \quad \text{vs} \quad H_1: R_t > 1$$
+
+> **【回填 18 · 正文式 (18)】**
+> $$H_0: R_t \le 1 \qquad \text{对} \qquad H_1: R_t > 1 \tag{eq:hypo\_growth}$$
+
 对任意备择强度 $R_1 > R_0$，似然比对数形式为：
 $$\ln \frac{\Pr_{R_1}(C_t = j)}{\Pr_{R_0}(C_t = j)} = nk \ln \frac{p^*(R_1)}{p^*(R_0)} + j \ln \frac{1 - p^*(R_1)}{1 - p^*(R_0)}$$
 计算对计数值 $j$ 的一阶差分：
 $$\Delta(j) \triangleq \ln \frac{\Pr_{R_1}(j+1)}{\Pr_{R_0}(j+1)} - \ln \frac{\Pr_{R_1}(j)}{\Pr_{R_0}(j)} = \ln \frac{1 - p^*(R_1)}{1 - p^*(R_0)}$$
 代入 $1 - p^*(R) = \frac{\rho R}{k + \rho R}$：
 $$\frac{1 - p^*(R_1)}{1 - p^*(R_0)} = \frac{\frac{\rho R_1}{k + \rho R_1}}{\frac{\rho R_0}{k + \rho R_0}} = \frac{R_1(k + \rho R_0)}{R_0(k + \rho R_1)} = \frac{k R_1 + \rho R_0 R_1}{k R_0 + \rho R_0 R_1}$$
-由于 $R_1 > R_0$，显然分子 $k R_1 + \rho R_0 R_1 > k R_0 + \rho R_0 R_1$ 分母，该比值严格大于 1！
-取自然对数后，一阶差分 $\Delta(j) > 0$ 恒成立！证明了似然比关于充分统计量 $C_t$ **严格单调递增**，Karlin–Rubin 定理严格适用！
-由经典统计推断理论，上尾拒绝域 $\{C_t \ge c_\alpha\}$ 在复合原假设下，一类错误率严格在上确界点（边界点 $R_t = 1$）达到最大：
-$$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha) \le \alpha$$
-离散临界值由 $c_\alpha = \min \{c \in \mathbb{N} : \Pr_{R_t=1}(C_t \ge c) \le \alpha\}$ 唯一确定。
+由于 $R_1 > R_0$，分子 $k R_1 + \rho R_0 R_1 > k R_0 + \rho R_0 R_1$ 分母，该比值严格大于 1！
+取自然对数后，一阶差分 $\Delta(j) > 0$ 恒成立！
+证明了似然比关于充分统计量 $C_t$ **严格单调递增**，Karlin–Rubin 定理严格适用！
 
-#### 3.6.2 离散功效锯齿波（Sawtooth Wave）成因
+#### 3.6.2 离散临界值与精确功效
+临界值由使边界处超额拒绝概率受控的最小整数唯一确定：
+
+> **【回填 19 · 正文式 (19)】**
+> $$c_\alpha = \min \left\{ c \in \mathbb{N} \;:\; \Pr_{R_t = 1}(C_t \ge c) \le \alpha \right\} \tag{eq:crit\_val}$$
+
+> **【回填 20 · 正文式 (20)】**
+> $$\pi(n, \delta) \triangleq \Pr_{R_t = 1 + \delta}(C_t \ge c_\alpha) = 1 - F_{\operatorname{NB}}\!\left(c_\alpha - 1; \; nk, \; \frac{k}{k + \rho(1+\delta)}\right) \tag{eq:power\_exact}$$
+
+#### 3.6.3 离散功效锯齿波（Sawtooth Wave）成因
 因为观测计数 $C_t$ 只能取整数，临界值 $c_\alpha(n)$ 随样本量 $n$ 呈阶梯状跳变：
 - 当 $n$ 在某个区间微增时，临界值 $c_\alpha$ 保持不变，由于样本量变大，功效连续上升；
-- 一旦 $n$ 跨过某个阈值，为了控制检验水平 $\alpha$，$c_\alpha$ 突然跳跃到 $c_\alpha + 1$，拒绝门槛突然拔高，导致统计功效瞬间出现向下跳跃！
-- 这一离散特征解释了为什么图 2 模拟中连续增加病例数，功效曲线会出现特有的锯齿波动，证实了离散枚举求解最小样本量的必要性。
+- 一旦 $n$ 跨过某个临界点，为了控制显著性水平 $\alpha$，$c_\alpha$ 突然跳跃到 $c_\alpha + 1$，拒绝门槛突然拔高，导致统计功效瞬间出现向下跳跃！
+- 这解释了图 2 模拟中为什么连续增加病例数，功效曲线会出现特有的锯齿波动，证实了离散枚举求解最小样本量的必要性。
 
 ---
 
@@ -305,22 +389,29 @@ $$\sup_{R_t \le 1} \Pr_{R_t}(C_t \ge c_\alpha) = \Pr_{R_t = 1}(C_t \ge c_\alpha)
 在时间序列更新过程中，给定截至第 $t$ 期的报告信息集 $\mathcal{F}_t^C$：
 
 **第一步：分解潜在真实感染数 $I_{t+1}$ 的预测方差**
-以历史信息及当期传播压力 $(\Lambda_{t+1}, R_{t+1})$ 为条件应用全方差公式：
 $$\operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) = \operatorname{Var}\big(\Lambda_{t+1} R_{t+1} \;\big|\; \mathcal{F}_t^C\big) + \mathbb{E}\Big[\operatorname{Var}\big(I_{t+1} \;\big|\; \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C\big) \;\Big|\; \mathcal{F}_t^C\Big]$$
+
+> **【回填 16 · 正文式 (16)】**
+> $$\operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) = \operatorname{Var}\big(\Lambda_{t+1} R_{t+1} \;\big|\; \mathcal{F}_t^C\big) + \mathbb{E}\Big[\operatorname{Var}\big(I_{t+1} \;\big|\; \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C\big) \;\Big|\; \mathcal{F}_t^C\Big] \tag{eq:var\_I\_decomp}$$
 
 **第二步：分解报告病例数 $C_{t+1}$ 的观测预测方差**
 以未观测的潜在真实感染 $I_{t+1}$ 为条件再次应用全方差公式：
 $$\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \mathbb{E}[\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) \mid \mathcal{F}_t^C] + \operatorname{Var}(\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] \mid \mathcal{F}_t^C)$$
 代入二项报告抽样条件分布 $C_{t+1} \mid I_{t+1} \sim \operatorname{Binomial}(I_{t+1}, \rho)$ 的条件方差 $I_{t+1}\rho(1-\rho)$ 与条件均值 $\rho I_{t+1}$：
-$$\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \rho(1 - \rho)\,\mathbb{E}[I_{t+1} \mid \mathcal{F}_t^C] + \rho^2 \operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C)$$
 
-#### 3.7.2 相对预测误差均方分解（式 29 / 式 380）
-设 $\mu_{t+1 \mid t} \triangleq \mathbb{E}[C_{t+1} \mid \mathcal{F}_t^C]$ 与 $\sigma_{t+1 \mid t}^2 \triangleq \operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C)$。在活跃周（$D_t > 0$）上有严格条件分解：
-$$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}\left[\frac{\sigma_{t+1 \mid t}^2}{D_t^2} + \left(\frac{\mu_{t+1 \mid t}}{D_t} - \bar{R}\right)^2 \;\middle|\; D_t > 0\right]$$
+> **【回填 17 · 正文式 (17)】**
+> $$\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \rho(1 - \rho)\,\mathbb{E}[I_{t+1} \mid \mathcal{F}_t^C] + \rho^2 \operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) \tag{eq:var\_C\_decomp}$$
+
+#### 3.7.2 相对预测误差均方分解（式 29 / 正文式 22）
+设 $\mu_{t+1 \mid t} \triangleq \mathbb{E}[C_{t+1} \mid \mathcal{F}_t^C]$ 与 $\sigma_{t+1 \mid t}^2 \triangleq \operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C)$，在活跃周（$D_t > 0$）上有严格的条件预测均方误差正交分解：
+
+> **【回填 22 · 正文式 (22)】**
+> $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}\left[\frac{\sigma_{t+1 \mid t}^2}{D_t^2} + \left(\frac{\mu_{t+1 \mid t}}{D_t} - \bar{R}\right)^2 \;\middle|\; D_t > 0\right] \tag{eq:exact\_renewal\_decomp}$$
+
 - **关键物理机制**：
   1. 第一项：随机分母 $D_t$ 对条件方差的**倒数二次方重新加权**；
-  2. 第二项：用报告历史代理真实感染压力导致的**非负预测偏差项** $(\mu_{t+1 \mid t}/D_t - \bar{R})^2 \ge 0$。
-- **对图 3 结果的终极解释**：这从代数上严格证明了：为什么在更新过程中，实际经验预测误差始终**严格不低于**单代静态下界！
+  2. 第二项：用报告历史代理真实感染压力导致的**非负预测偏差项** $\left(\frac{\mu_{t+1 \mid t}}{D_t} - \bar{R}\right)^2 \ge 0$。
+- **对图 3 结果的终极解释**：这从代数上严格证明了：为什么在更新过程中，实际经验预测误差始终**严格不低于单代静态下界**！
 
 ---
 
@@ -330,12 +421,12 @@ $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}
 - **双对数坐标轴下的两条轨迹**：
   - 蓝色曲线（估计当期 $R_t$）：斜率为 $-1$ 的直线，随 $m$ 增大单调趋零；
   - 红色曲线（估计跨期 $\bar{R}$）：小样本时沿 $-1$ 斜率下降，越过交叉点 $m_\times = 53.1$ 后，迅速弯曲变平，严丝合缝贴在水平渐近虚线 $v_R = 0.04$ 上；
-  - 散点与解析解比值处于 0.988–1.017 之间，证明理论代数推导 100% 紧致正确。
+  - 散点与解析解比值处于 0.988–1.017 之间，证明理论代数推导 100\% 紧致正确。
 
 ### 4.2 图 2（增长检测功效与 Wald 检验失真）
-- 虚线（Wald 检验）：在小样本且强超传播（$k=0.1$）时，实际一类错误率最高达到 8.1%（严重虚警）；
+- 虚线（Wald 检验）：在小样本且强超传播（$k=0.1$）时，实际一类错误率最高达到 8.1\%（严重虚警）；
 - 实线（离散精确负二项检验）：全域严格受控于 0.05 以下；
-- 超传播的代价：达到 80% 功效所需的病例数，从轻度超传播（$k=1.0$）的 142 例激增至重度超传播（$k=0.1$）的 415 例，暴增近 3 倍！
+- 超传播的代价：达到 80\% 功效所需的病例数，从轻度超传播（$k=1.0$）的 142 例激增至重度超传播（$k=0.1$）的 415 例，暴增近 3 倍！
 
 ### 4.3 图 3（更新过程时序卷积与单步预测误差的双口径解密）
 - **为什么初始参数看是 0.75–0.98 倍？** 模拟横轴标示的是第 0 周的初始规模 $m$。因为 $\bar{R} = 1.15 > 1$（疫情自发增长），到了第 4–29 周评估时，实际病例数自发增长至初始值的 1.7–2.4 倍（中位数口径，均值口径约 2.6–3.2 倍）！拿增长后的大病例数对比初始小规模理论值，表观比值自然偏低；
@@ -347,13 +438,8 @@ $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}
 
 ### 5.1 实证中的样本量 $N$ 是什么？怎么一步步筛选出来的？
 
-很多读者在查阅实证表格时常有疑问：“表 1 的 $N=1267$ 是什么？表 3 的 $N=1220$ 又是什么？为什么三个阶段加起来又是 10,303？这些 $N$ 到底代表什么，又是怎么筛选出来的？”
-
-本节彻底讲透实证中样本量 $N$ 的统计学定义与严格筛选漏斗：
-
 #### (1) $N$ 的统计学定义：观测单位是“州—周（State-Week）”
 在传染病面板数据（Panel Data）中，**1 个观测不是 1 个人，也不是 1 个州，而是 1 个具体的“辖区—周度”时间切片**！
-例如：“加利福尼亚州在 2023 年第 45 周”记为 1 个样本观测；“德克萨斯州在 2023 年第 45 周”是另 1 个观测。
 
 #### (2) 总样本池的来源：16,218 个原始记录
 - 全美 50 个州加上华盛顿特区（DC），共 51 个地理辖区；
@@ -374,11 +460,11 @@ $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}
 | :--- | :---: | :--- |
 | **全美主分析总池** | **$10,303$** | 满足 $D_t \ge 5$ 的全部活跃州—周观测总和。 |
 | **流行初期主拟合（表 1）** | **$1,267$** | 各流感季初期疫情上升波段（$\bar{R}_{\text{early}} \approx 1.67$）中满足 $D_t \ge 5$ 的记录。主回归 $a + b/D_t$ 即基于此 1,267 个样本跑出。 |
-| **达峰与回落反证（表 3）** | **$1,220$** | 全美各季达峰周及随后 7 周回落期（$\bar{R}_{\text{peak}} \approx 0.81$）满足 $D_t \ge 5$ 的记录。用于反证达峰期 88.9% 误差来自常数基准偏移。 |
-| **前过渡高覆盖期（第一阶段）** | **$6,009$** | 2020 年 10 月至 2024 年 4 月 30 日（合并大流行初期与法定强制段），平均覆盖率 91.1%。 |
+| **达峰与回落反证（表 3）** | **$1,220$** | 全美各季达峰周及随后 7 周回落期（$\bar{R}_{\text{peak}} \approx 0.81$）满足 $D_t \ge 5$ 的记录。用于反证达峰期 88.9\% 误差来自常数基准偏移。 |
+| **前过渡高覆盖期（第一阶段）** | **$6,009$** | 2020 年 10 月至 2024 年 4 月 30 日（合并大流行初期与法定强制段），平均覆盖率 91.1\%。 |
 | **自愿过渡期（第二阶段）** | **$420$** | 2024 年 5 月至 10 月（紧急状态解除），夏季低发加自愿填报，仅 420 个州周满足 $D_t \ge 5$。 |
-| **CMS 新规重制期（第三阶段）** | **$3,874$** | 2024 年 11 月至 2026 年 9 月，恢复医保强制上报，覆盖率回升至 91.8%。 |
-| **阶段加和算术闭环** | **$10,303$** | **$6,009 + 420 + 3,874 = 10,303$**，数据链条 100% 严密闭环！ |
+| **CMS 新规重制期（第三阶段）** | **$3,874$** | 2024 年 11 月至 2026 年 9 月，恢复医保强制上报，覆盖率回升至 91.8\%。 |
+| **阶段加和算术闭环** | **$10,303$** | **$6,009 + 420 + 3,874 = 10,303$**，数据链条 100\% 严密闭环！ |
 | **全国空间汇总序列** | **$28$** | 51 辖区数据加总为全国单一时间序列后，初期上升波段共 28 个全国汇总周（平均周住院 6,662 例）。 |
 | **CDC FluSight 外部验证** | **$1,177$** | CDC 官方多模型前瞻预测（2022–23 季），按纯事前预测值 $\widehat{Y} \ge 5$ 筛选的 50 州+DC 有效周。 |
 | **欧洲 COVID-19 外部验证** | **$404$** | 欧洲 11 国早期暴发序列（2020 年 2–4 月），按事前历史规模 $D_t \ge 5, g>0$ 筛选的国家—日观测。 |
@@ -391,37 +477,35 @@ $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}
 - 必须采用以拟合值平方倒数 $1/\hat{\mu}^2$ 加权的 FGLS，并配合 1,500 次按州聚类的 Bootstrap 估计标准误。
 
 ### 5.3 核心实证估计结果
-- 规模斜率项 $\hat{b} = 2.2434$（95% CI $[1.50, 3.02]$），**1,500 次 Bootstrap 重抽无一次小于等于零（$p < 10^{-4}$）**，强力证实了 $b/D_t$ 递减项的真实存在；
+- 规模斜率项 $\hat{b} = 2.2434$（95\% CI $[1.50, 3.02]$），**1,500 次 Bootstrap 重抽无一次小于等于零（$p < 10^{-4}$）**，强力证实了 $b/D_t$ 递减项的真实存在；
 - 经验拟合截距 $\hat{a} = 0.0991$；经验平衡点 $m_\times^{\mathrm{emp}} = \hat{b}/\hat{a} \approx 22.6$ 例/周；
-- **误差份额分解**：在流行初期平均 0.181 的总误差中，规模相关项占 45.1%，不可约经验下限占 54.6%（四至五成半）。
+- **误差份额分解**：在流行初期平均 0.181 的总误差中，规模相关项占 45.1\%，不可约经验下限占 54.6\%（四至五成半）。
 
-### 5.4 达峰期震撼反转：88.9% 偏差 vs 15.5% 集成预测
+### 5.4 达峰期震撼反转：88.9\% 偏差 vs 15.5\% 集成预测
 - **表象与传统误读**：在达峰期，各规模组的总相对误差恒定在 0.292–0.312，看起来不管怎么增大病例规模，误差完全不下降。很多人据此宣称“达峰期病例数失效了”。
 - **论文的数学正交分解**：
   $$\text{总误差} = \underbrace{\left(\frac{\bar{R}_{\mathrm{peak}} - \bar{R}_{\mathrm{early}}}{\bar{R}_{\mathrm{early}}}\right)^2}_{\text{常数基准偏移项（占 88.9\%）}} + \underbrace{\text{条件方差项（占 11.1\%）}}_{\text{规模效应仍显著为正！}}$$
-  - 达峰期看似恒定的高误差，**整整 88.9% 是因为疫情达峰转向、历史平稳基准失灵导致的常数漂移**！
+  - 达峰期看似恒定的高误差，**整整 88.9\% 是因为疫情达峰转向、历史平稳基准失灵导致的常数漂移**！
   - 剥离常数漂移后，达峰期内部的纯条件方差依然显著随规模递减（$\hat{b} = 7.9272$）；
 - **外部验证的终极呼应**：
-  在引入 CDC FluSight 官方真实多模型前瞻集成预测后，**达峰期的均值偏差占比从静态单模型的 88.9% 骤降至 15.5%**！
+  在引入 CDC FluSight 官方真实多模型前瞻集成预测后，**达峰期的均值偏差占比从静态单模型的 88.9\% 骤降至 15.5\%**！
   直接在实证上回答了：跨过规模平衡点后，单纯扩充样本量已经边际递减，必须依靠多模型自适应集成来消除均值漂移。
 
 ### 5.5 欧洲 11 国 COVID-19 跨病种验证
 - 引入欧洲 11 国早期日度发病监测数据（$N=404$）；
-- 纯事前口径拟合得 $\hat{b} = 33.92$（95% CI $[14.60, 74.9873]$），显著为正，经验平衡点为 124.7 例/天；
+- 纯事前口径拟合得 $\hat{b} = 33.92$（95\% CI $[14.60, 74.9873]$），显著为正，经验平衡点为 124.7 例/天；
 - 证明了规模递减规律跨病种、跨地域的高度稳健性，同时证实特征平衡点随时间分辨率和监测尺度变动。
 
 ---
 
 ## 第六部分：硕士中期答辩高频质询 Q&A 宝典（11 问 11 答）
 
-本部分专为数学系、应用统计系教授评委的刁钻提问量身定制，掌握这 11 个回答，答辩即可稳操胜券。
-
 #### Q1: 你的研究与现有的 EpiEstim (Cori) 和 Parag 的信息论下界有什么本质区别？
 > **答**：Cori 等人的 EpiEstim 解决的是“如何在滑动窗口下估计时变再生数”，Parag 等人的研究确立了“以当期瞬态参数 $R_t$ 为目标时信息量随病例数线性增长”的物理极限。
 > 本文的本质区别在于**推断目标的切换**：我们证明，一旦将推断目标由当期瞬态参数 $R_t$ 切换为跨期基础水平 $\bar{R}$，由于单期横截面样本无法消除全员共享的外生宏观环境扰动，方差标度律发生根本改变，出现不可约环境方差下限 $v_R$ 与特征规模平衡点 $m_\times$。本文填补的是从“单期推断”跨越到“监测资源运筹设计”的理论空白。
 
 #### Q2: 为什么一定要用负二项分支过程？用经典的泊松过程不行吗？
-> **答**：传染病学中普遍存在极强的超传播现象（Lloyd-Smith 等 2005），约 20% 的感染者引发 80% 的传播。
+> **答**：传染病学中普遍存在极强的超传播现象（Lloyd-Smith 等 2005），约 20\% 的感染者引发 80\% 的传播。
 > 泊松分布强加了方差等于均值（$k \to \infty$），这在数学上会严重低估小计数阶段的重尾抽样风险，人为低估达到指定功效所需的样本量需求（如图 2 所示，强超传播下样本量需求暴增 3 倍）。引入负二项分布不仅具有流行病学真实性，更在数理上通过 PGF 复合运算保证了二项抽样下的分布族封闭性，为全方差分解提供了优雅的解析基准。
 
 #### Q3: 理论上的 $m_\times = A/v_R$ 与实证拟合得到的 $b/a \approx 22.6$ 能否直接画等号？
@@ -442,7 +526,7 @@ $$\mathbb{E}\left[(G_{t+1} - \bar{R})^2 \;\middle|\; D_t > 0\right] = \mathbb{E}
 
 #### Q7: 达峰期看似误差恒定在 0.3 左右，你凭什么说病例规模在达峰期依然有用？
 > **答**：凭严格的**均值--方差正交代数分解**。
-> 我们证明了达峰期看似恒定的高误差中，整整 88.9% 来源于疫情转折导致的常数基准漂移 $(\bar{R}_{\mathrm{peak}} - \bar{R}_{\mathrm{early}})^2 / \bar{R}_{\mathrm{early}}^2 = 0.2669$。真正反映推断波动的纯条件方差只占 11.1%。当我们使用达峰期自身均值剥离常数漂移后，规模相关项系数 $\hat{b} = 7.9272$ 依然高度显著为正。失效的是跨期平稳性假设，而不是病例规模本身。
+> 我们证明了达峰期看似恒定的高误差中，整整 88.9\% 来源于疫情转折导致的常数基准漂移 $(\bar{R}_{\mathrm{peak}} - \bar{R}_{\mathrm{early}})^2 / \bar{R}_{\mathrm{early}}^2 = 0.2669$。真正反映推断波动的纯条件方差只占 11.1\%。当我们使用达峰期自身均值剥离常数漂移后，规模相关项系数 $\hat{b} = 7.9272$ 依然高度显著为正。失效的是跨期平稳性假设，而不是病例规模本身。
 
 #### Q8: 滞后暴露权重取 $w = (0.65, 0.25, 0.10)$ 的依据是什么？换一组权重结论还成立吗？
 > **答**：有两个依据：第一，加权平均回溯时间为 $1.45$ 周（约 $10.2$ 天），与流感临床从感染、潜伏（1–2天）、发病就诊（3–5天）到填报确认的复合特征时滞（约 10 天）完全吻合；

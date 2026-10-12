@@ -81,7 +81,7 @@ def parse_md_to_latex(md_text):
         text = re.sub(r'(?<!\*)\*([^*]+)\*(?!\*)', r'\\textit{\1}', text)
         
         # Escape LaTeX special chars: %, &, _, #
-        text = text.replace('%', r'\%')
+        text = text.replace(r'\%', '%').replace('%', r'\%')
         text = text.replace('&', r'\&')
         text = text.replace('_', r'\_')
         text = text.replace('#', r'\#')
@@ -260,6 +260,26 @@ def parse_md_to_latex(md_text):
         if stripped in ['---', '***', '___']:
             flush_list()
             latex_lines.append('\\vspace{0.8em}\\hrule\\vspace{0.8em}')
+            i += 1
+            continue
+            
+        # Blockquote with math detection
+        if stripped.startswith('>'):
+            inner = stripped.lstrip('>').strip()
+            m_q_math = re.match(r'^\$\$(.*?)\$\$[，,。;；]?$', inner)
+            if m_q_math:
+                qmath = m_q_math.group(1).rstrip('，,。;； ')
+                latex_lines.append('\\begin{quote}\small\color{black!75}')
+                latex_lines.append('\\begin{equation*}')
+                latex_lines.append(qmath)
+                latex_lines.append('\end{equation*}')
+                latex_lines.append('\end{quote}')
+                i += 1
+                continue
+            quote_tex = format_inline(inner)
+            latex_lines.append('\\begin{quote}\small\color{black!75}')
+            latex_lines.append(quote_tex)
+            latex_lines.append('\end{quote}')
             i += 1
             continue
             
