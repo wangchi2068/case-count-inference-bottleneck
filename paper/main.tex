@@ -110,6 +110,7 @@ C_t \mid I_t \sim \operatorname{Binomial}(I_t, \rho). \label{eq:binomial_obs}
 \begin{equation}
 \mathbb{E}[R_t \mid n] = \bar{R}, \qquad \operatorname{Var}(R_t \mid n) = v_R > 0. \label{eq:env_conditional_moment}
 \end{equation}
+这一设定揭示了不可约环境方差 $v_R$ 在两类推断目标下的本质分化：对目标 A 而言，环境波动正是待测对象本身，其跨期变异不构成误差；对目标 B 而言，同一波动退化为不可消除的误差源，单期样本无论多大都无法消除全员共享的单次环境实现。
 这一条件可由固定试验设计的 $n$，或 $R_t$ 与 $n$ 相互独立作为充分条件予以保证。
 
 \subsection{预测信息集}\label{subsec:meth_infoset}
@@ -183,6 +184,9 @@ m_\times \triangleq \frac{A}{v_R} = \frac{\bar{R} + \rho(\bar{R}^2 + v_R)/k}{v_R
 \end{equation}
 \end{definition}
 
+\noindent\textit{注记：}标量系数 $A \equiv \bar{R} + \frac{\rho(\bar{R}^2 + v_R)}{k}$ 自身仍显式依赖于报告率 $\rho$。因此两个监测系统即使处于相同的 $m = \rho n$，只要报告率 $\rho$ 不同，$A$ 与收益拐点 $m_\times$ 便不相同。$A$ 依赖 $\rho$ 的方式与依赖规模 $m$ 的反比衰减完全不同，这正是命题~\ref{prop:levers_asymmetry} 监测杠杆非对称性的数理根源。
+
+
 \paragraph{经济学与监测含义：} $m_\times$ 的解释是在给定 $(\rho, k, \bar{R}, v_R)$ 下，沿扩大 $n$ 方向时两类方差相等的规模。在 $m = m_\times$ 处，总方差中两项各占 50\%。导数 $\frac{\mathrm{d}V}{\mathrm{d}m} = -\frac{A}{m^2}$ 在 $m_\times$ 处平滑连续，不存在突变。当 $m > m_\times$ 时，环境方差占主导，增加病例数仍能降低方差，但仅能作用于占比逐渐减小的 $A/m$ 项。
 
 \begin{figure}[htbp]
@@ -245,14 +249,11 @@ V(n, \rho) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{k n}. \label{
 \operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) = \frac{v_R}{T} + \frac{A}{B}, \label{eq:var_budget_indep}
 \end{equation}
 其中 $A = \bar{R} + \rho(\bar{R}^2 + v_R)/k$（为与目标 A 区分，此处 $A$ 专指该标量方差系数）。当总预算 $B$ 固定时，比较不同设计 $\mathcal{D}_T$，增加观测期数 $T$（相应减少每期样本 $m = B/T$）严格单调降低估计方差；
-\item 若各期环境扰动存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s} \mid n_T) = v_R r^{|s|}$（$0 \le r < 1$），则有限期数 $T$ 下的精确方差为：
+\item 若各期环境扰动存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s} \mid n_T) = v_R r^{|s|}$（$0 \le r < 1$），在观测跨度远大于环境自相关特征时长（$T \gg \frac{1}{1-r}$）的渐近条件下，精确方差可良好近似为有效独立期数形式：
 \begin{equation}
-\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) = \frac{v_R}{T}\left[\frac{1+r}{1-r} - \frac{2r(1-r^T)}{T(1-r)^2}\right] + \frac{A}{B}, \label{eq:var_budget_ar1}
+\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) \approx \frac{v_R}{T_{\operatorname{eff}}(T, r)} + \frac{A}{B}, \qquad T_{\operatorname{eff}}(T, r) \triangleq T \frac{1-r}{1+r}, \label{eq:var_budget_ar1}
 \end{equation}
-在大期数且观测跨度远大于环境自相关特征时长（$T \gg \frac{1}{1-r}$）的渐近条件下，式~\eqref{eq:var_budget_ar1} 中第二项可忽略，精确方差可良好近似为有效独立期数形式：
-\begin{equation}
-\operatorname{Var}(\overline{\widehat{R}}_T \mid n_T) \approx \frac{v_R}{T_{\operatorname{eff}}(T, r)} + \frac{A}{B}, \qquad T_{\operatorname{eff}}(T, r) \triangleq T \frac{1-r}{1+r};
-\end{equation}
+有限期数下的精确双重级数求和闭式见附录~\ref{app:proof_prop4}；
 \item 离散可行设计集合： 当要求各期风险集相同且为正整数（$n_T \in \mathbb{N}_+$），并精确用尽总预算 $B$ 时，设计者仅能在如下离散可行集合中比较期数：
 \begin{equation}
 \mathcal{T}(B, \rho) \triangleq \left\{ T \in \mathbb{N}_+ \;:\; \frac{B}{\rho T} \in \mathbb{N}_+ \right\}. \label{eq:feasible_T}
@@ -279,9 +280,36 @@ m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\time
 若环境扰动在固定观测周期长度下存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s}) = v_R r^{|s|}$（$r > 0$），在 $T \gg \frac{1}{1-r}$ 的渐近近似下，有效环境方差由 $v_R$ 增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，使得环境随机性相较抽样误差更为棘手，最优单期规模将相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$，表明强自相关环境下应将更多预算向拉长观测期数 $T$ 倾斜（在短观测期或强自相关下应依据式~\eqref{eq:var_budget_ar1} 目标函数进行精确离散搜索）。
 \end{corollary}
 
-在统计抽样层面，推论~\ref{cor:optimal_scale} 中的方差与总成本结构，在数学形式上与经典两阶段抽样（Two-stage Sampling）的费用分配模型 \citep{cochran1977sampling} 形成了深刻对偶：时间观测期数 $T$ 对应初级抽样单元数，单期期望捕获规模 $m$ 对应次级样本量。当把一阶自回归环境波动展开后，最优单期规模 $m^*$ 与参数 $(v_R, A)$ 的依赖关系完全通过收益拐点 $m_\times$ 降维表征：在数值上，$m^*$ 恰为成本比与收益拐点的几何平均值。以代表性参数情景为例：若固定边际成本比取 $c_0/c_1 = 10$，对应最优配置规模约为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。
+在统计抽样层面，推论~\ref{cor:optimal_scale} 中的方差与总成本结构，在数学形式上与经典两阶段抽样（Two-stage Sampling）的费用分配模型 \citep{cochran1977sampling} 在数学形式上完全同构：时间观测期数 $T$ 对应初级抽样单元数，单期期望捕获规模 $m$ 对应次级样本量。当把一阶自回归环境波动展开后，最优单期规模 $m^*$ 与参数 $(v_R, A)$ 的依赖关系完全通过收益拐点 $m_\times$ 降维表征：在数值上，$m^*$ 恰为成本比与收益拐点的几何平均值。以代表性参数情景为例：若固定边际成本比取 $c_0/c_1 = 10$，对应最优配置规模约为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。
 
 
+
+\subsection{预测误差的条件分解：仅报告数据可见时的严格形式}\label{subsec:theory_multistep}
+
+在现实流行病学监测中，真实感染历史不可见，决策者仅能依据报告历史 $\mathcal{F}_t^C$ 进行前瞻推断。引入更新过程描述跨周感染压力：
+\begin{equation}
+\Lambda_{t+1} = \sum_{s=1}^S w_s I_{t+1-s}, \qquad \sum_{s=1}^S w_s = 1.
+\end{equation}
+假设在给定潜变量与报告历史下满足：
+\begin{equation}
+\mathbb{E}[I_{t+1} \mid \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C] = \Lambda_{t+1} R_{t+1}.
+\end{equation}
+并且，在给定当期真实感染数 $I_{t+1}$ 条件下，报告抽样过程 $C_{t+1} \mid I_{t+1} \sim \operatorname{Binomial}(I_{t+1}, \rho)$ 条件独立于既往报告历史 $\mathcal{F}_t^C$。
+
+\begin{proposition}[\textbf{真实感染与报告病例的单步预测方差分解}]\label{prop:forecast_decomp}
+基于截至第 $t$ 期的报告信息集 $\mathcal{F}_t^C$，未来真实感染数 $I_{t+1}$ 的预测方差严格满足全方差恒等式：
+\begin{equation}
+\operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) = \operatorname{Var}\big(\Lambda_{t+1} R_{t+1} \;\big|\; \mathcal{F}_t^C\big) + \mathbb{E}\Big[\operatorname{Var}\big(I_{t+1} \;\big|\; \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C\big) \;\Big|\; \mathcal{F}_t^C\Big]. \label{eq:var_I_decomp}
+\end{equation}
+在上述二项观测假定下，未来报告病例数 $C_{t+1}$ 的预测方差严格由下式给出：
+\begin{equation}
+\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \rho(1 - \rho)\,\mathbb{E}[I_{t+1} \mid \mathcal{F}_t^C] + \rho^2 \operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C). \label{eq:var_C_decomp}
+\end{equation}
+\end{proposition}
+
+\noindent\textit{解释：}当真实感染不可观测时，二项报告抽样噪声与底层感染状态空间的不确定性在预测方差中代数正交叠加，表明单代静态公式不能直接外推至时间序列更新过程（详细条件方差展开见附录~\ref{app:proof_prop6}）。
+
+瓶颈属于目标 B；作为对照，目标 A 在单期不存在瓶颈，但其小样本推断仍需精确离散方法。
 
 \subsection{当期超临界增长判定检验与离散检出功效}\label{subsec:theory_growth_test}
 
@@ -310,33 +338,6 @@ c_\alpha = \min \left\{ c \in \mathbb{N} \;:\; \Pr_{R_t = 1}(C_t \ge c) \le \alp
 
 
 由于报告计数的离散性，非随机化检验在有限样本下实际检验水平严格低于名义水平 $\alpha$。命题~\ref{prop:growth_test} 判定的是当期传播参数是否超临界（$R_t > 1$）；而在多期时间序列中，推断系统状态由亚临界向超临界的转变过程则需进一步结合时变再生数轨迹的反弹识别方法 \citep{parag2022fundamental}。
-
-
-
-\subsection{预测误差的条件分解：仅报告数据可见时的严格形式}\label{subsec:theory_multistep}
-
-在现实流行病学监测中，真实感染历史不可见，决策者仅能依据报告历史 $\mathcal{F}_t^C$ 进行前瞻推断。引入更新过程描述跨周感染压力：
-\begin{equation}
-\Lambda_{t+1} = \sum_{s=1}^S w_s I_{t+1-s}, \qquad \sum_{s=1}^S w_s = 1.
-\end{equation}
-假设在给定潜变量与报告历史下满足：
-\begin{equation}
-\mathbb{E}[I_{t+1} \mid \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C] = \Lambda_{t+1} R_{t+1}.
-\end{equation}
-并且，在给定当期真实感染数 $I_{t+1}$ 条件下，报告抽样过程 $C_{t+1} \mid I_{t+1} \sim \operatorname{Binomial}(I_{t+1}, \rho)$ 条件独立于既往报告历史 $\mathcal{F}_t^C$。
-
-\begin{proposition}[\textbf{真实感染与报告病例的单步预测方差分解}]\label{prop:forecast_decomp}
-基于截至第 $t$ 期的报告信息集 $\mathcal{F}_t^C$，未来真实感染数 $I_{t+1}$ 的预测方差严格满足全方差恒等式：
-\begin{equation}
-\operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C) = \operatorname{Var}\big(\Lambda_{t+1} R_{t+1} \;\big|\; \mathcal{F}_t^C\big) + \mathbb{E}\Big[\operatorname{Var}\big(I_{t+1} \;\big|\; \Lambda_{t+1}, R_{t+1}, \mathcal{F}_t^C\big) \;\Big|\; \mathcal{F}_t^C\Big]. \label{eq:var_I_decomp}
-\end{equation}
-在上述二项观测假定下，未来报告病例数 $C_{t+1}$ 的预测方差严格由下式给出：
-\begin{equation}
-\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \rho(1 - \rho)\,\mathbb{E}[I_{t+1} \mid \mathcal{F}_t^C] + \rho^2 \operatorname{Var}(I_{t+1} \mid \mathcal{F}_t^C). \label{eq:var_C_decomp}
-\end{equation}
-\end{proposition}
-
-\noindent\textit{解释：}当真实感染不可观测时，二项报告抽样噪声与底层感染状态空间的不确定性在预测方差中代数正交叠加，表明单代静态公式不能直接外推至时间序列更新过程（详细条件方差展开见附录~\ref{app:proof_prop6}）。
 
 
 
