@@ -299,15 +299,15 @@ def build_slide_2_overview(slide):
     total_w = Cm(30.87)
     x_left = Cm(1.5)
 
-    # Top Section: Grand Landscape Technical Roadmap Box (height 9.4cm)
-    h_top = Cm(9.4)
+    # Top Section: Grand Landscape Technical Roadmap Box (enlarged height 11.8cm)
+    h_top = Cm(11.8)
     card_map = create_card(slide, x_left, y_card, total_w, h_top, fill_color=C_WHITE, border_color=C_CARD_BORDER)
     pic_map = os.path.join(FIGURES_DIR, "fig0_technical_roadmap.png")
     if os.path.exists(pic_map):
         im_m = Image.open(pic_map)
         asp = im_m.size[0] / im_m.size[1]
-        avail_w = total_w - Cm(0.6)
-        avail_h = h_top - Cm(0.6)
+        avail_w = total_w - Cm(0.4)
+        avail_h = h_top - Cm(0.4)
         if avail_w / avail_h > asp:
             tgt_h = avail_h
             tgt_w = tgt_h * asp
@@ -318,9 +318,10 @@ def build_slide_2_overview(slide):
         p_y = y_card + (h_top - tgt_h) / 2
         slide.shapes.add_picture(pic_map, p_x, p_y, width=tgt_w, height=tgt_h)
 
-    # Bottom Section: 4 Horizontal KPI Milestone Cards (height 5.4cm)
-    y_bot = y_card + h_top + Cm(0.35)
-    h_bot = Cm(5.4)
+    # Bottom Section: 4 Compact Horizontal KPI Milestone Cards (height 3.10cm, smaller text)
+    gap_top_bot = Cm(0.25)
+    y_bot = y_card + h_top + gap_top_bot
+    h_bot = Cm(3.10)
     w_kpi = (total_w - Cm(0.9)) / 4 # 4 columns
     gap_kpi = Cm(0.3)
 
@@ -334,24 +335,24 @@ def build_slide_2_overview(slide):
     for i, (head, val, detail) in enumerate(kpis):
         xk = x_left + i * (w_kpi + gap_kpi)
         card_k = create_card(slide, xk, y_bot, w_kpi, h_bot, fill_color=C_CARD_BG, border_color=C_CARD_BORDER)
-        tb_k = slide.shapes.add_textbox(xk + Cm(0.3), y_bot + Cm(0.25), w_kpi - Cm(0.6), h_bot - Cm(0.5))
+        tb_k = slide.shapes.add_textbox(xk + Cm(0.25), y_bot + Cm(0.18), w_kpi - Cm(0.5), h_bot - Cm(0.36))
         tf_k = tb_k.text_frame
         tf_k.word_wrap = True
         
         p1 = tf_k.paragraphs[0]
         r1_h = p1.add_run()
-        format_run(r1_h, head, size_pt=11.0, bold=True, color=C_NAVY_DARK)
+        format_run(r1_h, head, size_pt=9.5, bold=True, color=C_NAVY_DARK)
         
         p_val = tf_k.add_paragraph()
-        p_val.space_before = Pt(2)
+        p_val.space_before = Pt(1.5)
         r1_v = p_val.add_run()
-        format_run(r1_v, val, size_pt=11.5, bold=True, color=C_PRIMARY_BLUE)
+        format_run(r1_v, val, size_pt=10.2, bold=True, color=C_PRIMARY_BLUE)
         
         p2 = tf_k.add_paragraph()
-        p2.line_spacing = 1.15
-        p2.space_before = Pt(3)
+        p2.line_spacing = 1.12
+        p2.space_before = Pt(2.0)
         r2 = p2.add_run()
-        format_run(r2, detail, size_pt=9.2, color=C_TEXT_BODY)
+        format_run(r2, detail, size_pt=8.0, color=C_TEXT_BODY)
 
     sanitize_all_slide_shapes(slide)
 
@@ -498,7 +499,7 @@ def build_slide_4_mechanism(slide):
     p_m1 = tf_m1.paragraphs[0]
     p_m1.line_spacing = 1.15
     r_m1 = p_m1.add_run()
-    format_run(r_m1, "• 第一阶段：微观传播层（负二项分支过程）", size_pt=11.2, bold=True, color=C_TEXT_DARK)
+    format_run(r_m1, "• 第一阶段：微观传播层（负二项分支过程） [Lloyd-Smith et al., Nature 2005]", size_pt=10.6, bold=True, color=C_TEXT_DARK)
     p_m1_sub = tf_m1.add_paragraph()
     p_m1_sub.space_before = Pt(2)
     p_m1_sub.line_spacing = 1.15
@@ -540,7 +541,7 @@ def build_slide_4_mechanism(slide):
     format_run(r_b0, "动力学模型的核心统计特征：", size_pt=11.2, bold=True, color=C_PRIMARY_BLUE)
     
     bio_items = [
-        ("方差均值比（离散指数）：", "Var(Y) / E[Y] = 1 + Rt / k > 1，体现极强超离散特征。"),
+        ("方差均值比与超传播：", "Var(Y) / E[Y] = 1 + Rt / k > 1，Lloyd-Smith 等 (Nature 2005) 证实病原体普遍具备强过度离散。"),
         ("稀疏抽稀效应：", "报告率 ρ 仅缩放观测期望均值，但不改变负二项分布族系属性。"),
         ("尺度映射关系：", "报告病例 Ct 的有效规模直接决定了后验推断的信息下界。")
     ]
