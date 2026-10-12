@@ -29,7 +29,7 @@ content = r"""# 论文深读与理论推导详解：《疫情监测中的病例�
 
 1. **微观概率论支柱**：从经典生灭分支过程（Galton–Watson 过程）出发，引入生物学超传播机制（Gamma 混合泊松分布，即负二项分布）与宏观观测不完全性（二项报告抽样过程），建立了双层随机生成机制；
 2. **渐近统计推断支柱**：利用概率母函数（PGF）复合律证明了分布族闭包，计算得分函数与 Fisher 信息矩阵，严格证明了一致最小方差无偏估计（UMVUE）并达到 Cramér–Rao 下界；
-3. **运筹与抽样设计支柱**：将理论方差分解与流行病学监测资源预算结合，推导了时间与样本规模的二维权衡闭式解，在数学形式上同构于经典两阶段抽样模型（Cochran 费用分配模型）的深刻对偶；
+3. **运筹与抽样设计支柱**：将理论方差分解与流行病学监测资源预算结合，推导了时间与样本规模的二维权衡闭式解，在数学形式上同构于经典两阶段抽样模型（Cochran 费用分配模型）的同构关系；
 4. **经验计量与实证支柱**：不满足于纯理论推导，而是采集全美 CDC NHSN 长达六年、涵盖 50 州及 DC 的 16,218 条真实住院周度记录，采用可行广义最小二乘法（FGLS）与聚类 Bootstrap 检验，破除了达峰期“样本量失效”的传统误读，并扩展至 CDC FluSight 与欧洲 COVID-19 多场景。
 
 读懂这篇论文的秘诀在于：**时刻牢记“推断目标决定规模收益”这一灵魂红线**。
@@ -211,6 +211,13 @@ $$\mathcal{I}^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{kn} \equiv \operatorname{
 
 ### 3.3 命题 2：跨期基础水平的边际方差分解与仿射式推导
 
+> **【核心观察：不可约环境方差 v_R 的双重身份】**
+> 在推导方差前，必须认清 v_R 的物理本质分化：
+> • **对目标 A（当期瞬态）而言**：环境波动正是待测对象本身，其跨期变异不构成误差，单期方差按 O(1/m) 无界衰减；
+> • **对目标 B（跨期平稳）而言**：同一波动退化为不可消除的误差源，单期样本无论多大都无法消除全员共享的单次环境实现！
+
+
+
 应用全方差公式：
 $$\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorname{Var}\left( \mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n \right) + \mathbb{E}\left[ \operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n \right]$$
 - 第一项：由无偏性，$\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] = R_t$，故方差为 $\operatorname{Var}(R_t \mid n) = v_R$；
@@ -270,7 +277,7 @@ $$S = \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2}$$
 $$\operatorname{Var}\left(\sum_{t=1}^T R_t\right) = T v_R + 2 v_R S = T v_R + 2 v_R \left[ \frac{T r}{1 - r} - \frac{r(1 - r^T)}{(1 - r)^2} \right] = v_R T \left[ 1 + \frac{2r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
 通分化简括号内前两项：$1 + \frac{2r}{1-r} = \frac{1-r+2r}{1-r} = \frac{1+r}{1-r}$：
 $$= v_R T \left[ \frac{1+r}{1-r} - \frac{2r(1 - r^T)}{T(1-r)^2} \right]$$
-两端除以 $T^2$，严格导出命题 4(ii) 式 (16)！当 $T \gg \frac{1}{1-r}$ 时，有效独立期数退化为 $T_{\mathrm{eff}} \approx T \frac{1-r}{1+r}$。
+两端除以 $T^2$，严格导出附录 A.4 的精确双重级数求和闭式；当 $T \gg \frac{1}{1-r}$ 时，正文式 (16) 给出有效独立期数折减 $T_{\mathrm{eff}} \approx T \frac{1-r}{1+r}$。
 
 #### 3.5.3 推论 1 成本优化一阶导与二阶导完整展开
 设每期固定运转维持成本为 $c_0$，每报告一例边际成本为 $c_1$。总经费预算为 $\mathcal{B} = T(c_0 + c_1 m)$。

@@ -277,10 +277,10 @@ V(n, \rho) = v_R + \frac{\bar{R}}{\rho n} + \frac{\bar{R}^2 + v_R}{k n}. \label{
 m^* = \sqrt{\frac{c_0}{c_1} \cdot \frac{A}{v_R}} = \sqrt{\frac{c_0}{c_1} m_\times}. \label{eq:optimal_scale}
 \end{equation}
 注意：若由内部一阶条件求出的规模超出可行上界（即 $\sqrt{\frac{c_0}{c_1} m_\times} > \frac{\mathcal{B} - c_0}{c_1}$），则由凸函数的单调性，最优配置取可行域边界角点解 $m^* = \frac{\mathcal{B} - c_0}{c_1}$（对应最低期数 $T = 1$）。命题~\ref{prop:budget_tradeoff} 中无固定成本的纯总人数预算 $B = T m$ 恰对应 $c_0 = 0$ 的特例，此时 $m^* \to 0$，即若无单期固定维持开销，资源配置应极端倾向于拉长期数 $T$；推论~\ref{cor:optimal_scale} 则刻画了存在固定周期开销时的现实权衡。
-若环境扰动在固定观测周期长度下存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s}) = v_R r^{|s|}$（$r > 0$），在 $T \gg \frac{1}{1-r}$ 的渐近近似下，有效环境方差由 $v_R$ 增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，使得环境随机性相较抽样误差更为棘手，最优单期规模将相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$，表明强自相关环境下应将更多预算向拉长观测期数 $T$ 倾斜（在短观测期或强自相关下应依据式~\eqref{eq:var_budget_ar1} 目标函数进行精确离散搜索）。
+若环境扰动在固定观测周期长度下存在一阶自回归自相关 $\operatorname{Cov}(R_t, R_{t+s}) = v_R r^{|s|}$（$r > 0$），在 $T \gg \frac{1}{1-r}$ 的渐近近似下，有效环境方差由 $v_R$ 增大为 $v_{\mathrm{eff}} \approx v_R \frac{1+r}{1-r}$，使得环境随机性相较抽样误差更为棘手，最优单期规模将相应调整为 $m^*_{\mathrm{AR}} \approx \sqrt{\frac{c_0}{c_1} m_\times \frac{1-r}{1+r}} < m^*$，表明强自相关环境下应将更多预算向拉长观测期数 $T$ 倾斜（在短观测期或强自相关下应依据附录~\ref{app:proof_prop4} 中的精确双重级数闭式进行离散搜索）。
 \end{corollary}
 
-在统计抽样层面，推论~\ref{cor:optimal_scale} 中的方差与总成本结构，在数学形式上与经典两阶段抽样（Two-stage Sampling）的费用分配模型 \citep{cochran1977sampling} 在数学形式上完全同构：时间观测期数 $T$ 对应初级抽样单元数，单期期望捕获规模 $m$ 对应次级样本量。当把一阶自回归环境波动展开后，最优单期规模 $m^*$ 与参数 $(v_R, A)$ 的依赖关系完全通过收益拐点 $m_\times$ 降维表征：在数值上，$m^*$ 恰为成本比与收益拐点的几何平均值。以代表性参数情景为例：若固定边际成本比取 $c_0/c_1 = 10$，对应最优配置规模约为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。
+推论~\ref{cor:optimal_scale} 中的方差与总成本结构，在数学形式上同构于经典两阶段抽样（Two-stage Sampling）的费用分配模型 \citep{cochran1977sampling}：时间观测期数 $T$ 对应初级抽样单元数，单期期望捕获规模 $m$ 对应次级样本量。当把一阶自回归环境波动展开后，最优单期规模 $m^*$ 与参数 $(v_R, A)$ 的依赖关系完全通过收益拐点 $m_\times$ 降维表征：在数值上，$m^*$ 恰为成本比与收益拐点的几何平均值。以代表性参数情景为例：若固定边际成本比取 $c_0/c_1 = 10$，对应最优配置规模约为 $m^* \approx 14.6 \sim 22.2$；若 $c_0/c_1 = 100$，则对应 $m^* \approx 46.1 \sim 70.2$。
 
 
 
