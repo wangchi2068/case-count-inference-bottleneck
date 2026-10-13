@@ -1,12 +1,12 @@
-# 病例规模的推断收益边界：估计目标、监测杠杆与流感住院实证
+# 疫情监测中的病例规模收益边界：估计目标、环境随机性与外部验证
 
-本目录为该论文的干净交付版，所有脚本路径均为相对路径，可在本目录内自洽复现全部结果。
+本目录为该论文与大论文、答辩材料的完整交付版，所有脚本路径均为相对路径，可在本目录内自洽复现全部结果。
 
 ## 目录结构
 
 ```
 paper_final/
-├── data/        CDC NHSN 周度流感住院原始数据（24 MB CSV，50 州 + 华盛顿特区，2020-08 至 2026-09）
+├── data/        CDC NHSN 周度流感住院原始数据（24 MB CSV，50 个州及华盛顿特区共 51 个地理辖区，2020-08 至 2026-09）
 ├── simulations/ 全部计算脚本与统计量输出
 │   ├── run_theory_simulations.py            图1：理论命题蒙特卡洛验证（50,000 次，种子 20260923）
 │   ├── run_detection_simulations.py         图2：增长判定检验功效（30,000 次，种子 20260924，首次穿越计算驱动）
@@ -14,12 +14,16 @@ paper_final/
 │   ├── run_empirical_flu_analysis.py        图4 + 全部实证统计量（含仿射 FGLS、cluster bootstrap、竞争基线、IV、误差预算）
 │   └── empirical_stats.json                 论文第 5 节全部数字的唯一数据来源（156+ 字段全固化）
 ├── theory/      propositions_and_proofs.md  命题 1–6 全推导底稿与成本优化推论 1（含全证明）
-├── figures/     fig1–fig4（PDF 投稿版 + PNG 预览版，含对数轴尾部离散与精确枚举图例）
-├── tests/       check_paper_numbers.py 全量多小数数值追踪与文本/文献一致性校验套件
+├── figures/     fig0–fig4（PDF 投稿版 + PNG 预览版，含流程架构图与精确枚举图例）
+├── tests/       check_paper_numbers.py 全量多小数数值追踪与文本/文献一致性校验套件（213 项全过）
+├── thesis/      85 页硕士学位大论文独立工程（Tectonic 独立编译通过，含保姆级推导附录 A 与核心源码附录 B）
 ├── LICENSE      开源协议（MIT License）
 ├── requirements.txt Python 依赖定义
+├── 硕士学位大论文_定稿_85页.pdf               85 页学位大论文最终排版 PDF 交付件
+├── 硕士学位大论文_定稿_85页.docx              85 页学位大论文 Word 格式交付件
+├── 学术答辩PPT_简约大气优化版.pptx            12 页中期学术答辩幻灯片（全宋体+Times New Roman，0排版碰撞，含完整逐页演说备注）
 └── paper/       论文正文（LaTeX 为权威版本；docx 为按学报模板派生的交付件，修订时以 main.tex 为准）
-    ├── main.tex           LaTeX 源（Tectonic 编译，xelatex 兼容）— 权威版本
+    ├── main.tex           LaTeX 源（Tectonic 编译，xelatex 兼容）— 权威版本（28 页定稿）
     ├── main.pdf           编译产物（28 页；从 paper/ 目录执行 tectonic main.tex）
     ├── main_docx.docx     按学报模板重写的 Word 版（含 OMML 公式、原生表格、3 图）
     ├── references.bib     38 条权威参考文献（含 DOI 与 CDC 数据集条目）
