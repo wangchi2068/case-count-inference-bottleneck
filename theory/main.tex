@@ -1,0 +1,184 @@
+% =================================================================
+% RESEARCH PAPER TEMPLATE / 研究论文模板
+% =================================================================
+% Single-column preprint layout -- journal-submission convention:
+% manuscripts are prepared single column; two-column is applied by
+% the publisher at final typesetting.
+% =================================================================
+
+% CHINESE PAPER SWITCH (中文论文开关) -- one line edit:
+%   \documentclass line below -> \documentclass[fontset=none,10pt,a4paper]{ctexart}
+% XeLaTeX is mandatory for both languages so the PDF contains the requested
+% real fonts instead of pdfTeX-compatible substitutes.
+\documentclass[fontset=none,10pt,a4paper]{ctexart}
+\usepackage{iftex}
+\ifXeTeX\else
+  \PackageError{paper-template}{XeLaTeX is required}{Run xelatex; exact Times New Roman and Songti cannot be guaranteed under pdfLaTeX.}
+\fi
+\usepackage{fontspec}
+% 优先使用模板规定的 Times New Roman 与宋体;构建机未安装时,退回度量兼容的
+% Liberation Serif 与宋体风格的 Noto Serif CJK SC(交付说明中已注明)。
+\IfFontExistsTF{Times New Roman}{
+  \setmainfont{Times New Roman}
+}{
+  \setmainfont{Liberation Serif}
+}
+\makeatletter
+\@ifclassloaded{ctexart}{
+  \IfFontExistsTF{SimSun}{
+    \setCJKmainfont{SimSun}
+  }{
+    \IfFontExistsTF{Songti SC}{
+      \setCJKmainfont{Songti SC}
+    }{
+      \IfFontExistsTF{STSong}{
+        \setCJKmainfont{STSong}
+      }{
+        \setCJKmainfont{Noto Serif CJK SC}
+      }
+    }
+  }
+  \IfFontExistsTF{SimHei}{
+    \setCJKsansfont{SimHei}
+  }{
+    \IfFontExistsTF{Heiti SC}{\setCJKsansfont{Heiti SC}}{\setCJKsansfont{Noto Sans CJK SC}}
+  }
+}{}
+\makeatother
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage[a4paper, margin=0.8in]{geometry}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{xurl}
+\usepackage[hidelinks,unicode=true]{hyperref}
+\urlstyle{same}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\captionsetup{
+  font=small,
+  labelfont=normalfont,
+  textfont=normalfont,
+  labelsep=space,
+  justification=justified,
+  singlelinecheck=true,
+  skip=6pt
+}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+% Let figure-heavy manuscripts drain the float queue throughout the body.
+% The final \FloatBarrier closes that queue; the following \clearpage makes
+% the bibliography start on a clean page that contains no body text or floats.
+\setcounter{topnumber}{5}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{8}
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.70}
+\setcounter{dbltopnumber}{4}
+\renewcommand{\dbltopfraction}{0.90}
+\renewcommand{\dblfloatpagefraction}{0.70}
+\usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+\renewcommand{\sectionmark}[1]{\markboth{\thesection\quad #1}{}}
+% Chinese manuscripts use no running header by default. English manuscripts
+% retain section-synchronised headers; the bibliography environment sets its
+% own mark only when the reference heading begins.
+\makeatletter
+\@ifclassloaded{ctexart}{\pagestyle{plain}}{\pagestyle{fancy}}
+\makeatother
+% Diagrams: TikZ for flow/architecture, forest for hierarchies/trees (auto-spaced,
+% no overlap). graphicx (above) provides \resizebox to clamp a figure to \linewidth.
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes.geometric, arrows.meta, fit, backgrounds, calc}
+\usepackage{forest}
+
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+% 讲义用的定理类环境:标题用无衬线(黑体)常规字重,正文为常规字体。
+\usepackage{amsthm}
+\newtheoremstyle{handout}{0.6em}{0.6em}{\normalfont}{}{\sffamily}{}{0.8em}{}
+\theoremstyle{handout}
+\newtheorem{lemma}{引理}[section]
+\newtheorem{proposition}{命题}
+\newtheorem{definition}{定义}
+\newtheorem{corollary}{推论}
+\newtheorem{remark}{注}
+\renewcommand{\proofname}{证明}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\setcounter{tocdepth}{2}
+
+\title{\textbf{《疫情监测中的病例规模收益边界》理论详解与建议}}
+% Production and review disclosures belong in the separate provenance report,
+% not in the manuscript author block. Scientific status such as simulated
+% evidence remains disclosed in the abstract, methods, and relevant captions.
+\author{Apevon Science}
+\date{2026 年 10 月}
+
+\begin{document}
+\maketitle
+\normalfont\mdseries
+
+\input{sections/abstract}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\setcounter{section}{-1}
+\section{导读}\label{sec:guide}
+\input{sections/guide}
+
+\section{前置知识速查}\label{sec:prereq}
+\input{sections/prereq}
+
+\section{符号与参数总表}\label{sec:symbols}
+\input{sections/symbols}
+
+\section{模型设定}\label{sec:model}
+\input{sections/model}
+
+\section{命题、定义与推论逐一详解}\label{sec:props}
+\input{sections/props_intro}
+\input{sections/props_a}
+\input{sections/props_b}
+
+\section{从理论到实证}\label{sec:empirical}
+\input{sections/empirical}
+
+\section{核验结果与原文推导问题}\label{sec:checks}
+\input{sections/checks}
+
+\section{修改、答辩与后续研究建议}\label{sec:advice}
+\input{sections/advice}
+
+\appendix
+\input{sections/appendix}
+
+\FloatBarrier
+\clearpage
+\bibliographystyle{unsrtnat}
+\bibliography{bibliography}
+
+\end{document}

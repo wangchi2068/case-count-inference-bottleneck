@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "tables": [
+    {
+      "id": "tab:peak-bins",
+      "path": "tab_peak_bins.tex",
+      "sha256": "b9bece2f02a18b5a6319393f2f27015d4e391f838d6de07429cfb4c2b83b6126",
+      "generator": "paper/code/thesis_tables_tex.py",
+      "data_sources": [
+        "paper/code/derived/nhsn_bins.json"
+      ],
+      "display": "raw",
+      "n_seeds": 1
+    }
+  ]
+}

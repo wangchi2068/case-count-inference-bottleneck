@@ -1,0 +1,182 @@
+{
+ "name": "c03_prop2_mx_prop3",
+ "title": "命题 2 / 定义 1 / 命题 3:方差分解、交叉点、杠杆非对称",
+ "records": [
+  {
+   "id": "3.1",
+   "target": "全方差公式给出式 eq:var_prop2",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.2",
+   "target": "式 eq:var_prop2 = v_R + A/m(m=ρn,A 为第 176 行)",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.3",
+   "target": "图 1/图 3 参数下 A 与 m_×(第 196、399 行:A=2.1232,m_×=53.1)",
+   "expected": "2.1232; 53.1",
+   "observed": "2.1232; 53.08",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.4",
+   "target": "m = m_× 处环境项占总方差 50%",
+   "expected": "1/2",
+   "observed": "1/2",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.5",
+   "target": "翻倍降幅 [V(m)-V(2m)]/V(m) = 1/(2(1+m/m_×))(第 409 行)",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.6.10",
+   "target": "翻倍降幅数值 m=10",
+   "expected": "42.1%",
+   "observed": "42.07%",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.6.53.08",
+   "target": "翻倍降幅数值 m=53.08",
+   "expected": "25.0%",
+   "observed": "25.00%",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.6.200",
+   "target": "翻倍降幅数值 m=200",
+   "expected": "10.5%",
+   "observed": "10.49%",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.7",
+   "target": "dV/dm = -A/m²(第 190 行)",
+   "expected": "(-Rbar - rho*(Rbar**2 + v_R)/k)/m**2",
+   "observed": "-(Rbar + rho*(Rbar**2 + v_R)/k)/m**2",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.8",
+   "target": "恒等拆分 式 eq:rho_decomp",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.9",
+   "target": "ρ→1 极限 式 eq:rho_limit",
+   "expected": "Rbar/n + v_R + (Rbar**2 + v_R)/(k*n)",
+   "observed": "Rbar**2/(k*n) + Rbar/n + v_R + v_R/(k*n)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.10",
+   "target": "n→∞ 极限 = v_R(第 222 行)",
+   "expected": "v_R",
+   "observed": "v_R",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.11",
+   "target": "【补充】每增加一单位 m:沿 n 与沿 ρ 的边际降幅之比",
+   "expected": "A/R̄ = 1+ρ(R̄²+v_R)/(kR̄)",
+   "observed": "(Rbar*k + rho*(Rbar**2 + v_R))/(Rbar*k)",
+   "verdict": "通过",
+   "note": "非对称在单位规模口径下的精确度量,见 derivations §6.4"
+  },
+  {
+   "id": "3.12",
+   "target": "【补充】流感住院情景下 A/R̄ 的范围",
+   "expected": "接近 1 则两条杠杆几乎等效",
+   "observed": "[1.019, 1.180]",
+   "verdict": "偏差",
+   "note": "ρ≈1% 时命题 3 的非对称在数量上很弱,论文第 467、613、658 行把它作为实证启示时应说明"
+  },
+  {
+   "id": "3.mc.4",
+   "target": "Var(C/(ρn)|n) MC vs 式 eq:var_prop2(n=4,m=1)",
+   "expected": "2.16321",
+   "observed": "2.13452(比值 0.9867,z=-2.25)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.share.4",
+   "target": "环境项份额 v_R/V(m=1),m_×=53.1 时应≈0.5",
+   "expected": "0.018",
+   "observed": "0.019",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.mc.40",
+   "target": "Var(C/(ρn)|n) MC vs 式 eq:var_prop2(n=40,m=10)",
+   "expected": "0.25232",
+   "observed": "0.25216(比值 0.9993,z=-0.17)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.share.40",
+   "target": "环境项份额 v_R/V(m=10),m_×=53.1 时应≈0.5",
+   "expected": "0.159",
+   "observed": "0.159",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.mc.212",
+   "target": "Var(C/(ρn)|n) MC vs 式 eq:var_prop2(n=212,m=53)",
+   "expected": "0.08006",
+   "observed": "0.08045(比值 1.0048,z=1.39)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.share.212",
+   "target": "环境项份额 v_R/V(m=53),m_×=53.1 时应≈0.5",
+   "expected": "0.500",
+   "observed": "0.499",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.mc.2000",
+   "target": "Var(C/(ρn)|n) MC vs 式 eq:var_prop2(n=2000,m=500)",
+   "expected": "0.04425",
+   "observed": "0.04461(比值 1.0082,z=2.44)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "3.share.2000",
+   "target": "环境项份额 v_R/V(m=500),m_×=53.1 时应≈0.5",
+   "expected": "0.904",
+   "observed": "0.904",
+   "verdict": "通过",
+   "note": ""
+  }
+ ]
+}

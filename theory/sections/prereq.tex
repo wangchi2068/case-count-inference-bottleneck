@@ -1,0 +1,67 @@
+论文的推导只用到本科概率统计与计量经济学的标准工具，但这些工具在原文中都以一句话带过。表~\ref{tab:prereq} 按依赖顺序列出十项前置知识，前四项是读懂命题 1 至命题 4 的必要条件，第五至第八项按答辩追问的可能性排序，第九、十项服务于实证映射。每项给出一句话要点、在本讲义中的位置和一道自测题；能不看讲义完成自测题，即可认为该项已经掌握。
+
+\begin{table}[!tbp]
+\centering
+\footnotesize
+\caption{前置知识速查。位置一栏指本讲义的章节；自测题要求不看讲义独立完成。}
+\label{tab:prereq}
+\begin{tabular}{L{0.3cm}L{2.0cm}L{5.8cm}L{1.5cm}L{4.4cm}}
+\toprule
+序号 & 主题 & 一句话要点 & 位置 & 自测题 \\
+\midrule
+1 & 负二项分布与概率生成函数 & Poisson 的均值服从 Gamma 分布即得负二项分布；独立和的生成函数相乘，二项抽稀等价于把 $s$ 换成 $1-\rho+\rho s$，因此负二项抽稀后仍是负二项。 & 第~\ref{sec:model} 节、附录~\ref{app:lemmas} & 推出 $p^*=k/(k+\rho R)$ 与 $\operatorname{Var}(C)=\rho nR+\rho^2nR^2/k$。 \\
+2 & Fisher 信息、CRLB 与完备性 & CRLB 取等当且仅当得分函数是估计量的仿射函数；指数族中充分统计量完备，其无偏函数即一致最小方差无偏估计。 & 命题 1 & 说明论文图 1(b) 中 0.988--1.017 的比值为何不能称为收敛。 \\
+3 & 全方差公式 & $\operatorname{Var}(Y)=\operatorname{Var}(\mathbb{E}[Y\mid X])+\mathbb{E}[\operatorname{Var}(Y\mid X)]$；$\mathbb{E}[R^2]=\bar R^2+v_R$ 是最常被漏掉的一项。 & 命题 2、命题 5 & 推出 $v_R+A/m$ 与命题 5 的 $\mathrm{CV}^2$ 展开。 \\
+4 & AR(1) 与有效样本量 & 相关样本均值的方差等于全部协方差之和除以 $T^2$；$T_{\rm eff}\approx T(1-r)/(1+r)$ 恒高估方差，相对误差约 $2r/[T(1-r^2)]$。 & 命题 4 & 用行和计数推出原文第 751 行的闭式，并计算 $T=26$、$r=0.8$ 时的误差。 \\
+5 & Cochran 两阶段抽样 & 方差 $S_b^2/n+S_w^2/(nm)$ 与成本 $c_1'n+c_2'nm$ 给出 $m_{\rm opt}=\sqrt{(c_1'/c_2')(S_w^2/S_b^2)}$；推论 1 是它的换名形式。 & 推论 1 & 写出两者的符号对应，并说明小预算为何要整数枚举。 \\
+6 & MLR 与 Karlin--Rubin 定理 & 似然比关于统计量单调时，单侧检验的水平在边界处取上确界，随机化单侧检验是一致最优势检验；非随机化离散检验的水平不超过 $\alpha$，功效呈锯齿状。 & 命题 6 & 说明“严格低于 $\alpha$”为何应改为“不超过 $\alpha$”，以及为何要报告稳定样本量。 \\
+7 & 加权最小二乘与 FGLS & 均值设定正确时，任何只依赖回归元的权重都给出一致估计；最优权重是条件方差的倒数，权重只影响效率。 & 第~\ref{sec:empirical} 节 & 说明加权残差的 $\mathrm{CV}^2$ 从 5.32 降到 0.99 为何不足以支持 $1/\hat\mu^2$ 权重。 \\
+8 & 聚类 Bootstrap & 以簇为单位重抽样，允许簇内任意相关，要求簇间独立且簇数足够；两维相关并存时用两向聚类。 & 第~\ref{sec:empirical} 节 & 说明按州聚类与按周聚类各自处理哪一种相关。 \\
+9 & 工具变量与测量误差 & 回归元的经典测量误差使 OLS 斜率向零衰减，工具变量可以纠正；工具变量需要相关性（看第一阶段 $F$）与排除限制（不可检验）。 & 第~\ref{sec:empirical} 节 & 说明为何 $b_{\rm iv}>b_{\rm ols}$，以及工具变量为何不能消除分母噪声对 $b$ 的放大。 \\
+10 & delta 法与比值估计 & $g(\hat\theta)$ 的方差近似为 $g'(\theta)^2\operatorname{Var}(\hat\theta)$；比值 $C/D$ 中分母的噪声以 $\mathbb{E}[G^2]\operatorname{Var}(\eta)$ 的形式进入方差。 & 第~\ref{sec:empirical} 节 & 推出 $b\approx[A+(1-\rho)(\bar R^2+v_R)\sum w^2]/\bar R^2$。 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{推荐读物}
+
+以下读物按表~\ref{tab:prereq} 的序号排列，每项只列最直接的一处。
+
+\begin{enumerate}
+\item 负二项分布与超传播参数 $k$ 的流行病学含义见 \citet{lloydsmith2005superspreading}；Poisson--Gamma 混合与概率生成函数见 \citet{casella2002statistical} 第 4 章。
+\item Cram\'er--Rao 下界与 Lehmann--Scheff\'e 定理见 \citet{casella2002statistical} 第 7.3 节与 \citet{lehmann1998point} 第 2 章。
+\item 条件期望与全方差公式见 \citet{casella2002statistical} 第 4.4 节。
+\item AR(1) 自协方差与长程方差见 \citet{hamilton1994time} 第 3 章。
+\item 两阶段抽样的最优分配见 \citet{cochran1977sampling} 第 10 章。
+\item 单调似然比、Karlin--Rubin 定理与随机化检验见 \citet{lehmann2005testing} 第 3 章与 \citet{karlin1956theory}。
+\item 加权最小二乘与可行广义最小二乘见 \citet{wooldridge2010econometric}。
+\item 聚类 Bootstrap 与两向聚类见 \citet{cameron2008bootstrap,cameron2011robust}，实务要点见 \citet{cameron2015practitioner}。
+\item 测量误差与工具变量见 \citet{wooldridge2010econometric} 第 4、5 章。
+\item delta 法见 \citet{casella2002statistical} 第 5.5.4 节。
+\end{enumerate}
+
+\subsection{答辩前的最小准备}
+
+答辩前至少应能在白板上用五分钟推完一条主线：负二项抽稀，命题 1 的 Fisher 信息，命题 2 的 $v_R+A/m$，交叉点 $m_\times$ 与翻倍降幅公式。第~\ref{sec:advice} 节列出的问答中，关于估计目标、$v_R$ 的可识别性、截距斜率口径和离散检验水平的四条最可能被追问，每条都应能用一句话作答。
+
+表~\ref{tab:keynums} 列出需要记住的关键数值，它们在后文各节反复出现。
+
+\begin{table}[!tbp]
+\centering
+\small
+\caption{需要记住的关键数值及其出处。理论值按论文图 1 的参数计算，实证值取自论文第 5 节。}
+\label{tab:keynums}
+\begin{tabular}{L{5.2cm}L{3.6cm}L{6.4cm}}
+\toprule
+量 & 数值 & 出处与说明 \\
+\midrule
+规模相关方差系数 $A$ & 2.1232 & $\bar R=1.15$、$v_R=0.04$、$k=0.35$、$\rho=0.25$ \\
+理论交叉点 $m_\times$ & 53.08 例/期 & $A/v_R$ \\
+实证截距 $a$ 与斜率 $b$ & 0.0991 与 2.2434 & 流行初期 FGLS 拟合 \\
+经验交叉点 $b/a$ & 22.6 例/周 & 区间 [13.7, 33.7] \\
+情景隐含截距 & 0.014--0.029 & 原文第 515 行情景参数 \\
+$T_{\rm eff}$ 近似的高估幅度 & 20.5\% & $T=26$、$r=0.8$ \\
+稳定样本量相对首次达标样本量 & 多 1.4\%--3.0\% & 命题 6 的精确检验功效 \\
+\bottomrule
+\end{tabular}
+\end{table}

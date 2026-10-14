@@ -1,0 +1,110 @@
+{
+ "name": "c01_prop1_sympy",
+ "title": "命题 1:负二项抽稀封闭性、Fisher 信息与 CRLB(sympy)",
+ "records": [
+  {
+   "id": "1.1",
+   "target": "Poisson–Gamma 混合的 PGF = NB(k,k/(k+R)) 的 PGF",
+   "expected": "0",
+   "observed": "符号差 0;数值最大差 0.0e+00",
+   "verdict": "通过",
+   "note": "E[exp(-Rνu)] = (1+Ru/k)^(-k),u=1-s"
+  },
+  {
+   "id": "1.2",
+   "target": "E[X|R], Var(X|R)(式 eq:nb_branching)",
+   "expected": "R, R+R^2/k",
+   "observed": "R, R*(R + k)/k",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.3",
+   "target": "G_C(s)=G_I(1-ρ+ρs) 化为 (p*/(1-(1-p*)s))^{nk}",
+   "expected": "1",
+   "observed": "1",
+   "verdict": "通过",
+   "note": "两底数之比化简为 1 即同分布"
+  },
+  {
+   "id": "1.4",
+   "target": "附录 p* = p/(p+ρ(1-p)) = k/(k+ρR)",
+   "expected": "k/(R*rho + k)",
+   "observed": "k/(R*rho + k)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.5",
+   "target": "E[C|n,R]=ρnR;Var(C|n,R)=ρnR+ρ²nR²/k(PGF 与全方差两条路线一致)",
+   "expected": "ρnR; ρnR+ρ²nR²/k",
+   "observed": "R*n*rho; R*n*rho*(R*rho + k)/k",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.6",
+   "target": "Var(C/(ρn)|n,R)(式 eq:var_prop1)",
+   "expected": "R/(ρn)+R²/(kn)",
+   "observed": "R**2/(k*n) + R/(n*rho)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.7",
+   "target": "得分函数 ∂lnL/∂R(附录第 701 行)",
+   "expected": "k*(C - R*n*rho)/(R*(R*rho + k))",
+   "observed": "-k*(-C + R*n*rho)/(R*(R*rho + k))",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.8",
+   "target": "附录第 697 行的对数似然(去常数)与完整对数似然的 R 导数一致",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.9",
+   "target": "得分为零的解 = C/(ρn)",
+   "expected": "C/(n*rho)",
+   "observed": "[C/(n*rho)]",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.10",
+   "target": "Fisher 信息 = Var(score) = -E[ℓ''] = n/(R/ρ+R²/k)(式 eq:fisher_info)",
+   "expected": "n/(R**2/k + R/rho)",
+   "observed": "k*n*rho/(R*(R*rho + k)) ; k*n*rho/(R*(R*rho + k))",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.11",
+   "target": "CRLB:1/I = Var(C/(ρn))",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "1.12",
+   "target": "得分可写成 I(R)·(R̂−R)(CRLB 取等的充要条件)",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": "论文证明只比较了方差,没写这一条件;derivations §3.4 补上"
+  },
+  {
+   "id": "1.13",
+   "target": "k→∞ 时 I → ρn/R(第 151 行)",
+   "expected": "n*rho/R",
+   "observed": "n*rho/R",
+   "verdict": "通过",
+   "note": ""
+  }
+ ]
+}

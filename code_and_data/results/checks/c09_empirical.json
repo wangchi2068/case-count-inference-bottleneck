@@ -1,0 +1,294 @@
+{
+ "name": "c09_empirical",
+ "title": "实证:仿射拟合、份额分解、阶段偏差与外部验证的算术一致性",
+ "records": [
+  {
+   "id": "9.1",
+   "target": "初期 m_×^emp = b/a(第 512 行 22.6)",
+   "expected": "22.6",
+   "observed": "22.6471",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.2",
+   "target": "剔除 1% 后 b/a(第 512 行 10.6)",
+   "expected": "10.6",
+   "observed": "10.5578",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.3",
+   "target": "十分位拟合 b/a(第 512 行 22.6)",
+   "expected": "22.6",
+   "observed": "22.5637",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.4.original",
+   "target": "滞后权重 original 的 b/a(表 tab:lag_weights_robustness)",
+   "expected": "22.65",
+   "observed": "22.6471",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.4.equal_3w",
+   "target": "滞后权重 equal_3w 的 b/a(表 tab:lag_weights_robustness)",
+   "expected": "12.64",
+   "observed": "12.6385",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.4.single_1w",
+   "target": "滞后权重 single_1w 的 b/a(表 tab:lag_weights_robustness)",
+   "expected": "45.96",
+   "observed": "45.9574",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.5.expanding_all",
+   "target": "事前滚动 expanding_all 的 b/a(第 551 行)",
+   "expected": "22.5",
+   "observed": "22.5398",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.5.pool_26w",
+   "target": "事前滚动 pool_26w 的 b/a(第 551 行)",
+   "expected": "42.7",
+   "observed": "42.6570",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.5.state_expanding",
+   "target": "事前滚动 state_expanding 的 b/a(第 551 行)",
+   "expected": "38.9",
+   "observed": "38.9127",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.6",
+   "target": "FluSight 外部验证 b/a",
+   "expected": "60.28",
+   "observed": "60.2842",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.7",
+   "target": "欧洲 COVID-19 纯事前口径 b/a",
+   "expected": "124.66",
+   "observed": "124.6588",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.8",
+   "target": "达峰期条件拟合 b/a",
+   "expected": "119.2",
+   "observed": "119.2248",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.9",
+   "target": "[5,20)→[20,50) RelMSE 降幅(第 511 行 51.3%)",
+   "expected": "0.513",
+   "observed": "0.5125",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.10",
+   "target": "分箱样本量之和 = 初期 N",
+   "expected": "1267",
+   "observed": "1267",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.11",
+   "target": "分箱加权平均 RelMSE = 总平均 0.181",
+   "expected": "0.181",
+   "observed": "0.1813",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.12",
+   "target": "(sd/R̄_early)² ≈ 总平均 RelMSE(ddof 差异)",
+   "expected": "0.1812847661884968",
+   "observed": "0.1814",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.13",
+   "target": "a 份额 = a/总平均(第 554 行 54.6%)",
+   "expected": "0.546",
+   "observed": "0.5464",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.14",
+   "target": "b/D 份额(第 554 行 45.1%)",
+   "expected": "0.451",
+   "observed": "0.4512",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.15",
+   "target": "第 551 行「回顾口径 54.8%/45.2%」= 去掉模型外残差后重新归一的份额",
+   "expected": "54.8%/45.2%",
+   "observed": "54.8%/45.2%",
+   "verdict": "偏差",
+   "note": "同一规格在第 551 行与第 554 行用了两种归一化(54.8/45.2 vs 54.6/45.1),正文未说明(issues I-18)"
+  },
+  {
+   "id": "9.16",
+   "target": "【补充】由 b/D 份额反推样本 E[1/D] 与调和平均规模",
+   "expected": "论文未给",
+   "observed": "E[1/D]=0.0365,调和平均 D≈27.4",
+   "verdict": "通过",
+   "note": "调和平均≈27 例/周,与 m_×^emp=22.6 同量级 ⇒ 份额约各半是 m_× 定义的直接推论"
+  },
+  {
+   "id": "9.17",
+   "target": "D≥250 组平均 RelMSE(第 554 行 0.104)",
+   "expected": "0.104",
+   "observed": "0.1041",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.18",
+   "target": "D≥250 观测数",
+   "expected": "244",
+   "observed": "244",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.19",
+   "target": "大规模组 / 全体 = 「约六成」",
+   "expected": "0.6",
+   "observed": "0.5740",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.20",
+   "target": "常数偏差项 (R̄_early-R̄_peak)²/R̄_early²",
+   "expected": "0.266912098536553",
+   "observed": "0.2669",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.21",
+   "target": "偏差份额(第 585 行 88.9%)",
+   "expected": "0.889",
+   "observed": "0.8891",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.22",
+   "target": "未归一 b_early = b·R̄_early²",
+   "expected": "6.26111660248519",
+   "observed": "6.2611",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.23",
+   "target": "未归一 b_peak = b_peak,cond·R̄_peak²",
+   "expected": "5.169008665802857",
+   "observed": "5.1690",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.24",
+   "target": "共同分母 b_peak = 未归一 b_peak / R̄_early²(FGLS 尺度等变)",
+   "expected": "1.8521111520062985",
+   "observed": "1.8521",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.25",
+   "target": "平均回溯延迟 Σ s·w_s(第 441 行 1.45 周)",
+   "expected": "1.45",
+   "observed": "1.4500",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.26",
+   "target": "1.45 周换算天数(第 441 行「约 10.2 天」)",
+   "expected": "10.2",
+   "observed": "10.15",
+   "verdict": "通过",
+   "note": "10.15 四舍五入为 10.2"
+  },
+  {
+   "id": "9.27",
+   "target": "自愿期 SD 扩张(第 613 行 192.1%)",
+   "expected": "1.921",
+   "observed": "1.9207",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "9.28",
+   "target": "【补充】若覆盖率下降只是均匀二项漏报,G 的 SD 至多放大 √(ρ1/ρ2)",
+   "expected": "≤ 1.29 倍",
+   "observed": "实测 2.92 倍",
+   "verdict": "偏差",
+   "note": "2.9 倍远超纯抽稀上界 1.29 倍 ⇒ 支持论文「结构性非随机扰动」解释;与命题 3 的联系只能是定性的(issues I-21)"
+  },
+  {
+   "id": "9.29",
+   "target": "全国汇总:N 与 RelMSE(第 617 行 0.0348,N=28)",
+   "expected": "0.0348; 28",
+   "observed": "0.0348; 28",
+   "verdict": "通过",
+   "note": "N=28 很小,宜给区间"
+  },
+  {
+   "id": "9.30",
+   "target": "【补充】若把州级 a 全视为环境项,由 v_agg/v = c̄+(1-c̄)/J 反推 c̄",
+   "expected": "论文未估计",
+   "observed": "c̄≈0.34",
+   "verdict": "通过",
+   "note": "粗略量级;忽略了全国序列的抽样项和州间方差不等(issues I-20)"
+  },
+  {
+   "id": "9.31",
+   "target": "截距 a 与情景隐含 v_R/R̄²(第 508 行称「0.0991 与 0.014–0.029 相符」)",
+   "expected": "0.014–0.029",
+   "observed": "a=0.0991,为隐含值的 3.5–6.9 倍",
+   "verdict": "不通过",
+   "note": "数量上不相符;论文同段又说 a 混入了代理偏差,应删去「相符」"
+  },
+  {
+   "id": "9.32",
+   "target": "斜率 b 与情景隐含 A/R̄²",
+   "expected": "0.610–0.707",
+   "observed": "b=2.2434,为隐含值的 3.2–3.7 倍",
+   "verdict": "偏差",
+   "note": "b 同样被放大(随机分母等,见 c10);m_× 的「数量级相符」来自分子分母同向放大"
+  }
+ ]
+}

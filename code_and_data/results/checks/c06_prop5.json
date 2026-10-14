@@ -1,0 +1,94 @@
+{
+ "name": "c06_prop5",
+ "title": "命题 5:真实感染与报告病例的单步预测方差分解",
+ "records": [
+  {
+   "id": "6.1",
+   "target": "全方差 + 二项条件矩 ⇒ 式 eq:var_C_decomp",
+   "expected": "ρ(1-ρ)E[I|F] + ρ²Var(I|F)",
+   "observed": "E_I*rho*(1 - rho) + V_I*rho**2",
+   "verdict": "通过",
+   "note": "E[Var(C|I)] = ρ(1-ρ)E[I],Var(E[C|I]) = ρ²Var(I);条件独立于 F_t^C 是必要的"
+  },
+  {
+   "id": "6.2",
+   "target": "【补充】Λ≡n 已知时 Var(C|F)/(ρn)² 恰为命题 2 的 v_R + A/m",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": "命题 5 是命题 2 在随机感染压力下的推广;论文没有写出这一桥接"
+  },
+  {
+   "id": "6.3",
+   "target": "【补充】Λ ⫫ R | F 时 Var(ΛR|F) = Var(Λ)v_R + Var(Λ)R̄² + E[Λ]²v_R",
+   "expected": "E_Lambda**2*v_R + Rbar**2*V_Lambda + V_Lambda*v_R",
+   "observed": "E_Lambda**2*v_R + Rbar**2*V_Lambda + V_Lambda*v_R",
+   "verdict": "通过",
+   "note": "感染压力的不确定性 Var(Λ|F) 以 R̄² 放大进入预测方差,这是第 391 行「预测偏差项」的来源"
+  },
+  {
+   "id": "6.mc.I.40.0.0",
+   "target": "Var(I) MC vs 式 eq:var_I_decomp 两项之和(E[Λ]=40,CV(Λ)=0.0)",
+   "expected": "265.7",
+   "observed": "266.1(z=0.35)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "6.mc.C.40.0.0",
+   "target": "Var(C) MC vs 式 eq:var_C_decomp(E[Λ]=40,CV(Λ)=0.0)",
+   "expected": "理论 25.23;MC 矩代入 25.26",
+   "observed": "25.24(对理论 z=0.04)",
+   "verdict": "通过",
+   "note": "判定按预设 |z|<3 机械给出;越界时以 6.mc.seeds 的多种子复核区分公式错误与抽样波动"
+  },
+  {
+   "id": "6.mc.reduce",
+   "target": "Λ 固定时 Var(C)/(ρΛ)² 与命题 2 的 V(m)",
+   "expected": "0.2523",
+   "observed": "0.2524",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "6.mc.I.40.0.3",
+   "target": "Var(I) MC vs 式 eq:var_I_decomp 两项之和(E[Λ]=40,CV(Λ)=0.3)",
+   "expected": "461.9",
+   "observed": "456.6(z=-2.68)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "6.mc.C.40.0.3",
+   "target": "Var(C) MC vs 式 eq:var_C_decomp(E[Λ]=40,CV(Λ)=0.3)",
+   "expected": "理论 37.49;MC 矩代入 37.15",
+   "observed": "36.97(对理论 z=-4.45)",
+   "verdict": "不通过",
+   "note": "判定按预设 |z|<3 机械给出;越界时以 6.mc.seeds 的多种子复核区分公式错误与抽样波动"
+  },
+  {
+   "id": "6.mc.I.200.0.5",
+   "target": "Var(I) MC vs 式 eq:var_I_decomp 两项之和(E[Λ]=200,CV(Λ)=0.5)",
+   "expected": "16233.6",
+   "observed": "16065.4(z=-1.99)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "6.mc.C.200.0.5",
+   "target": "Var(C) MC vs 式 eq:var_C_decomp(E[Λ]=200,CV(Λ)=0.5)",
+   "expected": "理论 1057.72;MC 矩代入 1047.17",
+   "observed": "1048.12(对理论 z=-1.76)",
+   "verdict": "通过",
+   "note": "判定按预设 |z|<3 机械给出;越界时以 6.mc.seeds 的多种子复核区分公式错误与抽样波动"
+  },
+  {
+   "id": "6.mc.seeds",
+   "target": "20 个独立种子(各 1e4)的平均相对误差(E[Λ]=40,CV(Λ)=0.3)",
+   "expected": "0",
+   "observed": "Var(I): -0.08% ± 0.29%;Var(C): -0.07% ± 0.27%",
+   "verdict": "通过",
+   "note": "排除单一种子的偶然偏离"
+  }
+ ]
+}

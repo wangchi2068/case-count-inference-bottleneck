@@ -1,0 +1,224 @@
+\section{关键引理的完整证明}\label{app:lemmas}
+
+本附录给出正文反复使用的四条引理的完整证明。每条引理先给出陈述，再分步证明并点明每一步所用的工具，最后说明它在本讲义与论文中的使用位置。记号沿用第~\ref{sec:symbols} 节。负二项分布 $\mathrm{NB}(r,p)$ 的概率质量函数统一取下式的参数化：
+\begin{equation}\label{eq:ap-nbpmf}
+\Pr(Y=y)=\frac{\Gamma(y+r)}{y!\,\Gamma(r)}\,p^{r}(1-p)^{y},
+\end{equation}
+其中 $y=0,1,2,\dots$，形状参数 $r>0$，成功概率 $p\in(0,1)$。这一参数化与论文第 332 行负二项累积分布函数的写法一致，其均值 $r(1-p)/p$ 与方差 $r(1-p)/p^2$ 将在引理 A.2 的证明中由概率生成函数导出。
+
+\subsection{引理 A.1：负二项分布是 Poisson–Gamma 混合}\label{lem:ap-nb}
+
+若个体传染力 $\lambda$ 服从形状为 $k$、尺度为 $R/k$ 的 Gamma 分布，且给定 $\lambda$ 时继发感染数 $X\sim\mathrm{Poisson}(\lambda)$，则 $X\sim\mathrm{NB}(k,p)$，其中 $p=k/(k+R)$，并有 $\mathbb{E}[X]=R$、$\operatorname{Var}(X)=R+R^2/k$；进一步，若 $X_1,\dots,X_n$ 在给定 $R$ 下独立同分布于 $\mathrm{NB}(k,p)$，则 $I=\sum_{i=1}^nX_i\sim\mathrm{NB}(nk,p)$。
+
+论文式 (1) 只给出个体继发感染数的前两阶条件矩，如下式所示：
+\begin{equation*}
+\mathbb{E}[X_{i,t} \mid R_t] = R_t, \qquad
+\operatorname{Var}(X_{i,t} \mid R_t) = R_t + \frac{R_t^2}{k},
+\tag{原文式 1}
+\end{equation*}
+附录第 688 行则直接以 $n$ 人总和的概率生成函数为出发点，所用的结论如下式所示：
+\begin{equation*}
+G_{I_t}(s) = \left(\frac{p}{1 - (1-p)s}\right)^{nk}
+\tag*{原文第 688 行}
+\end{equation*}
+引理 A.1 补齐从 Poisson--Gamma 混合到这两处结论的全部步骤 \citep{casella2002statistical}。
+
+\begin{enumerate}
+\item 由全概率公式对连续混合变量积分，$X$ 的边际概率可以写成 Poisson 概率与 Gamma 密度乘积的积分：
+\begin{equation*}
+\Pr(X=x)=\int_0^\infty\frac{e^{-\lambda}\lambda^{x}}{x!}\cdot\frac{\lambda^{k-1}e^{-\lambda k/R}}{\Gamma(k)(R/k)^{k}}\,d\lambda .
+\end{equation*}
+\item 由指数函数与幂函数的乘法法则合并被积函数，$\lambda$ 的幂次为 $x+k-1$，指数中 $\lambda$ 的系数为 $1+k/R=(k+R)/R$。
+\item 由 Gamma 积分 $\int_0^\infty\lambda^{a-1}e^{-b\lambda}\,d\lambda=\Gamma(a)/b^{a}$，取 $a=x+k$、$b=(k+R)/R$，可得
+\begin{equation*}
+\Pr(X=x)=\frac{\Gamma(x+k)}{x!\,\Gamma(k)\,(R/k)^{k}}\Big(\frac{R}{k+R}\Big)^{x+k}.
+\end{equation*}
+\item 由代数整理 $(R/k)^{-k}\big(R/(k+R)\big)^{k}=\big(k/(k+R)\big)^{k}$，上式化为
+\begin{equation*}
+\Pr(X=x)=\frac{\Gamma(x+k)}{x!\,\Gamma(k)}\Big(\frac{k}{k+R}\Big)^{k}\Big(\frac{R}{k+R}\Big)^{x},
+\end{equation*}
+与式~(\ref{eq:ap-nbpmf}) 对照，这正是 $r=k$、$p=k/(k+R)$ 的负二项分布。一般地，形状为 $\alpha$、尺度为 $\theta$ 的 Gamma 混合给出 $\mathrm{NB}(\alpha,1/(1+\theta))$，本步取 $\theta=R/k$。
+\item 由全期望公式，$\mathbb{E}[X]=\mathbb{E}\big[\mathbb{E}[X\mid\lambda]\big]=\mathbb{E}[\lambda]=k\cdot R/k=R$；由全方差公式（引理 A.3 的式~(\ref{eq:ap-totvar})），$\operatorname{Var}(X)=\mathbb{E}[\operatorname{Var}(X\mid\lambda)]+\operatorname{Var}(\mathbb{E}[X\mid\lambda])=\mathbb{E}[\lambda]+\operatorname{Var}(\lambda)=R+k(R/k)^2=R+R^2/k$，与原文式 1 一致。
+\item 由广义二项级数 $\sum_{x\ge0}\frac{\Gamma(x+r)}{x!\,\Gamma(r)}z^{x}=(1-z)^{-r}$（$|z|<1$），取 $z=(1-p)s$，单个 $\mathrm{NB}(k,p)$ 的概率生成函数为
+\begin{equation}\label{eq:ap-pgf}
+G_X(s)=\sum_{x\ge0}\frac{\Gamma(x+k)}{x!\,\Gamma(k)}p^{k}\big((1-p)s\big)^{x}=\Big(\frac{p}{1-(1-p)s}\Big)^{k},
+\end{equation}
+它在 $|s|<1/(1-p)$ 上收敛，包含 $[0,1]$。
+\item 由独立随机变量之和的概率生成函数等于各自概率生成函数之积，并利用给定 $R$ 时 $X_1,\dots,X_n$ 条件独立且共用同一个 $p$，可得 $G_I(s)=\prod_{i=1}^nG_{X_i}(s)=\big(p/(1-(1-p)s)\big)^{nk}$，它是式~(\ref{eq:ap-pgf}) 中把 $k$ 换成 $nk$ 的结果，即原文第 688 行的表达式。
+\item 由概率生成函数唯一决定非负整数值分布（$\Pr(I=i)=G_I^{(i)}(0)/i!$），可知 $I\sim\mathrm{NB}(nk,p)$。
+\item 作为独立的核对，由 Poisson 分布的可加性，给定 $\lambda_1,\dots,\lambda_n$ 时 $I\sim\mathrm{Poisson}(\sum_i\lambda_i)$；由同尺度 Gamma 分布的可加性，$\sum_i\lambda_i$ 服从形状 $nk$、尺度 $R/k$ 的 Gamma 分布；再用第 1--4 步，$I\sim\mathrm{NB}(nk,1/(1+R/k))=\mathrm{NB}(nk,k/(k+R))$，与第 8 步一致。
+\end{enumerate}
+
+引理 A.1 在论文与本讲义中有三处用途。第一，它为原文式 1 提供分布层面的解释：$k$ 是个体传染力的 Gamma 形状参数，$R^2/k$ 正是传染力本身的方差，$k$ 越小，少数个体贡献的继发感染比例越大，这是超传播文献中 $k$ 的标准含义 \citep{lloydsmith2005superspreading}。第二，第 7 步要求同期 $n$ 人共用同一个 $p$，即共享同一个 $R_t$；若每人各自抽取一个 $R$，环境方差会被 $1/n$ 稀释，命题 2 中不随规模下降的 $v_R$ 就不复存在，这一点对应第~\ref{sec:model} 节需要显式写出的假设。第三，$I\sim\mathrm{NB}(nk,p)$ 是引理 A.2、命题 1 的似然以及命题 6 精确检验的共同起点，相应推导见第~\ref{sec:props} 节。
+
+\subsection{引理 A.2：二项抽稀下负二项分布封闭}\label{lem:ap-thin}
+
+若 $I\mid n,R\sim\mathrm{NB}(nk,p)$，$p=k/(k+R)$，且 $C\mid I\sim\mathrm{Binomial}(I,\rho)$，则 $C\mid n,R\sim\mathrm{NB}(nk,p^*)$，其中 $p^*=k/(k+\rho R)$，从而 $\mathbb{E}[C\mid n,R]=\rho nR$、$\operatorname{Var}(C\mid n,R)=\rho nR+\rho^2nR^2/k$。
+
+\begin{enumerate}
+\item 由二项分布的概率生成函数，每名感染者独立地以概率 $\rho$ 被报告，单人的概率生成函数为 $1-\rho+\rho s$，$I$ 人相乘得 $\mathbb{E}[s^{C}\mid I]=(1-\rho+\rho s)^{I}$。
+\item 由条件期望的塔式性质，对 $I$ 再取期望，可得复合关系
+\begin{equation}\label{eq:ap-compose}
+G_C(s)=\mathbb{E}\big[\mathbb{E}[s^{C}\mid I]\big]=\mathbb{E}\big[(1-\rho+\rho s)^{I}\big]=G_I(1-\rho+\rho s).
+\end{equation}
+\item 由式~(\ref{eq:ap-pgf})（形状参数取 $nk$）代入，$G_C(s)=\big(p/[1-(1-p)(1-\rho+\rho s)]\big)^{nk}$。
+\item 由展开分母的代数整理，$1-(1-p)(1-\rho)-(1-p)\rho s=\big[p+\rho(1-p)\big]-\rho(1-p)s$。
+\item 由分子分母同除以 $p+\rho(1-p)$，括号内化为 $p^*/\big(1-(1-p^*)s\big)$，其中 $p^*=p/\big(p+\rho(1-p)\big)$，$1-p^*=\rho(1-p)/\big(p+\rho(1-p)\big)$，两者相加为 1 且都在 $(0,1)$ 内。
+\item 由代入 $p=k/(k+R)$，有 $1-p=R/(k+R)$，$p+\rho(1-p)=(k+\rho R)/(k+R)$，于是
+\begin{equation}\label{eq:ap-pstar}
+p^*=\frac{k}{k+\rho R},\qquad 1-p^*=\frac{\rho R}{k+\rho R}.
+\end{equation}
+\item 由概率生成函数的唯一性（引理 A.1 第 8 步），$C\mid n,R\sim\mathrm{NB}(nk,p^*)$。
+\end{enumerate}
+
+附录第 691 行以一行写出了第 2--5 步的结果，如下式所示：
+\begin{equation*}
+G_{C_t}(s) = G_{I_t}(1 - \rho + \rho s) = \left(\frac{p}{1 - (1-p)(1 - \rho + \rho s)}\right)^{nk} = \left(\frac{p^*}{1 - (1-p^*)s}\right)^{nk},
+\tag*{原文第 691 行}
+\end{equation*}
+第 693 行给出的抽稀后成功概率如下式所示，与式~(\ref{eq:ap-pstar}) 相同：
+\begin{equation*}
+p^* = \frac{p}{p + \rho(1-p)} = \frac{k}{k + \rho R_t}
+\tag*{原文第 693 行}
+\end{equation*}
+命题 1(i) 用均值与形状参数表述同一结论，如下式所示：
+\begin{equation*}
+C_t \mid n, R_t \sim \operatorname{NB}\!\left(\text{均值} = \rho n R_t, \; \text{形状参数} = nk\right);
+\tag{原文式 4}
+\end{equation*}
+原文式 4 中的均值需要由下面的矩计算得到。矩可以沿两条路线求出，两者互相印证。
+
+\begin{enumerate}
+\item 路线 A 由概率生成函数求导求矩。对 $G(s)=\big(q/(1-(1-q)s)\big)^{r}$，链式法则给出 $G'(s)=r(1-q)q^{r}\big(1-(1-q)s\big)^{-r-1}$ 与 $G''(s)=r(r+1)(1-q)^2q^{r}\big(1-(1-q)s\big)^{-r-2}$，于是 $\mathbb{E}[Y]=G'(1)=r(1-q)/q$，$\mathbb{E}[Y(Y-1)]=G''(1)=r(r+1)(1-q)^2/q^2$。
+\item 由方差与阶乘矩的关系 $\operatorname{Var}(Y)=G''(1)+G'(1)-G'(1)^2$，可得 $\operatorname{Var}(Y)=r(1-q)^2/q^2+r(1-q)/q=r(1-q)/q^2$。
+\item 由代入 $r=nk$、$q=p^*$ 与式~(\ref{eq:ap-pstar}) 中的 $(1-p^*)/p^*=\rho R/k$，可得 $\mathbb{E}[C\mid n,R]=nk\cdot\rho R/k=\rho nR$，以及 $\operatorname{Var}(C\mid n,R)=nk\cdot(\rho R/k)\cdot(k+\rho R)/k=\rho nR+\rho^2nR^2/k$。
+\item 路线 B 用全方差公式（引理 A.3）以 $I$ 为条件。二项分布的条件矩为 $\mathbb{E}[C\mid I]=\rho I$、$\operatorname{Var}(C\mid I)=\rho(1-\rho)I$；由第 1--2 步应用于 $\mathrm{NB}(nk,p)$，$\mathbb{E}[I]=nR$、$\operatorname{Var}(I)=nR+nR^2/k$。
+\item 由全方差公式，$\operatorname{Var}(C)=\mathbb{E}[\rho(1-\rho)I]+\operatorname{Var}(\rho I)=\rho(1-\rho)nR+\rho^2(nR+nR^2/k)$；由合并同类项 $\rho(1-\rho)nR+\rho^2nR=\rho nR$，结果为 $\rho nR+\rho^2nR^2/k$，与路线 A 相同。
+\end{enumerate}
+
+附录第 711 行引用的负二项方差就是上面两条路线的共同结果，如下式所示：
+\begin{equation*}
+\operatorname{Var}(C_t \mid n, R_t) = \rho n R_t + \frac{\rho^2 n R_t^2}{k} = \frac{\rho n R_t(k + \rho R_t)}{k}
+\tag*{原文第 711 行}
+\end{equation*}
+
+引理 A.2 是命题 1 全部结论的分布基础：原文式 4 直接来自它，引理 A.4 中的似然、得分与 Fisher 信息都以 $\mathrm{NB}(nk,p^*)$ 为模型。命题 6 的精确功效（原文式 25）把 $R$ 换成 $1+\delta$ 后使用同一个 $p^*$。式~(\ref{eq:ap-compose}) 不依赖 $I$ 的分布，所以“先生成再抽稀”在概率生成函数上始终是复合运算，负二项族的特殊之处在于复合后形式不变。由第 3 步的矩还可得到相对方差 $\operatorname{Var}(C)/\mathbb{E}[C]^2=1/(\rho nR)+1/(nk)$，其中超传播项 $1/(nk)$ 只取决于真实感染者数 $n$，命题 3 的非对称性即来源于此。相关讨论见第~\ref{sec:props} 节。
+
+\subsection{引理 A.3：全方差公式}\label{lem:ap-totvar}
+
+若 $\mathbb{E}[Y^2]<\infty$，则对任意随机变量或随机向量 $X$ 有 $\operatorname{Var}(Y)=\operatorname{Var}(\mathbb{E}[Y\mid X])+\mathbb{E}[\operatorname{Var}(Y\mid X)]$；更一般地，对 $\sigma$-代数 $\mathcal F\subseteq\mathcal G$ 有 $\operatorname{Var}(Y\mid\mathcal F)=\operatorname{Var}(\mathbb{E}[Y\mid\mathcal G]\mid\mathcal F)+\mathbb{E}[\operatorname{Var}(Y\mid\mathcal G)\mid\mathcal F]$。
+
+证明从条件期望的定义出发 \citep{casella2002statistical}。对可积的 $Y$ 与子 $\sigma$-代数 $\mathcal G$，$\mathbb{E}[Y\mid\mathcal G]$ 定义为几乎处处唯一的 $\mathcal G$ 可测可积随机变量 $Z$，使得对一切 $G\in\mathcal G$ 有 $\mathbb{E}[Z\mathbb 1_G]=\mathbb{E}[Y\mathbb 1_G]$；$\mathbb{E}[Y\mid X]$ 指 $\mathbb{E}[Y\mid\sigma(X)]$。条件方差定义为 $\operatorname{Var}(Y\mid\mathcal G)=\mathbb{E}\big[(Y-\mathbb{E}[Y\mid\mathcal G])^2\mid\mathcal G\big]$。
+
+\begin{enumerate}
+\item 由定义推出塔式性质。设 $\mathcal F\subseteq\mathcal G$，对任意 $F\in\mathcal F$，因 $F\in\mathcal G$，有 $\mathbb{E}\big[\mathbb{E}[Y\mid\mathcal G]\mathbb 1_F\big]=\mathbb{E}[Y\mathbb 1_F]$；而 $\mathbb{E}[\mathbb{E}[Y\mid\mathcal G]\mid\mathcal F]$ 与 $\mathbb{E}[Y\mid\mathcal F]$ 都是满足这一等式的 $\mathcal F$ 可测变量，由唯一性两者几乎处处相等。取 $\mathcal F$ 为平凡 $\sigma$-代数，即得 $\mathbb{E}\big[\mathbb{E}[Y\mid\mathcal G]\big]=\mathbb{E}[Y]$。
+\item 由定义推出“提出已知量”的性质。若 $W=\mathbb 1_H$，$H\in\mathcal G$，记 $Z=\mathbb{E}[Y\mid\mathcal G]$，则对任意 $G\in\mathcal G$ 有 $\mathbb{E}[\mathbb 1_HZ\mathbb 1_G]=\mathbb{E}[Z\mathbb 1_{H\cap G}]=\mathbb{E}[Y\mathbb 1_{H\cap G}]=\mathbb{E}[\mathbb 1_HY\mathbb 1_G]$，所以 $\mathbb{E}[WY\mid\mathcal G]=WZ$；由线性性推广到简单函数，再由控制收敛定理推广到 $WY$ 可积的一般 $\mathcal G$ 可测 $W$。
+\item 由条件 Jensen 不等式，$Z=\mathbb{E}[Y\mid X]$ 满足 $Z^2\le\mathbb{E}[Y^2\mid X]$，取期望得 $\mathbb{E}[Z^2]\le\mathbb{E}[Y^2]<\infty$，因此下文出现的各项期望都有限。
+\item 由加减同一项的分解，$Y-\mathbb{E}[Y]=(Y-Z)+(Z-\mathbb{E}[Y])$，平方后取期望，$\operatorname{Var}(Y)=\mathbb{E}[(Y-Z)^2]+\mathbb{E}[(Z-\mathbb{E}Y)^2]+2\,\mathbb{E}[(Y-Z)(Z-\mathbb{E}Y)]$。
+\item 由塔式性质与“提出已知量”，交叉项满足 $\mathbb{E}[(Y-Z)(Z-\mathbb{E}Y)]=\mathbb{E}\big[(Z-\mathbb{E}Y)\,\mathbb{E}[Y-Z\mid X]\big]=\mathbb{E}\big[(Z-\mathbb{E}Y)(Z-Z)\big]=0$。
+\item 由塔式性质 $\mathbb{E}[Z]=\mathbb{E}[Y]$，第二项等于 $\mathbb{E}[(Z-\mathbb{E}Z)^2]=\operatorname{Var}(\mathbb{E}[Y\mid X])$。
+\item 由塔式性质与条件方差的定义，第一项等于 $\mathbb{E}\big[\mathbb{E}[(Y-Z)^2\mid X]\big]=\mathbb{E}[\operatorname{Var}(Y\mid X)]$。三项合并即得
+\begin{equation}\label{eq:ap-totvar}
+\operatorname{Var}(Y)=\operatorname{Var}\big(\mathbb{E}[Y\mid X]\big)+\mathbb{E}\big[\operatorname{Var}(Y\mid X)\big].
+\end{equation}
+\item 条件版本按同样的思路证明。记 $W=\mathbb{E}[Y\mid\mathcal G]$、$U=\mathbb{E}[Y\mid\mathcal F]$，由第 1 步的塔式性质 $\mathbb{E}[W\mid\mathcal F]=U$。由分解 $Y-U=(Y-W)+(W-U)$，平方后取 $\mathbb{E}[\cdot\mid\mathcal F]$；因 $U$ 是 $\mathcal F$ 可测、从而 $\mathcal G$ 可测，$W-U$ 是 $\mathcal G$ 可测的，由第 1、2 步，交叉项 $\mathbb{E}[(Y-W)(W-U)\mid\mathcal F]=\mathbb{E}\big[(W-U)\,\mathbb{E}[Y-W\mid\mathcal G]\mid\mathcal F\big]=0$。
+\item 由 $\mathbb{E}[W\mid\mathcal F]=U$ 与条件方差的定义，$\mathbb{E}[(W-U)^2\mid\mathcal F]=\operatorname{Var}(W\mid\mathcal F)$；由塔式性质，$\mathbb{E}[(Y-W)^2\mid\mathcal F]=\mathbb{E}\big[\mathbb{E}[(Y-W)^2\mid\mathcal G]\mid\mathcal F\big]=\mathbb{E}[\operatorname{Var}(Y\mid\mathcal G)\mid\mathcal F]$。合并即得
+\begin{equation}\label{eq:ap-condtotvar}
+\operatorname{Var}(Y\mid\mathcal F)=\operatorname{Var}\big(\mathbb{E}[Y\mid\mathcal G]\mid\mathcal F\big)+\mathbb{E}\big[\operatorname{Var}(Y\mid\mathcal G)\mid\mathcal F\big],\qquad\mathcal F\subseteq\mathcal G .
+\end{equation}
+取 $\mathcal F$ 为平凡 $\sigma$-代数、$\mathcal G=\sigma(X)$，式~(\ref{eq:ap-condtotvar}) 退化为式~(\ref{eq:ap-totvar})。由条件方差的定义展开平方，还可得到常用的推论 $\mathbb{E}[Y^2\mid\mathcal F]=\operatorname{Var}(Y\mid\mathcal F)+\mathbb{E}[Y\mid\mathcal F]^2$，论文第 728 行的 $\mathbb{E}[R_t^2\mid n]=v_R+\bar R^2$ 即为此式。
+\end{enumerate}
+
+全方差公式在本文中有三处关键应用，另有一处用于实证映射。
+
+第一处是命题 2。取 $\mathcal F=\sigma(n)$、$\mathcal G=\sigma(n,R_t)$、$Y=C_t/(\rho n)$ 代入式~(\ref{eq:ap-condtotvar})，得到附录第 722 行的分解，如下式所示：
+\begin{equation*}
+\operatorname{Var}\!\left(\frac{C_t}{\rho n} \;\middle|\; n\right) = \operatorname{Var}\left(\mathbb{E}\left[\frac{C_t}{\rho n} \;\middle|\; n, R_t\right] \;\middle|\; n\right) + \mathbb{E}\left[\operatorname{Var}\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) \;\middle|\; n\right].
+\tag*{原文第 722 行}
+\end{equation*}
+由命题 1 的无偏性，第一项为 $\operatorname{Var}(R_t\mid n)=v_R$；第二项的被积量取自原文式 6，对 $R_t$ 取条件期望后如下式所示：
+\begin{equation*}
+\mathbb{E}\left[\frac{R_t}{\rho n} + \frac{R_t^2}{k n} \;\middle|\; n\right] = \frac{\mathbb{E}[R_t \mid n]}{\rho n} + \frac{\mathbb{E}[R_t^2 \mid n]}{k n}.
+\tag*{原文第 726 行}
+\end{equation*}
+再用推论 $\mathbb{E}[R_t^2\mid n]=v_R+\bar R^2$，即得原文式 7 的 $v_R+\bar R/(\rho n)+(\bar R^2+v_R)/(kn)$。
+
+第二、三处都在命题 5。第一次取 $\mathcal F=\mathcal F_t^C$、$\mathcal G=\sigma(\Lambda_{t+1},R_{t+1},\mathcal F_t^C)$、$Y=I_{t+1}$，并代入假设 $\mathbb{E}[I_{t+1}\mid\Lambda_{t+1},R_{t+1},\mathcal F_t^C]=\Lambda_{t+1}R_{t+1}$，即得原文式 21。第二次取 $\mathcal G=\sigma(I_{t+1},\mathcal F_t^C)$、$Y=C_{t+1}$，得到附录第 769 行的分解，如下式所示：
+\begin{equation*}
+\operatorname{Var}(C_{t+1} \mid \mathcal{F}_t^C) = \mathbb{E}[\operatorname{Var}(C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C) \mid \mathcal{F}_t^C] + \operatorname{Var}(\mathbb{E}[C_{t+1} \mid I_{t+1}, \mathcal{F}_t^C] \mid \mathcal{F}_t^C).
+\tag*{原文第 769 行}
+\end{equation*}
+代入二项条件矩 $\operatorname{Var}(C_{t+1}\mid I_{t+1},\mathcal F_t^C)=\rho(1-\rho)I_{t+1}$ 与 $\mathbb{E}[C_{t+1}\mid I_{t+1},\mathcal F_t^C]=\rho I_{t+1}$，即得原文式 22。命题 4 的证明（附录第 743--747 行）以整条环境序列 $\{R_t\}$ 为条件，用的也是同一公式。
+
+第四处是第~\ref{sec:empirical} 节随机分母的一阶 delta 法。设 $X$ 与 $Y$ 独立、$\mathbb{E}[Y]=1$，以 $Y$ 为条件应用式~(\ref{eq:ap-totvar})，有 $\operatorname{Var}(XY\mid Y)=Y^2\operatorname{Var}(X)$、$\mathbb{E}[XY\mid Y]=Y\,\mathbb{E}[X]$，于是
+\begin{equation}\label{eq:ap-prodvar}
+\operatorname{Var}(XY)=\mathbb{E}[Y^2]\operatorname{Var}(X)+\mathbb{E}[X]^2\operatorname{Var}(Y)=\operatorname{Var}(X)+\mathbb{E}[X^2]\operatorname{Var}(Y).
+\end{equation}
+把分母写成 $D=\rho\Lambda(1+\eta)$，其中 $\eta$ 是零均值的相对抽样误差，并记 $G_0=C/(\rho\Lambda)$，则增长比 $C/D\approx G_0(1-\eta)$；给定 $\Lambda$ 时 $G_0$ 与 $\eta$ 独立，取 $X=G_0$、$Y=1-\eta$，式~(\ref{eq:ap-prodvar}) 给出分母噪声以 $\mathbb{E}[G_0^2]\operatorname{Var}(\eta)$ 的形式进入方差，这就是斜率 $b$ 被抬高的来源。引理 A.1 第 5 步与引理 A.2 路线 B 也都是式~(\ref{eq:ap-totvar}) 的直接应用。
+
+\subsection{引理 A.4：Fisher 信息、CRLB 及其取等条件}\label{lem:ap-fisher}
+
+在正则条件下，参数 $\theta$ 的任一无偏估计的方差不低于 Fisher 信息的倒数，等号成立当且仅当得分是该估计量的仿射函数；对 $\mathrm{NB}(nk,k/(k+\rho R))$ 族，$C/(\rho n)$ 在每个 $n$ 上取等，由完备性与 Lehmann--Scheffé 定理为 UMVUE，且 Fisher 信息为 $n/(R/\rho+R^2/k)$。
+
+设观测 $Y$ 的密度或概率质量函数为 $f(y;\theta)$，得分定义为 $S(\theta)=\partial\ln f(Y;\theta)/\partial\theta$，Fisher 信息定义为 $\mathcal I(\theta)=\mathbb{E}_\theta[S(\theta)^2]$。所用正则条件如下 \citep{lehmann1998point}。
+\begin{itemize}
+\item 参数空间 $\Theta$ 是开区间。
+\item 支撑集 $\{y:f(y;\theta)>0\}$ 不依赖于 $\theta$。
+\item $\ln f(y;\theta)$ 关于 $\theta$ 可微，并且 $\int f\,dy$ 与 $\int T f\,dy$ 可以在积分号下对 $\theta$ 求导；离散情形把积分换成求和。
+\item 对一切 $\theta\in\Theta$，$0<\mathcal I(\theta)<\infty$。
+\end{itemize}
+
+\begin{enumerate}
+\item 由积分号下求导，对恒等式 $\int f(y;\theta)\,dy=1$ 两端关于 $\theta$ 求导，得 $\int\partial_\theta f\,dy=\int S\,f\,dy=0$，即 $\mathbb{E}_\theta[S]=0$，因此 $\mathcal I(\theta)=\operatorname{Var}_\theta(S)$。
+\item 由积分号下求导，对无偏性 $\int T(y)f(y;\theta)\,dy=\theta$ 两端求导，得 $\mathbb{E}_\theta[TS]=1$；结合第 1 步，$\operatorname{Cov}_\theta(T,S)=\mathbb{E}[TS]-\mathbb{E}[T]\mathbb{E}[S]=1$。
+\item 由 Cauchy--Schwarz 不等式 $\operatorname{Cov}(T,S)^2\le\operatorname{Var}(T)\operatorname{Var}(S)$，得 $1\le\operatorname{Var}_\theta(T)\,\mathcal I(\theta)$，即
+\begin{equation}\label{eq:ap-crlb}
+\operatorname{Var}_\theta(T)\ge\frac{1}{\mathcal I(\theta)}.
+\end{equation}
+\item 由 Cauchy--Schwarz 不等式的取等条件，式~(\ref{eq:ap-crlb}) 取等当且仅当 $S-\mathbb{E}S$ 与 $T-\mathbb{E}T$ 几乎处处线性相关，即 $S=c(\theta)(T-\theta)$。两端乘以 $S$ 取期望并用第 2 步，得 $\mathcal I(\theta)=c(\theta)\operatorname{Cov}(T,S)=c(\theta)$，所以取等的充要条件为
+\begin{equation}\label{eq:ap-affine}
+S(\theta)=\mathcal I(\theta)\,\big(T-\theta\big),\ \text{几乎处处成立}.
+\end{equation}
+\item 由对 $\theta$ 积分，若式~(\ref{eq:ap-affine}) 对一切 $\theta$ 成立，则 $\ln f(y;\theta)=\eta(\theta)T(y)-B(\theta)+h(y)$，其中 $\eta'(\theta)=\mathcal I(\theta)>0$、$B'(\theta)=\theta\,\mathcal I(\theta)$。这说明 CRLB 能在整个参数空间上达到，当且仅当模型是以 $T$ 为自然统计量的单参数指数族，且 $T$ 估计的是其均值参数。
+\item 由 Rao--Blackwell 论证（其中的方差比较就是引理 A.3 的式~(\ref{eq:ap-totvar})），设 $T$ 为充分统计量、$W$ 为任一无偏估计，令 $\varphi(T)=\mathbb{E}[W\mid T]$。充分性保证 $\varphi(T)$ 不依赖 $\theta$，因而是统计量；塔式性质保证它无偏；全方差公式给出 $\operatorname{Var}(W)=\operatorname{Var}(\varphi(T))+\mathbb{E}[\operatorname{Var}(W\mid T)]\ge\operatorname{Var}(\varphi(T))$。
+\item 由完备性的定义推出 Lehmann--Scheffé 定理。若 $T$ 完备，且 $g_1(T)$、$g_2(T)$ 都无偏，则 $\mathbb{E}_\theta[g_1(T)-g_2(T)]=0$ 对一切 $\theta$ 成立，从而 $g_1=g_2$ 几乎处处成立。于是任一无偏估计经第 6 步改进后都等于唯一的无偏函数 $g(T)$，所以 $\operatorname{Var}(g(T))\le\operatorname{Var}(W)$ 对一切无偏 $W$ 成立，$g(T)$ 是 UMVUE。这一论证不需要上面的正则条件。
+\end{enumerate}
+
+下面把引理应用到 $C\mid n,R\sim\mathrm{NB}(nk,p^*)$，其中 $p^*$ 由式~(\ref{eq:ap-pstar}) 给出，$k$、$\rho$、$n$ 已知，参数为 $R\in(0,\infty)$。
+
+\begin{enumerate}
+\item 由式~(\ref{eq:ap-nbpmf}) 取 $r=nk$、$p=p^*$ 写出似然，并把不含 $R$ 的 $\ln\Gamma$ 项、$nk\ln k$ 与 $C\ln\rho$ 并入常数，得到附录第 697 行的对数似然，如下式所示：
+\begin{equation*}
+\ln L(R_t) = \text{const} - (nk + C_t) \ln(k + \rho R_t) + C_t \ln R_t.
+\tag*{原文第 697 行}
+\end{equation*}
+\item 由对数函数的求导法则与通分，分子为 $C(k+\rho R)-\rho R(nk+C)=k(C-\rho nR)$，得到附录第 701 行的得分与极大似然估计，如下式所示：
+\begin{equation*}
+\frac{\partial \ln L}{\partial R_t} = -\frac{\rho(nk + C_t)}{k + \rho R_t} + \frac{C_t}{R_t} = \frac{k(C_t - \rho n R_t)}{R_t(k + \rho R_t)} = 0 \implies \widehat{R}_t^{\text{MLE}} = \frac{C_t}{\rho n}.
+\tag*{原文第 701 行}
+\end{equation*}
+\item 由正则条件的逐条核对，参数空间 $(0,\infty)$ 为开区间，支撑集 $\{0,1,2,\dots\}$ 不依赖 $R$。概率质量函数关于 $R$ 光滑，在 $R$ 的任一紧子区间上 $1-p^*$ 有小于 1 的上界，逐项求导后的级数被收敛的几何型级数控制，由控制收敛定理可以在求和号下求导。Fisher 信息由下一步给出，在内部点上为正且有限。
+\item 由得分关于 $C$ 是线性函数且均值为零，Fisher 信息等于得分的方差，即附录第 709 行的表达式，如下式所示：
+\begin{equation*}
+\mathcal{I}(R_t \mid n) = \operatorname{Var}\left(\frac{\partial \ln L}{\partial R_t}\right) = \frac{k^2 \operatorname{Var}(C_t \mid n, R_t)}{R_t^2(k + \rho R_t)^2}.
+\tag*{原文第 709 行}
+\end{equation*}
+\item 由引理 A.2 的方差 $\operatorname{Var}(C\mid n,R)=\rho nR(k+\rho R)/k$ 代入，再把分子分母同除以 $k\rho$，得到附录第 713 行的结果，如下式所示：
+\begin{equation*}
+\mathcal{I}(R_t \mid n) = \frac{k^2 \cdot \frac{\rho n R_t(k + \rho R_t)}{k}}{R_t^2(k + \rho R_t)^2} = \frac{k \rho n R_t}{R_t^2(k + \rho R_t)} = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}}.
+\tag*{原文第 713 行}
+\end{equation*}
+作为核对，由负二阶导的期望，$\partial_R^2\ln L=-C/R^2+\rho^2(nk+C)/(k+\rho R)^2$，代入 $\mathbb{E}[C]=\rho nR$ 得 $-\mathbb{E}[\partial_R^2\ln L]=\rho n/R-\rho^2n/(k+\rho R)=k\rho n/\big(R(k+\rho R)\big)$，与上式相同。命题 1(iii) 的结论如下式所示：
+\begin{equation*}
+\mathcal{I}(R_t \mid n) = \frac{n}{\frac{R_t}{\rho} + \frac{R_t^2}{k}};
+\tag{原文式 5}
+\end{equation*}
+\item 由取等条件式~(\ref{eq:ap-affine}) 的直接验证，取 $T=C/(\rho n)$，有 $\mathcal I(R)\big(C/(\rho n)-R\big)=\dfrac{k\rho n}{R(k+\rho R)}\cdot\dfrac{C-\rho nR}{\rho n}=\dfrac{k(C-\rho nR)}{R(k+\rho R)}$，恰为第 2 步的得分。$C/(\rho n)$ 无偏（附录第 705 行），所以它的方差在每个 $n$ 上精确等于 CRLB，即命题 1(iv) 的结论，如下式所示：
+\begin{equation*}
+\operatorname{Var}\!\left(\frac{C_t}{\rho n} \;\middle|\; n, R_t\right) = \mathcal{I}(R_t \mid n)^{-1} = \frac{R_t}{\rho n} + \frac{R_t^2}{k n}.
+\tag{原文式 6}
+\end{equation*}
+\item 由幂级数的唯一性定理证明 $C$ 的完备性。记 $z=1-p^*=\rho R/(k+\rho R)$，当 $R$ 取遍 $(0,\infty)$ 时 $z$ 取遍 $(0,1)$。若 $\mathbb{E}_R[g(C)]=(p^*)^{nk}\sum_{c\ge0}g(c)\frac{\Gamma(c+nk)}{c!\,\Gamma(nk)}z^{c}=0$ 对一切 $R$ 成立，则幂级数 $\sum_c a_cz^c$（$a_c=g(c)\Gamma(c+nk)/(c!\,\Gamma(nk))$）在 $(0,1)$ 上恒为零，各系数 $a_c$ 都为零，又 $\Gamma(c+nk)/(c!\,\Gamma(nk))>0$，故 $g\equiv0$。$C$ 本身就是全部数据，自然充分；由第 7 步的 Lehmann--Scheffé 定理，$C/(\rho n)$ 是 $R$ 的 UMVUE。
+\end{enumerate}
+
+引理 A.4 支撑命题 1 的 (ii)--(iv) 三条结论（原文式 5、式 6 与附录第 697--715 行）。它澄清了两处表述：第一，第 6 步说明 CRLB 在每个有限 $n$ 上精确达到，论文图 1(b) 中仿真方差与理论值之比 0.988--1.017 是蒙特卡洛误差，第 419 行的“收敛”应改为“精确达到”；第二，第 7 步给出附录第 715 行所缺的 UMVUE 论证。两条结论都以 $k$ 与 $\rho$ 已知为前提，以估计的 $\hat k$ 代入后精确性质不再成立。令 $k\to\infty$，Fisher 信息退化为第 151 行的 Poisson 极限 $\rho n/R$。第 5 步揭示的指数族结构也是命题 6 单调似然比性质的来源：自然参数 $\ln(1-p^*)$ 关于 $R$ 严格递增，似然比关于 $C$ 单调。相关讨论见第~\ref{sec:props} 节与第~\ref{sec:advice} 节。

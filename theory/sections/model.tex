@@ -1,0 +1,65 @@
+论文第 2 节用三个式子搭起全部理论的骨架：个体层的负二项分支、报告层的二项抽样、环境层的条件矩。本节照录这三个原式，补齐论文跳过的推导，并列出推导实际依赖、但原文没有完整写出的假设。
+
+\subsection{个体继发感染：负二项分支}
+
+论文对第 $t$ 期第 $i$ 名感染者的继发感染数只给出条件均值与条件方差，如下式所示：
+\begin{equation*}
+\mathbb{E}[X_{i,t} \mid R_t] = R_t, \qquad
+\operatorname{Var}(X_{i,t} \mid R_t) = R_t + \frac{R_t^2}{k}, \tag{原文式 1}
+\end{equation*}
+
+式中 $X_{i,t}$ 是非负整数，$R_t>0$ 是当期环境决定的个体期望继发感染数，$k>0$ 是离散参数。方差中的 $R_t$ 是 Poisson 计数噪声，$R_t^2/k$ 是个体传染力本身的异质性，$k$ 越小超传播越强。
+
+命题 1 断言 $C_t$ 严格服从负二项分布，这需要完整的分布假设，两阶矩不够。原文直到附录第 688 行才写出 $X_{i,t}\sim\mathrm{NB}(k,p)$、$p=k/(k+R_t)$。这一分布可以由 Poisson--Gamma 混合构造出来：令个体传染力 $\lambda_i\mid R_t\sim\mathrm{Gamma}(k,R_t/k)$（形状 $k$、尺度 $R_t/k$），再令 $X_{i,t}\mid\lambda_i\sim\mathrm{Poisson}(\lambda_i)$。推导分三步。
+
+\begin{enumerate}
+\item 对 $\lambda$ 积分写出混合概率，被积函数中 $\lambda$ 的幂次为 $x+k-1$，指数系数为 $1+k/R_t=(k+R_t)/R_t$。
+\item 由 Gamma 积分 $\int_0^\infty\lambda^{a-1}e^{-b\lambda}\,d\lambda=\Gamma(a)/b^a$ 取 $a=x+k$、$b=(k+R_t)/R_t$，并把分母中的 $(R_t/k)^k$ 与 $\big((k+R_t)/R_t\big)^k$ 合并为 $\big((k+R_t)/k\big)^k$，得到
+\begin{equation*}
+\Pr(X_{i,t}=x\mid R_t)=\frac{\Gamma(x+k)}{x!\,\Gamma(k)}\Big(\frac{k}{k+R_t}\Big)^{k}\Big(\frac{R_t}{k+R_t}\Big)^{x},
+\end{equation*}
+即 $\mathrm{NB}(k,p)$，$p=k/(k+R_t)$。
+\item 由全期望公式得 $\mathbb{E}[X_{i,t}]=\mathbb{E}[\lambda_i]=R_t$；由全方差公式得 $\operatorname{Var}(X_{i,t})=\mathbb{E}[\lambda_i]+\operatorname{Var}(\lambda_i)=R_t+k(R_t/k)^2=R_t+R_t^2/k$，与原文式 1 一致。
+\end{enumerate}
+
+完整证明见附录引理~\ref{lem:ap-nb}。混合表示给出 $R_t^2/k$ 一项的直接解释：它就是个体传染力的方差 $\operatorname{Var}(\lambda_i)$。$k\to\infty$ 时传染力退化为常数 $R_t$，只剩 Poisson 计数噪声。以 $k$ 刻画超传播的做法来自 \citet{lloydsmith2005superspreading}。
+
+\subsection{报告：二项抽样}
+
+真实新发感染 $I_t=\sum_{i=1}^nX_{i,t}$ 中每一例独立地以概率 $\rho$ 被报告，论文写成下式：
+\begin{equation*}
+C_t \mid I_t \sim \operatorname{Binomial}(I_t, \rho). \tag{原文式 2}
+\end{equation*}
+
+式中 $C_t$ 是报告病例数，$\rho\in(0,1]$ 是报告率。用概率生成函数 $G_Y(s)=\mathbb{E}[s^Y]$ 与塔式性质可以把报告层写成复合：
+\begin{equation*}
+G_{C_t}(s)=\mathbb{E}\big[\mathbb{E}[s^{C_t}\mid I_t]\big]=\mathbb{E}\big[(1-\rho+\rho s)^{I_t}\big]=G_{I_t}(1-\rho+\rho s).
+\end{equation*}
+第二个等号用到二项分布的生成函数：单个感染者被报告与否的生成函数是 $1-\rho+\rho s$，$I_t$ 个独立感染者相乘得到 $(1-\rho+\rho s)^{I_t}$。这一步不依赖 $I_t$ 的分布，因此“先生成再抽稀”在生成函数上就是把自变量 $s$ 换成 $1-\rho+\rho s$。命题 1 把这一复合用于负二项的生成函数，得到抽稀后仍为负二项的结论，完整证明见附录引理~\ref{lem:ap-thin}。
+
+\subsection{环境层：两种估计目标与条件矩}
+
+论文区分两类估计目标。目标 A 是当期传播参数 $R_t$，环境波动正是待测对象，其跨期变异不构成误差。目标 B 是跨期基础水平 $\bar R$，同一波动成为单期样本无法消除的误差源。为此论文假定当期环境满足如下条件矩：
+\begin{equation*}
+\mathbb{E}[R_t \mid n] = \bar{R}, \qquad \operatorname{Var}(R_t \mid n) = v_R > 0. \tag{原文式 3}
+\end{equation*}
+
+式中 $\bar R>0$ 是跨期基础传播水平，$v_R>0$ 是环境方差，两者都以上一代感染者数 $n$ 为条件。由方差定义可以立即得到之后反复使用的二阶矩：
+\begin{equation}
+\mathbb{E}[R_t^2\mid n]=\operatorname{Var}(R_t\mid n)+\mathbb{E}[R_t\mid n]^2=v_R+\bar R^2.
+\label{eq:model-second-moment}
+\end{equation}
+式~\eqref{eq:model-second-moment} 是命题 2 中 $A$ 含有 $\bar R^2+v_R$ 的来源，推导时最容易漏掉 $v_R$ 这一项。
+
+\subsection{推导实际依赖的假设}
+
+原文第 94 行与第 114 行给出了部分条件。把命题 1 至命题 4 的推导逐步展开后，可以确认它们依赖下列四条假设，其中第一条与第四条原文没有完整写出。
+
+\begin{enumerate}
+\item 同期共享环境。同一期的 $n$ 名感染者共用同一个 $R_t$，因此 $v_R$ 不会随 $n$ 被平均掉。若每名感染者各自抽取一个 $R$，$v_R$ 会被稀释为 $v_R/n$，命题 2 的方差下限随之消失。
+\item 给定 $R_t$ 的条件独立。给定 $(n,R_t)$ 时 $\{X_{i,t}\}_{i=1}^n$ 相互独立，原文第 94 行写明了这一条。
+\item 参数已知且不随规模变化。$k$ 与 $R_t$、$n$ 无关且对推断者已知，$\rho$ 固定已知。
+\item 环境与规模无关。$R_t$ 的条件分布不依赖 $n$，原文第 114 行给出的充分条件是 $n$ 由试验设计固定或 $R_t$ 与 $n$ 独立。在时间序列中 $n_t=I_{t-1}$ 由 $R_{t-1}$ 生成；若环境存在自相关（$r>0$），$n_t$ 偏大意味着 $R_{t-1}$ 偏大，进而 $R_t$ 也偏大，于是 $\mathbb{E}[R_t\mid n_t]\neq\bar R$。论文第 5 节把 $D_t$ 当作外生规模时，这一条并不自动成立，第~\ref{sec:checks} 节讨论其后果。
+\end{enumerate}
+
+在这四条假设下，第~\ref{sec:props} 节的全部推导只需要附录~\ref{app:lemmas} 中的四个引理：负二项的混合表示、二项抽稀的封闭性、全方差公式（引理~\ref{lem:ap-totvar}）以及 Fisher 信息与 Cram\'er--Rao 下界（引理~\ref{lem:ap-fisher}）。

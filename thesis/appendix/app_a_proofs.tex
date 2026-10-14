@@ -1,0 +1,183 @@
+\chapter{命题证明}
+\label{chap:proofs}
+
+本附录给出正文各命题、推论与注的完整证明，以及第五章式~\eqref{eq:b-delta} 的推导。正文第三章与第四章已给出主要推导步骤，这里补全其中略去的细节。负二项分布 $\NB(r,p)$ 取失败次数参数化，概率生成函数、均值与方差为
+\begin{equation}
+  G(s)=\frac{p^{r}}{[1-(1-p)s]^{r}},\qquad \E X=\frac{r(1-p)}{p},\qquad \Var X=\frac{r(1-p)}{p^2}.
+  \label{eq:pgf}
+\end{equation}
+取 $r=k$、$p=k/(k+R)$，由式~\eqref{eq:pgf} 即得式~\eqref{eq:offspring} 中的均值 $R$ 与方差 $R+R^2/k$。
+
+\section{负二项分布的求和与抽稀}
+\label{app:lemma}
+
+\begin{lemma}
+\label{lem:nb-thinning}
+若 $X_1,\dots,X_n$ 独立同分布于 $\NB(k,p)$，则 $I=\sum_iX_i\sim\NB(nk,p)$。若再有 $C\mid I\sim\Bin(I,\rho)$，则 $C\sim\NB(nk,p')$，其中 $p'=p/[1-(1-p)(1-\rho)]$。
+\end{lemma}
+
+\begin{proof}
+独立随机变量之和的概率生成函数等于各项生成函数之积，故 $G_I(s)=G(s)^n$，这是 $\NB(nk,p)$ 的生成函数。二项抽稀对应复合运算 $G_C(s)=G_I(1-\rho+\rho s)$，见式~\eqref{eq:thinning-pgf}。记 $q=1-(1-p)(1-\rho)$，则
+\begin{equation*}
+  G_C(s)=\frac{p^{nk}}{[q-(1-p)\rho s]^{nk}}=\frac{(p/q)^{nk}}{\{1-[(1-p)\rho/q]\,s\}^{nk}}.
+\end{equation*}
+由于 $1-p/q=(q-p)/q=(1-p)\rho/q$，$G_C$ 正是 $\NB(nk,p/q)$ 的生成函数。代入 $p=k/(k+R_t)$，得 $q=(k+\rho R_t)/(k+R_t)$，$p'=k/(k+\rho R_t)$，即式~\eqref{eq:report-dist}。式~\eqref{eq:relvar} 由式~\eqref{eq:report-dist} 的方差除以均值的平方得到。
+\end{proof}
+
+\section{\texorpdfstring{命题 \ref{prop:current} 的证明}{命题 3.1 的证明}}
+\label{app:current}
+
+\begin{proof}
+记 $c$ 为 $C_t$ 的观测值，$\theta=\rho R_t$。由式~\eqref{eq:report-dist}，对数似然为
+\begin{equation*}
+  \ell(R_t)=\text{常数}+nk\log\frac{k}{k+\theta}+c\log\frac{\theta}{k+\theta},
+\end{equation*}
+略去常数后即式~\eqref{eq:loglik}。对 $R_t$ 求导得到得分函数~\eqref{eq:score}，其中 $\mathcal I(R_t)=k\rho n/[R_t(k+\rho R_t)]$。
+
+(i) 当 $c>0$ 时，由式~\eqref{eq:score}，$S(R_t)$ 在 $R_t<\widehat R_t$ 时为正，在 $R_t>\widehat R_t$ 时为负，似然在 $\widehat R_t$ 处取唯一最大值。当 $c=0$ 时，$S(R_t)=-nk\rho/(k+\rho R_t)<0$，似然在 $(0,\infty)$ 上严格递减，最大值在边界 $R_t=0$，与 $\widehat R_t=0$ 一致。
+
+(ii) 由式~\eqref{eq:report-dist}，$\E C_t=\rho nR_t$，$\Var C_t=\rho nR_t+\rho^2nR_t^2/k$。于是 $\E\widehat R_t=R_t$，且
+\begin{equation*}
+  \Var(\widehat R_t)=\frac{\rho nR_t+\rho^2nR_t^2/k}{(\rho n)^2}=\frac{R_t}{\rho n}+\frac{R_t^2}{kn}=\frac{R_t(k+\rho R_t)}{k\rho n}.
+\end{equation*}
+
+(iii) Fisher 信息等于得分函数的方差。由式~\eqref{eq:score} 与 (ii) 可得下式：
+\begin{equation*}
+  \Var\{S(R_t)\}=\mathcal I(R_t)^2\,\Var(\widehat R_t)=\frac{(k\rho n)^2}{[R_t(k+\rho R_t)]^2}\cdot\frac{R_t(k+\rho R_t)}{k\rho n}=\mathcal I(R_t),
+\end{equation*}
+因此 $\Var(\widehat R_t)=1/\mathcal I(R_t)$。得分函数是 $\widehat R_t-R_t$ 的常数倍，这正是 Cram\'er--Rao 不等式取等号的充要条件，见式~\eqref{eq:crlb}，对每个有限 $n$ 都成立。
+
+(iv) 式~\eqref{eq:report-dist} 的概率质量函数可写为 $h(c)\exp[\eta c-\psi(\eta)]$，其中自然参数 $\eta=\log[\rho R_t/(k+\rho R_t)]$。$k$ 已知时这是单参数指数族；$R_t$ 取遍 $(0,\infty)$ 时，$\eta$ 取遍 $(-\infty,0)$，参数空间含开区间，所以 $C_t$ 是完备充分统计量。$\widehat R_t$ 是 $C_t$ 的函数且无偏，由 Lehmann--Scheff\'e 定理，它是一致最小方差无偏估计\citep{lehmann1998point}。
+\end{proof}
+
+\section{\texorpdfstring{命题 \ref{prop:average} 的证明与汇总方差}{命题 3.2 的证明与汇总方差}}
+\label{app:average}
+
+\begin{proof}
+由 H4，给定 $n$ 时 $R_t$ 的均值与方差为 $\Rbar$ 与 $v_R$。由命题~\ref{prop:current}(ii)，$\E(\widehat R_t\mid n,R_t)=R_t$，所以 $\E(\widehat R_t\mid n)=\Rbar$。由全方差公式~\eqref{eq:total-variance} 得到下式：
+\begin{equation*}
+  \Var(\widehat R_t\mid n)=\E\Bigl\{\frac{R_t}{\rho n}+\frac{R_t^2}{kn}\Bigm| n\Bigr\}+\Var(R_t\mid n)
+  =\frac{\Rbar}{\rho n}+\frac{\Rbar^2+v_R}{kn}+v_R.
+\end{equation*}
+以 $m=\rho n$ 代入，前两项之和为 $A/m$，即得式~\eqref{eq:var-average}。
+
+(i) $m\to\infty$ 时 $A/m\to0$。(ii) 规模项份额为 $(A/m)/(v_R+A/m)=1/(1+mv_R/A)=1/(1+m/\mx)$。(iii) 规模翻倍时方差的下降比例为
+\begin{equation*}
+  \frac{V(m)-V(2m)}{V(m)}=\frac{A/(2m)}{v_R+A/m}=\frac{1}{2(1+m/\mx)}.
+\end{equation*}
+(iv) $V'(m)=-A/m^2<0$，$V''(m)=2A/m^3>0$；弹性为 $mV'(m)/V(m)=-(A/m)/(v_R+A/m)=-\mx/(m+\mx)$，在 $m=\mx$ 处为 $-1/2$。
+\end{proof}
+
+式~\eqref{eq:pooling} 的推导如下。设 $J$ 个辖区的环境项方差同为 $v_R$，两两相关系数的平均为 $\bar c$，则其等权平均的方差为
+\begin{equation*}
+  \frac{1}{J^2}\bigl[Jv_R+J(J-1)\bar c\,v_R\bigr]=v_R\Bigl[\bar c+\frac{1-\bar c}{J}\Bigr].
+\end{equation*}
+
+\section{\texorpdfstring{命题 \ref{prop:reporting} 的证明}{命题 3.3 的证明}}
+\label{app:reporting}
+
+\begin{proof}
+把式~\eqref{eq:var-average} 写成 $n$ 与 $\rho$ 的函数
+\begin{equation*}
+  V(n,\rho)=v_R+\frac{\Rbar}{\rho n}+\frac{\Rbar^2+v_R}{kn}.
+\end{equation*}
+(i) 令 $\rho\to1$，第二项趋于 $\Rbar/n>0$，第三项与 $\rho$ 无关且为正，故极限严格大于 $v_R$。(ii) 令 $n\to\infty$，后两项都趋于零。(iii) 由 $1/\rho=1+(1-\rho)/\rho$ 直接得到。(iv) 两个方向的边际效应为
+\begin{equation*}
+  -\frac{\partial V}{\partial\log n}=\frac{\Rbar}{\rho n}+\frac{\Rbar^2+v_R}{kn}=\frac{A}{m},\qquad
+  -\frac{\partial V}{\partial\log\rho}=\frac{\Rbar}{\rho n}=\frac{\Rbar}{m}.
+\end{equation*}
+二者之比为 $A/\Rbar=1+\rho(\Rbar^2+v_R)/(k\Rbar)$。
+\end{proof}
+
+\section{\texorpdfstring{命题 \ref{prop:allocation} 的证明}{命题 4.1 的证明}}
+\label{app:allocation}
+
+\begin{proof}
+设各期上一代人数均为 $n$，给定 $(R_1,\dots,R_T)$ 时各期报告数相互独立。记 $\bar R_T=T^{-1}\sum_tR_t$。由全方差公式得到下式：
+\begin{equation*}
+  \frac{1}{T^2}\Var\Bigl(\sum_t\widehat R_t\Bigr)=\Var(\bar R_T)+\frac1{T^2}\sum_t\E\Bigl\{\frac{R_t}{\rho n}+\frac{R_t^2}{kn}\Bigr\}
+  =\Var(\bar R_T)+\frac{A}{Tm}.
+\end{equation*}
+第二项等于 $A/B$，只依赖 $R_t$ 的边际分布，与相关结构无关。$R_t$ 独立时 $\Var(\bar R_T)=v_R/T$，得式~\eqref{eq:alloc-indep}。
+
+一阶自回归情形下 $\Cov(R_s,R_t)=v_Rr^{|s-t|}$，于是式~\eqref{eq:ar-sum} 成立，且
+\begin{equation*}
+  \sum_{h=1}^{T-1}(T-h)r^h=\frac{r[T(1-r)-(1-r^T)]}{(1-r)^2}.
+\end{equation*}
+该等式在 $T=1$ 时两边均为零；若对 $T$ 成立，则 $T+1$ 时左端增加 $\sum_{h=1}^{T}r^h=r(1-r^T)/(1-r)$，右端的增量为 $r[(1-r)-(r^T-r^{T+1})]/(1-r)^2=r(1-r^T)/(1-r)$，二者相等，由归纳法得证。代入式~\eqref{eq:ar-sum}，环境项如下式所示：
+\begin{equation*}
+  T^2\Var(\bar R_T)=v_RT\,\frac{1+r}{1-r}-\frac{2r(1-r^T)\,v_R}{(1-r)^2},
+\end{equation*}
+两边除以 $T^2$ 即得式~\eqref{eq:alloc-ar}。
+
+下面证明单调性。记 $S_T=T^2\Var(\bar R_T)$，$\Delta_j=v_R(1+2\sum_{h=1}^{j}r^h)$，则 $S_{T+1}=S_T+\Delta_T$，$S_T=\sum_{j=0}^{T-1}\Delta_j$。$\Var(\bar R_{T+1})<\Var(\bar R_T)$ 等价于 $T^2S_{T+1}<(T+1)^2S_T$，即 $T^2\Delta_T<(2T+1)S_T$。数列 $\Delta_j$ 的增量 $2v_Rr^{j+1}$ 随 $j$ 递减，所以它是凹数列，满足 $\Delta_j\geq[(T-j)\Delta_0+j\Delta_T]/T$。对 $j=0,\dots,T-1$ 求和，得 $S_T\geq[(T+1)\Delta_0+(T-1)\Delta_T]/2$。记 $d=\Delta_T-\Delta_0$，代入 $\Delta_0=v_R$，有
+\begin{equation*}
+  (2T+1)S_T-T^2\Delta_T\geq(T+1)\Bigl(Tv_R-\frac d2\Bigr).
+\end{equation*}
+由于 $d=2v_R\sum_{h=1}^{T}r^h<2Tv_R$，右端为正。规模项 $A/B$ 与 $T$ 无关，所以总方差随 $T$ 严格递减。$r=0$ 时即独立情形，环境项 $v_R/T$ 的单调性是直接的。
+\end{proof}
+
+\section{\texorpdfstring{推论 \ref{cor:optimal} 的证明}{推论 4.1 的证明}}
+\label{app:optimal}
+
+\begin{proof}
+由式~\eqref{eq:alloc-indep}，以 $T=\mathcal B/(c_0+c_1m)$、$B=Tm$ 代入，得式~\eqref{eq:f-expand}。$f'(m)=(c_1v_R-c_0A/m^2)/\mathcal B$，$f''(m)=2c_0A/(m^3\mathcal B)>0$。$c_0>0$ 时 $f$ 在 $(0,\infty)$ 上严格凸，唯一驻点满足 $m^{*2}=c_0A/(c_1v_R)=(c_0/c_1)\mx$。代回得 $f(m^*)=[c_0v_R+c_1A+2\sqrt{c_0c_1v_RA}]/\mathcal B=(\sqrt{c_0v_R}+\sqrt{c_1A})^2/\mathcal B$，即式~\eqref{eq:optimal-m}。
+
+约束 $T\geq1$ 等价于 $m\leq(\mathcal B-c_0)/c_1$。若 $m^*$ 超出这一范围，$f$ 在可行区间上递减，最优解取右端点，即 $T=1$。若 $c_0=0$，$f(m)=c_1(v_Rm+A)/\mathcal B$ 严格递增，下确界在 $m\to0$ 处取得。
+
+整数解的情形如下。$m=(\mathcal B/T-c_0)/c_1$ 关于 $T$ 严格单调，而 $f$ 关于 $m$ 单峰，所以 $f$ 作为 $T$ 的函数也单峰，整数最优解是连续最优期数两侧的两个整数之一。第四章表~\ref{tab:integer-alloc} 即按此比较。环境服从一阶自回归且 $T$ 较大时，由式~\eqref{eq:alloc-ar}，环境项约为 $v_R(1+r)/[(1-r)T]$，相当于把 $v_R$ 换成 $v_R(1+r)/(1-r)$，于是 $m^*$ 约乘以 $\sqrt{(1-r)/(1+r)}$。
+\end{proof}
+
+\section{\texorpdfstring{命题 \ref{prop:test} 的证明}{命题 4.2 的证明}}
+\label{app:test}
+
+\begin{proof}
+取 $R>R'$。由式~\eqref{eq:report-dist}，似然比为式~\eqref{eq:mlr}。由于 $R/(k+\rho R)$ 关于 $R$ 严格递增，方括号内大于 1，似然比关于 $c$ 严格递增，分布族具有单调似然比。
+
+(i) 对单调似然比族，形如 $\{C_t\geq c\}$ 的检验的功效函数关于 $R_t$ 非降\citep{lehmann2005testing}，所以在 $R_t\leq1$ 上的最大拒绝概率在 $R_t=1$ 处取得，等于 $\alpha^*=P_{R_t=1}(C_t\geq c_\alpha)\leq\alpha$。
+
+(ii) 由 Karlin--Rubin 定理\citep{karlin1956theory}，对任意水平，形如“$C_t>c$ 时拒绝，$C_t=c$ 时以概率 $\gamma$ 拒绝”的检验在该水平下一致最优。非随机化检验 $\{C_t\geq c_\alpha\}$ 是 $c=c_\alpha-1$、$\gamma=1$ 的特例，所以在水平 $\alpha^*$ 下一致最优；适当选取 $\gamma$ 可以使水平恰为 $\alpha$。
+
+(iii) $R_t=1+\delta$ 时，由引理~\ref{lem:nb-thinning}，$C_t\sim\NB(nk,k/[k+\rho(1+\delta)])$，拒绝概率为 $1-F_{\NB}(c_\alpha-1)$，即式~\eqref{eq:power}。
+\end{proof}
+
+\section{\texorpdfstring{注 \ref{rem:information} 与式 (\ref{eq:mse-decomp}) 的推导}{注 4.1 与均方误差分解的推导}}
+\label{app:information}
+
+以下期望都在 $\mathcal F_t$ 条件下取，$\Rbar$ 与 $v_R$ 理解为 $R_{t+1}$ 的条件均值与条件方差。记 $\bar\Lambda=\E(\Lambda_{t+1}\mid\mathcal F_t)$，$m=\rho\bar\Lambda$。第一次使用全方差公式，以 $(\Lambda_{t+1},R_{t+1})$ 为条件，得到
+\begin{equation*}
+  \Var(C_{t+1})=\E\Bigl(\rho\Lambda_{t+1}R_{t+1}+\frac{\rho^2\Lambda_{t+1}R_{t+1}^2}{k}\Bigr)+\Var(\rho\Lambda_{t+1}R_{t+1}).
+\end{equation*}
+由条件独立，第一项为 $\rho\bar\Lambda\Rbar+\rho^2\bar\Lambda(\Rbar^2+v_R)/k=mA$。第二项中乘积的方差为
+\begin{equation*}
+  \Var(\Lambda_{t+1}R_{t+1})=\E(\Lambda_{t+1}^2)\,\E(R_{t+1}^2)-\bar\Lambda^2\Rbar^2
+  =\bar\Lambda^2\bigl[v_R+\CV^2(\Lambda_{t+1})(\Rbar^2+v_R)\bigr].
+\end{equation*}
+两项相加后除以 $m^2$，即得式~\eqref{eq:info-decomp}。
+
+式~\eqref{eq:mse-decomp} 的推导如下。$D_t$ 由 $\mathcal F_t$ 决定，所以 $\E(G_t\mid\mathcal F_t)=\mu_t/D_t$，$\Var(G_t\mid\mathcal F_t)=(\sigma_t/D_t)^2$。由 $\E[(G_t-\Rbar)^2\mid\mathcal F_t]=\Var(G_t\mid\mathcal F_t)+[\E(G_t\mid\mathcal F_t)-\Rbar]^2$ 再对 $\mathcal F_t$ 取期望即可。式~\eqref{eq:identity} 是两边同除以 $\Rbar D_t$ 的代数恒等式。
+
+\section{\texorpdfstring{式 (\ref{eq:b-delta}) 的推导}{斜率近似式的推导}}
+\label{app:b-delta}
+
+式~\eqref{eq:b-delta} 的推导换用另一个条件。记 $\mathcal H_t$ 为截至第 $t$ 周的真实感染史，并把式~\eqref{eq:dt-main} 的滞后权重当作感染压力的权重，即 $\Lambda_{t+1}=\sum_s w_sI_{t+1-s}$，$\sum_s w_s=1$。给定 $\mathcal H_t$，$\Lambda_{t+1}$ 已经确定，取 $m=\rho\Lambda_{t+1}$。它与第四章的 $m=\rho\E(\Lambda_{t+1}\mid\mathcal F_t)$ 相差一层报告噪声，式~\eqref{eq:affine} 的拟合又以 $D_t$ 代替 $m$，式~\eqref{eq:b-delta} 描述的正是这层噪声的影响。各周报告独立地服从 $C_{t+1-s}\mid I_{t+1-s}\sim\Bin(I_{t+1-s},\rho)$，所以分母的条件均值与条件方差为
+\begin{equation*}
+  \E(D_t\mid\mathcal H_t)=\rho\Lambda_{t+1},\qquad
+  \Var(D_t\mid\mathcal H_t)=\rho(1-\rho)\sum_s {w_s}^2I_{t+1-s}.
+\end{equation*}
+
+在平稳规模附近取 $I_{t+1-s}\approx\Lambda_{t+1}$，并令 $D_t=m(1+\delta)$，则 $\E\delta=0$，$\E\delta^2=c/m$，其中 $c=(1-\rho)\sum_s {w_s}^2$，而 $\E\delta^3$ 与 $\E\delta^4$ 都是 $O(m^{-2})$。记 $X=C_{t+1}/m$，于是 $G_t=X/(1+\delta)$。给定 $\mathcal H_t$，$C_{t+1}$ 的报告抽样与此前各周的报告抽样相互独立，$X$ 与 $\delta$ 独立，展开中没有交叉项。与命题~\ref{prop:average} 相同，$\E X=\Rbar$，$\Var X=v_R+A/m$。把 $(1+\delta)^{-1}$ 展开到 $\delta^2$ 再取期望，得到
+\begin{gather*}
+  \E(G_t\mid\mathcal H_t)=\Rbar\Bigl(1+\frac cm\Bigr)+O(m^{-2}),\\
+  \Var(G_t\mid\mathcal H_t)=v_R+\frac{A+(\Rbar^2+3v_R)\,c}{m}+O(m^{-2}).
+\end{gather*}
+只保留 $\delta$ 的一阶项时，方差的附加项是 $\E(R_{t+1}^2)\,c/m=(\Rbar^2+v_R)\,c/m$。$\delta^2$ 的期望与 $1/m$ 同阶，它另外贡献 $2v_Rc/m$，并使条件均值上移 $\Rbar c/m$。以条件均值的平方归一化时，两处二阶效应相互抵消，结果为
+\begin{equation*}
+  \frac{\Var(G_t\mid\mathcal H_t)}{[\E(G_t\mid\mathcal H_t)]^2}
+  =\frac{v_R}{\Rbar^2}+\frac{A+(1-\rho)(\Rbar^2+v_R)\sum_s {w_s}^2}{\Rbar^2\,m}+O(m^{-2}).
+\end{equation*}
+上式中 $1/m$ 的系数就是式~\eqref{eq:b-delta}。若按式~\eqref{eq:loss} 的定义以固定的 $\Rbar$ 归一化，系数变为 $[A+(1-\rho)(\Rbar^2+3v_R)\sum_s {w_s}^2]/\Rbar^2$。在第五章表~\ref{tab:lag-weights} 的情景参数下，主规格因此多出 0.021，约为式~\eqref{eq:b-delta} 的 1.8\%，正文略去了这一项。
+
+这一推导依赖平稳规模、跨周独立与大规模三项近似。平稳规模指 $\sum_s w_s=1$ 且 $I_{t+1-s}\approx\Lambda_{t+1}$；规模以周增长比 $r$ 变化时，$\sum_s {w_s}^2$ 应换成 $\sum_s {w_s}^2I_{t+1-s}/\Lambda_{t+1}$，主规格在 $r=1.67$ 时为 0.555，在 $r=0.8$ 时为 0.461。跨周独立指各周报告抽样条件独立。若报告比例存在跨周的共同冲击，$X$ 与 $\delta$ 相关，展开中会多出交叉项。大规模近似的精度可以直接计算。对固定的 $m$ 逐点枚举二项分布并截断 $D_t\geq5$ 后，主规格下 $m[\CV^2(G_t\mid\mathcal H_t)-v_R/\Rbar^2]$ 在 $m=20$ 时为 1.223，在 $m=320$ 时为 1.159，按 $1/m$ 外推为 1.155，与式~\eqref{eq:b-delta} 一致。只用当周权重时，$m=20$ 处为 1.972，高阶余项已不可忽略。
+
+实证拟合以 $D_t$ 代替 $m$，属于含噪回归元。第五章表~\ref{tab:lag-weights} 中模拟值与预测值的差距来自这一步、$D_t\geq5$ 的截断和小规模处的高阶余项。含噪回归元使斜率向零稀释，截断去掉了分母偶然偏小、损失偏大的观测，二者都使模拟值低于预测；高阶余项在小规模处为正，使模拟值高于预测。三者方向不同，部分相互抵消。

@@ -1,0 +1,55 @@
+\section{模型与估计目标}
+\label{sec:model}
+
+\subsection{传播与报告}
+\label{sec:model-transmission}
+
+考虑第 $t$ 期的传播。上一代有 $n$ 名感染者，第 $i$ 人产生 $X_{i,t}$ 个继发感染。为刻画超传播，设给定当期再生数 $R_t$ 时 $X_{i,t}$ 相互独立，且服从负二项分布
+\begin{equation}
+  X_{i,t}\mid R_t \sim \NB(k,\ k/(k+R_t)),\qquad
+  \E(X_{i,t}\mid R_t)=R_t,\quad \Var(X_{i,t}\mid R_t)=R_t+\frac{R_t^2}{k}.
+  \label{eq:offspring}
+\end{equation}
+这里 $k$ 是离散参数，$k$ 越小，少数人造成大部分传播的现象越明显。式~\eqref{eq:offspring} 等价于个体再生数服从均值为 $R_t$、形状参数为 $k$ 的 Gamma 分布，继发感染数在其上服从泊松分布\citep{lloydsmith2005superspreading}。
+
+同期新感染总数 $I_t=\sum_{i=1}^{n}X_{i,t}$ 服从 $\NB(nk,\,k/(k+R_t))$。监测系统只看到其中一部分，每名新感染者独立地以概率 $\rho$ 被报告，报告数 $C_t\mid I_t\sim\Bin(I_t,\rho)$。负二项分布经二项稀疏后仍是负二项分布（附录~\ref{app:lemma}），由此得到报告数的条件分布
+\begin{equation}
+  C_t\mid n, R_t \sim \NB(nk,\ k/(k+\rho R_t)),\qquad
+  \E(C_t\mid n,R_t)=\rho n R_t,\quad
+  \Var(C_t\mid n,R_t)=\rho n R_t+\frac{\rho^2 n R_t^2}{k}.
+  \label{eq:report-dist}
+\end{equation}
+记 $m=\rho n$，即上一代感染者中预计被报告的人数。下文用 $m$ 度量监测规模。
+
+报告数的相对方差由两部分组成，可写为
+\begin{equation}
+  \frac{\Var(C_t\mid n,R_t)}{\E(C_t\mid n,R_t)^2}=\frac{1}{\rho n R_t}+\frac{1}{nk}.
+  \label{eq:relvar}
+\end{equation}
+第一项来自报告抽样，提高报告率 $\rho$ 可以压低它；第二项来自超传播，只能靠增加感染者人数 $n$ 来压低。这一不对称在第~\ref{sec:variance-reporting}~节会再次出现。
+
+\subsection{两个估计目标}
+\label{sec:model-targets}
+
+$R_t$ 随时间波动。天气、学校假期和人群流动会让各期的传播强度围绕某个平均水平上下变化。设 $\E(R_t)=\Rbar$，$\Var(R_t)=v_R$，称 $v_R$ 为环境方差。
+
+监测要回答的问题可以分为两类。
+
+目标Ⅰ是当期再生数 $R_t$。例如，卫生部门想知道本周的传播是否比上周更快，关心的是这一期实际发生的 $R_t$。
+
+目标Ⅱ是平均水平 $\Rbar$。例如，制定一个流行季的床位计划时，需要的是该时段典型的传播强度，而单期的 $R_t$ 只是围绕 $\Rbar$ 的一次随机实现。
+
+两个目标用同一个估计量 $\widehat R_t=C_t/(\rho n)$，但误差的参照对象不同。目标Ⅰ的误差是 $\widehat R_t-R_t$，目标Ⅱ的误差是 $\widehat R_t-\Rbar$。后者多出了 $R_t-\Rbar$ 这一项，它不随规模变化。
+
+\subsection{基本假设}
+\label{sec:model-assumptions}
+
+第~\ref{sec:variance}--\ref{sec:design}~节的推导依赖以下四条假设。
+\begin{enumerate}[label=H\arabic*]
+  \item 给定 $R_t$，各感染者的继发感染数相互独立且服从式~\eqref{eq:offspring}，报告过程为独立二项抽样。
+  \item 同一期的感染者共享同一个 $R_t$，即环境扰动作用在“期”这一层面。
+  \item 离散参数 $k$ 与报告率 $\rho$ 已知。
+  \item 规模 $n$ 与当期环境无关：$\E(R_t\mid n)=\Rbar$，$\Var(R_t\mid n)=v_R$。
+\end{enumerate}
+
+H4 需要单独说明。若 $n$ 由设计固定，例如每期追踪固定数目的指示病例，H4 自然成立。若 $n_t$ 是此前传播的结果，而 $R_t$ 又有时间相关，那么大的 $n_t$ 往往出现在 $R$ 偏高的时期，H4 不再自动成立。真实监测序列属于后一种情况，第~\ref{sec:renewal}~节专门讨论。H3 在实践中也只是近似，$k$ 需要估计，其影响见第~\ref{sec:design-test}~节和第~\ref{sec:discussion}~节。

@@ -1,13 +1,38 @@
-.DS_Store
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+
+# Caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# LaTeX auxiliary files (keep final PDFs)
 *.aux
-*.log
-*.out
 *.bbl
 *.blg
-*.xdv
-_batch.json
-review.md
-review*.md
-similar*.md
-.*.savetmp*
+*.idx
+*.ind
+*.ilg
+*.lot
+*.lof
+*.out
+*.toc
+*.run.xml
+*.bcf
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.nav
+*.snm
+*.vrb
+
+# OS and Editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/

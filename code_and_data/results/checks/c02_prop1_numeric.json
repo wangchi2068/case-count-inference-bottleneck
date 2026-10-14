@@ -1,0 +1,126 @@
+{
+ "name": "c02_prop1_numeric",
+ "title": "命题 1:抽稀分布、方差与 Fisher 信息的数值核验",
+ "records": [
+  {
+   "id": "2.a.5",
+   "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=5,k=0.35,ρ=0.25,R=1.15)",
+   "expected": "≈0(数值误差级)",
+   "observed": "6.13e-16",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.a.30",
+   "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=30,k=0.1,ρ=0.5,R=1.5)",
+   "expected": "≈0(数值误差级)",
+   "observed": "5.24e-15",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.a.60",
+   "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=60,k=2.0,ρ=0.8,R=0.8)",
+   "expected": "≈0(数值误差级)",
+   "observed": "4.15e-15",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.var.10",
+   "target": "Var(C/(ρn)) MC vs 式 eq:var_prop1 (n=10,k=0.35,ρ=0.25,R=1.15,reps=20000)",
+   "expected": "0.83786",
+   "observed": "0.85449(比值 1.0199,z=1.35)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.mean.10",
+   "target": "E[C/(ρn)] = R(无偏)",
+   "expected": "1.15",
+   "observed": "1.1440",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.fisher.10",
+   "target": "Var(score) MC vs Fisher 信息 式 eq:fisher_info",
+   "expected": "1.1935",
+   "observed": "1.2172(比值 1.0198)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.dist.10",
+   "target": "MC 的 C 分布 vs NB(nk,p*) 卡方拟合",
+   "expected": "p > 0.001",
+   "observed": "χ²=24.3, df=11, p=0.011",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.var.20",
+   "target": "Var(C/(ρn)) MC vs 式 eq:var_prop1 (n=20,k=0.1,ρ=0.5,R=1.5,reps=10000)",
+   "expected": "1.27500",
+   "observed": "1.27996(比值 1.0039,z=0.17)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.mean.20",
+   "target": "E[C/(ρn)] = R(无偏)",
+   "expected": "1.5",
+   "observed": "1.5183",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.fisher.20",
+   "target": "Var(score) MC vs Fisher 信息 式 eq:fisher_info",
+   "expected": "0.7843",
+   "observed": "0.7873(比值 1.0038)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.dist.20",
+   "target": "MC 的 C 分布 vs NB(nk,p*) 卡方拟合",
+   "expected": "p > 0.001",
+   "observed": "χ²=58.3, df=58, p=0.466",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.var.40",
+   "target": "Var(C/(ρn)) MC vs 式 eq:var_prop1 (n=40,k=2.0,ρ=0.8,R=0.8,reps=5000)",
+   "expected": "0.03300",
+   "observed": "0.03244(比值 0.9830,z=-0.85)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.mean.40",
+   "target": "E[C/(ρn)] = R(无偏)",
+   "expected": "0.8",
+   "observed": "0.7966",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.fisher.40",
+   "target": "Var(score) MC vs Fisher 信息 式 eq:fisher_info",
+   "expected": "30.3030",
+   "observed": "29.7807(比值 0.9828)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "2.b.dist.40",
+   "target": "MC 的 C 分布 vs NB(nk,p*) 卡方拟合",
+   "expected": "p > 0.001",
+   "observed": "χ²=22.7, df=31, p=0.861",
+   "verdict": "通过",
+   "note": ""
+  }
+ ]
+}

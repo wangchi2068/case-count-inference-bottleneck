@@ -1,0 +1,260 @@
+% 西安科技大学应用统计硕士学位论文
+% 版式自旧稿 thesis_main.tex(ctexbook、A4、学校页边距)改造:去掉彩色链接与灰色页眉,
+% 标题用黑体而非加粗,字体沿用新稿的回退写法(缺 Times New Roman / SimSun 时回退到
+% Liberation Serif 与 Noto Serif CJK SC)。章节正文在 chapters/,sections 为指向它的链接。
+\documentclass[fontset=none,zihao=-4,a4paper,twoside,openany]{ctexbook}
+\usepackage{iftex}
+% 罗马数字Ⅰ/Ⅱ(U+2160 段)Liberation Serif 没有字形,归入 CJK 字符类交给中文字体。
+\xeCJKDeclareCharClass{CJK}{"2160 -> "216F}
+\ifXeTeX\else
+  \PackageError{thesis-template}{XeLaTeX is required}{Run xelatex.}
+\fi
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}{
+  \setmainfont{Times New Roman}
+}{
+  \setmainfont{Liberation Serif}
+}
+\IfFontExistsTF{SimSun}{
+  \setCJKmainfont{SimSun}
+}{
+  \IfFontExistsTF{Songti SC}{
+    \setCJKmainfont{Songti SC}
+  }{
+    \IfFontExistsTF{STSong}{
+      \setCJKmainfont{STSong}
+    }{
+      \setCJKmainfont{Noto Serif CJK SC}
+    }
+  }
+}
+\IfFontExistsTF{SimHei}{
+  \setCJKsansfont{SimHei}
+  \newCJKfontfamily\heiti{SimHei}
+}{
+  \IfFontExistsTF{Heiti SC}{
+    \setCJKsansfont{Heiti SC}
+    \newCJKfontfamily\heiti{Heiti SC}
+  }{
+    \setCJKsansfont{Noto Sans CJK SC}
+    \newCJKfontfamily\heiti{Noto Sans CJK SC}
+  }
+}
+\usepackage{graphicx}
+\usepackage{amsmath,amsthm}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+% 估计量的帽子用 pict2e 画成矢量折线,与新稿一致。
+\usepackage{pict2e}
+\newcommand{\hatmark}{{\setlength{\unitlength}{0.1em}\linethickness{0.045em}%
+  \begin{picture}(5,1.7)\polyline(0.2,0)(2.5,1.5)(4.8,0)\end{picture}}}
+\AtBeginDocument{%
+  \renewcommand{\widehat}[1]{\overset{\hatmark}{#1}}%
+  \renewcommand{\hat}[1]{\overset{\hatmark}{#1}}}
+% 学校页边距:上 3.0、下 2.5、内 3.0、外 2.5 厘米
+\usepackage[a4paper,top=3.0cm,bottom=2.5cm,inner=3.0cm,outer=2.5cm,
+  headheight=15pt,headsep=18pt,footskip=22pt]{geometry}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{array}
+\usepackage{xurl}
+\usepackage[hidelinks,unicode=true,bookmarksnumbered=true]{hyperref}
+\urlstyle{same}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{placeins}
+\captionsetup{
+  font=small,
+  labelfont=normalfont,
+  textfont=normalfont,
+  labelsep=space,
+  justification=justified,
+  singlelinecheck=true,
+  skip=6pt
+}
+\setlength{\textfloatsep}{12pt plus 2pt minus 2pt}
+\setlength{\floatsep}{10pt plus 2pt minus 2pt}
+\setlength{\intextsep}{10pt plus 2pt minus 2pt}
+\setcounter{topnumber}{5}
+\setcounter{bottomnumber}{3}
+\setcounter{totalnumber}{8}
+\renewcommand{\topfraction}{0.90}
+\renewcommand{\bottomfraction}{0.80}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.70}
+\setlist{nosep,leftmargin=2em}
+\linespread{1.3}
+
+% 章节标题:黑体,不加粗
+\ctexset{
+  chapter = {
+    format = \centering\heiti\zihao{3},
+    name = {第,章},
+    number = \chinese{chapter},
+    aftername = \quad,
+    beforeskip = 12pt,
+    afterskip = 24pt
+  },
+  section = {
+    format = \heiti\zihao{4},
+    beforeskip = 16pt plus 2pt minus 2pt,
+    afterskip = 10pt plus 2pt minus 2pt
+  },
+  subsection = {
+    format = \heiti\zihao{-4},
+    beforeskip = 12pt plus 2pt minus 2pt,
+    afterskip = 8pt plus 2pt minus 2pt
+  },
+  subsubsection = {
+    format = \heiti\zihao{-4},
+    beforeskip = 8pt plus 2pt minus 2pt,
+    afterskip = 6pt plus 2pt minus 2pt
+  },
+  bibname = {参考文献},
+  contentsname = {目\quad 录},
+  listfigurename = {插图清单},
+  listtablename = {表格清单},
+  appendixname = {附录}
+}
+
+% 页眉:学位论文格式要求双面页眉,偶数页为论文类别,奇数页为当前章标题,黑色。
+% qa-allow-chinese-running-header: 西安科技大学学位论文格式要求奇偶页页眉
+\usepackage{fancyhdr}
+\fancypagestyle{thesis}{%
+  \fancyhf{}%
+  \fancyhead[CE]{\small 西安科技大学硕士学位论文}%
+  \fancyhead[CO]{\small \leftmark}%
+  \fancyfoot[C]{\small\thepage}%
+  \renewcommand{\headrulewidth}{0.5pt}%
+  \renewcommand{\footrulewidth}{0pt}}
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyhead[CE]{\small 西安科技大学硕士学位论文}%
+  \fancyhead[CO]{\small \leftmark}%
+  \fancyfoot[C]{\small\thepage}%
+  \renewcommand{\headrulewidth}{0.5pt}%
+  \renewcommand{\footrulewidth}{0pt}}
+\renewcommand{\chaptermark}[1]{\markboth{\ifnum\value{chapter}>0 \CTEXthechapter\quad\fi #1}{}}
+\renewcommand{\sectionmark}[1]{}
+
+% 定理类环境:按章编号,标题黑体
+\newtheoremstyle{zhplain}{0.6em}{0.6em}{\normalfont}{}{\heiti}{}{0.8em}{}
+\theoremstyle{zhplain}
+\newtheorem{proposition}{命题}[chapter]
+\newtheorem{corollary}{推论}[chapter]
+\newtheorem{lemma}{引理}[chapter]
+\newtheorem{definition}{定义}[chapter]
+\newtheorem{remark}{注}[chapter]
+\renewcommand{\proofname}{证明}
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par\pushQED{\qed}\normalfont
+  \topsep6\p@\@plus6\p@\relax\trivlist
+  \item[\hskip\labelsep\heiti #1\@addpunct{：}]\ignorespaces}{\popQED\endtrivlist\@endpefalse}
+\makeatother
+\numberwithin{equation}{chapter}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+
+\newcommand{\Rbar}{\overline{R}}
+\newcommand{\mx}{m_{\times}}
+\newcommand{\NB}{\operatorname{NB}}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\E}{\operatorname{E}}
+\newcommand{\RelMSE}{\operatorname{RelMSE}}
+\newcommand{\Cov}{\operatorname{Cov}}
+\newcommand{\CV}{\operatorname{CV}}
+\newcommand{\Bin}{\operatorname{Bin}}
+
+% 盲审开关:送盲审时改为 \blindtrue,封面姓名、学号与导师即隐去。
+\newif\ifblind
+\blindfalse
+
+\title{疫情监测中的病例规模收益边界：估计目标、环境随机性与外部验证}
+\newcommand{\entitle}{Returns to Case-Count Scale in Epidemic Surveillance: Estimation Targets, Environmental Stochasticity and External Validation}
+\date{}
+
+% 封面由 \maketitle 生成
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{titlepage}
+    \thispagestyle{empty}
+    {\small
+    \begin{tabular}{@{}ll@{}}
+      学校代码：& 10704 \\
+      学\qquad 号：& \ifblind ＿＿＿＿＿＿ \else 24201221020\fi \\
+      分\ 类\ 号：& ＿＿＿＿＿＿ \\
+      密\qquad 级：& 公开 \\
+    \end{tabular}\par}
+    \vspace*{2.2cm}
+    \begin{center}
+      {\heiti\zihao{1} 硕士学位论文\par}
+      \vspace{0.6cm}
+      {\zihao{4} 专业学位\par}
+      \vspace{2.0cm}
+      {\heiti\zihao{2} 疫情监测中的病例规模收益边界：\par}
+      \vspace{0.3cm}
+      {\heiti\zihao{3} 估计目标、环境随机性与外部验证\par}
+      \vspace{0.8cm}
+      {\zihao{4}\begin{minipage}{0.86\textwidth}\centering\entitle\end{minipage}\par}
+      \vspace{2.4cm}
+      {\zihao{-3}
+      \renewcommand{\arraystretch}{1.5}
+      \begin{tabular}{@{}r@{\quad}l@{}}
+        作者姓名：& \ifblind （盲审隐去）\else 王驰\fi \\
+        专业学位类别：& 应用统计硕士 \\
+        研究方向：& 传染病监测数据的统计建模 \\
+        校内导师：& \ifblind （盲审隐去）\else 张仲华\fi \\
+        培养单位：& 西安科技大学 \\
+      \end{tabular}\par}
+      \vfill
+      {\zihao{-3} 二〇二六年十月\par}
+    \end{center}
+  \end{titlepage}}
+\makeatother
+
+\begin{document}
+\frontmatter
+\pagestyle{empty}
+\maketitle\normalfont\mdseries
+
+\input{chapters/declaration}
+\cleardoublepage
+\pagestyle{thesis}
+\pagenumbering{Roman}
+\input{chapters/abstract}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+\pagestyle{thesis}
+\input{chapters/ch1_introduction}
+\input{chapters/ch2_literature_theory}
+\input{chapters/ch3_model_targets}
+\input{chapters/ch4_design_simulation}
+\input{chapters/ch5_empirical}
+\input{chapters/ch6_robustness}
+\input{chapters/ch7_conclusion}
+
+\appendix
+\input{appendix/app_a_proofs}
+\input{appendix/app_b_repro}
+\input{chapters/acknowledgements}
+\input{chapters/achievements}
+
+\FloatBarrier
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{参考文献}
+\markboth{参考文献}{}
+\bibliographystyle{unsrtnat-noid}
+\setlength{\bibsep}{1.2pt}
+\bibliography{bibliography}
+\end{document}

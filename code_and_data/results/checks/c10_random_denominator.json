@@ -1,0 +1,118 @@
+{
+ "name": "c10_random_denominator",
+ "title": "实证映射:随机分母与报告过离散对 a、b、m_× 的影响",
+ "records": [
+  {
+   "id": "10.1",
+   "target": "D=ρΛ 精确时 FGLS 截距 a → v_R/R̄²",
+   "expected": "0.0215",
+   "observed": "0.0216(SE 0.0005)",
+   "verdict": "通过",
+   "note": "验证「a 对应环境底板」的映射本身"
+  },
+  {
+   "id": "10.2",
+   "target": "D=ρΛ 精确时 FGLS 斜率 b → A/R̄²",
+   "expected": "0.6601",
+   "observed": "0.6806(SE 0.0153)",
+   "verdict": "通过",
+   "note": "验证「b 对应单代抽样项」的映射本身"
+  },
+  {
+   "id": "10.3.original",
+   "target": "二项报告、分母含噪(权重 original,Σw²=0.495):b vs delta 法预测",
+   "expected": "1.1551(无分母噪声时 0.6601)",
+   "observed": "1.1946(SE 0.0450)",
+   "verdict": "通过",
+   "note": "分母的二项噪声使 b 增加 (1-ρ)(R̄²+v_R)Σw²/R̄²,与 Σw² 成正比"
+  },
+  {
+   "id": "10.4.original",
+   "target": "二项报告、分母含噪(权重 original):a 不受分母噪声影响",
+   "expected": "0.0215",
+   "observed": "0.0202(SE 0.0005)",
+   "verdict": "通过",
+   "note": "分母噪声是 O(1/m) 项,只进斜率"
+  },
+  {
+   "id": "10.9",
+   "target": "【补充】分母含噪时 b/a 是否仍估计 m_× = A/v_R(原始权重)",
+   "expected": "30.7",
+   "observed": "59.2",
+   "verdict": "偏差",
+   "note": "只有斜率被放大 ⇒ b/a 高估 m_×;实证 a 也被放大,两者部分抵消,所以 22.6 与情景区间「同量级」不能当作结构验证(issues I-14)"
+  },
+  {
+   "id": "10.3.single",
+   "target": "二项报告、分母含噪(权重 single,Σw²=1.000):b vs delta 法预测",
+   "expected": "1.6602(无分母噪声时 0.6601)",
+   "observed": "1.5663(SE 0.0336)",
+   "verdict": "通过",
+   "note": "分母的二项噪声使 b 增加 (1-ρ)(R̄²+v_R)Σw²/R̄²,与 Σw² 成正比"
+  },
+  {
+   "id": "10.4.single",
+   "target": "二项报告、分母含噪(权重 single):a 不受分母噪声影响",
+   "expected": "0.0215",
+   "observed": "0.0225(SE 0.0004)",
+   "verdict": "通过",
+   "note": "分母噪声是 O(1/m) 项,只进斜率"
+  },
+  {
+   "id": "10.3.equal",
+   "target": "二项报告、分母含噪(权重 equal,Σw²=0.333):b vs delta 法预测",
+   "expected": "0.9934(无分母噪声时 0.6601)",
+   "observed": "0.9987(SE 0.0396)",
+   "verdict": "通过",
+   "note": "分母的二项噪声使 b 增加 (1-ρ)(R̄²+v_R)Σw²/R̄²,与 Σw² 成正比"
+  },
+  {
+   "id": "10.4.equal",
+   "target": "二项报告、分母含噪(权重 equal):a 不受分母噪声影响",
+   "expected": "0.0215",
+   "observed": "0.0214(SE 0.0006)",
+   "verdict": "通过",
+   "note": "分母噪声是 O(1/m) 项,只进斜率"
+  },
+  {
+   "id": "10.5.single",
+   "target": "b_single/b_original:delta 法 / MC / 实证(表 tab:lag_weights_robustness)",
+   "expected": "delta 1.437",
+   "observed": "MC 1.311;实证 1.397",
+   "verdict": "通过",
+   "note": "固定 R̄ 下的比值;实证三种权重的 R̄ 不同(1.48/1.67/1.99),只作方向与量级对照"
+  },
+  {
+   "id": "10.5.equal",
+   "target": "b_equal/b_original:delta 法 / MC / 实证(表 tab:lag_weights_robustness)",
+   "expected": "delta 0.860",
+   "observed": "MC 0.836;实证 0.859",
+   "verdict": "通过",
+   "note": "固定 R̄ 下的比值;实证三种权重的 R̄ 不同(1.48/1.67/1.99),只作方向与量级对照"
+  },
+  {
+   "id": "10.6",
+   "target": "二项分母噪声单独能解释的 b 水平(原始权重)",
+   "expected": "实证 b=2.2434",
+   "observed": "预测 1.1551(实证的 51%);无分母噪声 0.6601(29%)",
+   "verdict": "偏差",
+   "note": "剩余缺口可由报告过离散 φ≈1.96 补足(报告方差 φ·ρI);这是一种可能解释,不是唯一解释"
+  },
+  {
+   "id": "10.7",
+   "target": "过离散报告 φ=1.96、原始权重:b MC vs 预测",
+   "expected": "2.2386",
+   "observed": "2.0190(SE 0.0343),a=0.0227",
+   "verdict": "偏差",
+   "note": "一阶 delta 法在分母噪声大时高估约 5–10%(含噪回归元 1/D 的回归稀释与 D≥5 截断,同见 10.3.single);量级结论不变:φ≈2 时 b 接近实证水平,但 a 仍停在 v_R/R̄²,a 的放大需另找来源"
+  },
+  {
+   "id": "10.8",
+   "target": "【补充】实证截距 a 随平均回溯延迟单调增大(单周 1.0 / 原始 1.45 / 等权 2.0 周)",
+   "expected": "若 a 只是环境方差则应与权重无关",
+   "observed": "single: a=0.0682; original: a=0.0991; equal: a=0.1524",
+   "verdict": "通过",
+   "note": "支持「a 混入了周增长比与世代再生数的口径偏差」:回溯越远,G 越多地吸收增长趋势的异质性(issues I-12、I-14)"
+  }
+ ]
+}

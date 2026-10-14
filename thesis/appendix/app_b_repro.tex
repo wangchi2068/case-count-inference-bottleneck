@@ -1,0 +1,121 @@
+\chapter{复现说明}
+\label{chap:repro}
+
+本附录说明正文数字、图表与核验结果的来源，以及复现它们所需的代码、数据和运行环境。正文第三章至第六章的理论量、模拟结果和实证数字都与同期完成的期刊稿件共用一套代码与数据。这套材料以“新稿\_代码与结果”文件夹的形式随学位论文一并提交，下文简称“代码包”，其中的路径都相对于该文件夹书写。学位论文另有三个辅助脚本，只读取代码包的结果文件来整理表格和绘制新增的四张数据图，不改动数据口径，也不重新拟合。
+
+\section{代码包的组成}
+\label{app:repro-layout}
+
+代码包分为代码、数据和结果三部分，表~\ref{tab:repro-files} 列出主要文件及其作用。脚本只使用代码包内的相对路径，复制到任意位置都可以直接运行。运行时在代码包下新建 \nolinkurl{figures/} 与 \nolinkurl{logs/} 两个目录，分别存放作图输出与运行日志。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{代码包的主要文件}
+  \label{tab:repro-files}
+  \small
+  \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.40\textwidth}X@{}}
+    \toprule
+    文件 & 作用 \\
+    \midrule
+    \nolinkurl{code/figstyle.py} & 出图样式、字体与路径设置，其余脚本从这里取路径 \\
+    \nolinkurl{code/prep_nhsn.py} & 由州级周报原始数据生成全国周序列与流行初期、达峰期分箱 \\
+    \nolinkurl{code/sim_theory.py} & 第三章、第四章的理论量与蒙特卡洛模拟 \\
+    \nolinkurl{code/make_figures.py} & 绘制全部数据图 \\
+    \nolinkurl{code/checks/c01}--\nolinkurl{c12} & 理论与数值核验脚本，\nolinkurl{_common.py} 为公用工具 \\
+    \nolinkurl{data/raw/Weekly_Hospital_Respiratory_Data_Metrics_by_Jurisdiction.csv} & 美国国家医疗安全网络州级周报原始数据，截至 2026 年 9 月 \\
+    \nolinkurl{data/empirical_stats.json} & 实证分析的拟合、重抽区间、工具变量与外部数据结果 \\
+    \nolinkurl{data/derived/national_weekly.csv} & 全国周序列 \\
+    \nolinkurl{data/derived/nhsn_bins.json} & 流行初期与达峰期的规模分箱 \\
+    \nolinkurl{results/sim_theory.json} & 理论量与模拟结果 \\
+    \nolinkurl{results/fig_records.json} & 出图记录，含尺寸与嵌入字体 \\
+    \nolinkurl{results/checks/*.json} & 各核验脚本的结论 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\section{运行环境与复现步骤}
+\label{app:repro-steps}
+
+代码在 Python 3.11.2 下测试，所用程序包的版本为 numpy 2.4.6、pandas 3.0.6、scipy 1.17.1、sympy 1.13.1、matplotlib 3.11.2。Python 3.10 及以上版本均可运行，matplotlib 至少需要 3.6 版。图中西文字体为 Liberation Serif，汉字字体为 Noto Serif CJK SC；\nolinkurl{code/figstyle.py} 开头写有字体文件的默认路径，其他系统需改为本机路径。
+
+复现按以下顺序进行，命令均在代码包内执行：先进入 \nolinkurl{code/} 目录，依次运行 \nolinkurl{prep_nhsn.py}、\nolinkurl{sim_theory.py} 与 \nolinkurl{make_figures.py}；再进入 \nolinkurl{code/checks/} 目录，逐个运行核验脚本，例如 \nolinkurl{c12_eq15_derivation.py}。前两个脚本各需 1--2 秒，每个核验脚本在 15 秒以内完成。
+
+随机种子写在脚本中。第三章方差公式的蒙特卡洛检验（图~\ref{fig:variance}）取 10 个规模，每个规模重复 20,000 次，种子为 20261013。第四章的更新过程仿真（图~\ref{fig:renewal}）对每个初始规模生成 400 条轨迹，种子为 20261014。精确增长检验的功效（图~\ref{fig:test}、表~\ref{tab:power-n}）由负二项分布精确计算，不涉及随机数。实证部分的按州聚类重抽为 1,500 次，工具变量回归的重抽为 10,000 次；外部数据中，FluSight 以州、欧洲 COVID-19 数据以国家为聚类单位。
+
+在独立副本上完整重跑一遍后，全国周序列、分箱结果与理论模拟结果和原文件逐字节一致，部分数据图的位图与正文所用图逐像素一致。c01 与 c03 至 c12 的核验结论与原文件完全一致，c02 有 3 条记录的数值差异在 $10^{-15}$ 量级，属于浮点舍入，判定不变。
+
+\section{核验脚本与正文的对应}
+\label{app:repro-checks}
+
+核验脚本最初为期刊稿件的上一版写成，脚本内部说明中的命题编号沿用上一版。表~\ref{tab:repro-checks} 给出它们与本文命题、章节的对应。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{核验脚本与正文的对应}
+  \label{tab:repro-checks}
+  \small
+  \begin{tabularx}{\textwidth}{@{}lX@{}}
+    \toprule
+    脚本 & 核验对象 \\
+    \midrule
+    c01、c02 & 命题~\ref{prop:current} 及附录~\ref{app:current}，符号推导与数值核对 \\
+    c03 & 命题~\ref{prop:average}、交叉点定义与命题~\ref{prop:reporting} \\
+    c04 & 命题~\ref{prop:allocation}，含一阶自回归环境 \\
+    c05 & 推论~\ref{cor:optimal} \\
+    c06 & 第四章单步预测的误差分解，式~\eqref{eq:mse-decomp} \\
+    c07 & 命题~\ref{prop:test} 与图~\ref{fig:test} \\
+    c08 & 第四章更新过程仿真与图~\ref{fig:renewal} \\
+    c09 & 第五章实证数字与实证结果文件的算术一致性 \\
+    c10 & 第五章随机分母与式~\eqref{eq:b-delta}，图~\ref{fig:noise} 与表~\ref{tab:lag-weights}，每种权重 18,000 个模拟州周 \\
+    c11 & 第五章一步可行广义最小二乘的一致性与按州聚类重抽区间 \\
+    c12 & 附录~\ref{app:b-delta} 的推导，分符号推导、固定规模精确枚举与蒙特卡洛三层核验 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+附录~\ref{app:b-delta} 中的 0.021（1.8\%）、0.555 与 0.461、1.223、1.159、1.155 和 1.972 都取自 \nolinkurl{results/checks/c12_eq15_derivation.json}，逐项数值见同目录下的 \nolinkurl{c12_eq15_derivation_detail.json}。
+
+\section{图表与数据来源}
+\label{app:repro-figures}
+
+表~\ref{tab:repro-figs} 列出正文各图的来源。数据图均由 matplotlib 绘制；图~\ref{fig:roadmap} 与图~\ref{fig:mechanism} 是概念示意图，不由数据生成。
+
+\begin{table}[!htbp]
+  \centering
+  \caption{正文各图的来源}
+  \label{tab:repro-figs}
+  \small
+  \begin{tabularx}{\textwidth}{@{}lX@{}}
+    \toprule
+    图 & 来源 \\
+    \midrule
+    图~\ref{fig:roadmap}、图~\ref{fig:mechanism} & 概念示意图 \\
+    图~\ref{fig:offspring}、图~\ref{fig:levers}、图~\ref{fig:budget} & 学位论文辅助作图脚本，按第三章示例参数计算 \\
+    图~\ref{fig:variance} & 代码包作图函数 fig02，数据为理论模拟结果中的方差模拟 \\
+    图~\ref{fig:test} & 代码包作图函数 fig03，数据为精确增长检验的功效计算 \\
+    图~\ref{fig:renewal} & 代码包作图函数 fig04，数据为更新过程仿真 \\
+    图~\ref{fig:nhsn} & 代码包作图函数 fig05，数据为全国周序列 \\
+    图~\ref{fig:early} & 代码包作图函数 fig06，数据为流行初期分箱与实证拟合 \\
+    图~\ref{fig:noise} & 代码包作图函数 fig10，数据为滞后权重敏感性与 c10 的模拟 \\
+    图~\ref{fig:peak} & 代码包作图函数 fig07，数据为达峰期分箱 \\
+    图~\ref{fig:policy} & 代码包作图函数 fig08，数据为三个填报制度期的统计量 \\
+    图~\ref{fig:forest} & 代码包作图函数 fig09，汇总各设定下的经验交叉点 \\
+    图~\ref{fig:baselines} & 学位论文辅助表格脚本，数据为达峰期分箱中的三种基准损失 \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+第五章与第六章的表格数字由学位论文辅助表格脚本从 \nolinkurl{data/empirical_stats.json}、\nolinkurl{data/derived/nhsn_bins.json} 与 \nolinkurl{results/checks/c10_random_denominator.json} 中读取并按表格格式整理，没有重新估计。其中表~\ref{tab:peak-bins} 由第三个辅助脚本直接从 \nolinkurl{nhsn_bins.json} 生成 LaTeX 源文件，并记录文件摘要，避免手工转录。第四章表~\ref{tab:power-n} 的数字取自 \nolinkurl{results/sim_theory.json}，表~\ref{tab:integer-alloc} 由推论~\ref{cor:optimal} 的方差公式在整数期数上直接计算。
+
+三个辅助脚本随学位论文源码一并提供，文件名为 \nolinkurl{thesis_figures.py}、\nolinkurl{thesis_empirical.py} 与 \nolinkurl{thesis_tables_tex.py}。它们与写作环境共用路径设置，换用其他目录时需要修改开头的路径。它们输出的数字都可以由上述结果文件按表注中的口径重新算出，作图所需的参数也都在正文中列明。
+
+\section{未重跑的部分}
+\label{app:repro-limits}
+
+实证结果文件、FluSight 阶段分解与概念示意图没有在代码包内重跑。
+
+实证结果文件 \nolinkurl{data/empirical_stats.json} 是原研究仓库中实证分析脚本的输出，包括仿射拟合、1,500 次按州聚类重抽的区间、工具变量回归，以及 FluSight 与欧洲 COVID-19 两组外部数据的结果。该脚本依赖原仓库中未提交的外部验证中间文件，代码包把它的输出作为输入数据收录，新代码只读取、不改动这个文件。
+
+FluSight 各流行阶段的偏差分解只有结果文件中的计算值，原仓库中没有生成它的脚本。第六章引用的峰期偏差占比 15.5\% 由峰期均值偏差平方 0.0709 除以相对均方误差 0.4583 得到。
+
+概念示意图不由数据生成，其中的文字与正文的符号、术语逐项核对过，不含正文以外的数字。

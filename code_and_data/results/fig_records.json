@@ -1,0 +1,111 @@
+{
+ "fig02_variance_theory": {
+  "stem": "fig02_variance_theory",
+  "size_in": [
+   6.5,
+   3.0
+  ],
+  "pdf_fonts": [
+   "SWATQZ+NotoSerifCJKsc-Regular",
+   "BESXEY+LiberationSerif-Italic",
+   "FPFZPF+LiberationSerif"
+  ]
+ },
+ "fig03_growth_test": {
+  "stem": "fig03_growth_test",
+  "size_in": [
+   6.5,
+   3.0
+  ],
+  "pdf_fonts": [
+   "JGCQIO+NotoSerifCJKsc-Regular",
+   "BIAJWG+LiberationSerif-Italic",
+   "DKMGRJ+LiberationSerif"
+  ]
+ },
+ "fig04_renewal_scale": {
+  "stem": "fig04_renewal_scale",
+  "size_in": [
+   6.5,
+   3.0
+  ],
+  "pdf_fonts": [
+   "GWFLEJ+NotoSerifCJKsc-Regular",
+   "BRMYPY+LiberationSerif-Italic",
+   "FKKSTY+LiberationSerif"
+  ]
+ },
+ "fig05_nhsn_series": {
+  "stem": "fig05_nhsn_series",
+  "size_in": [
+   6.5,
+   2.8
+  ],
+  "pdf_fonts": [
+   "BECNTH+NotoSerifCJKsc-Regular",
+   "FXGTOW+LiberationSerif"
+  ]
+ },
+ "fig06_early_scale": {
+  "stem": "fig06_early_scale",
+  "size_in": [
+   5.0,
+   3.2
+  ],
+  "pdf_fonts": [
+   "EJLQFM+NotoSerifCJKsc-Regular",
+   "CFSQBE+LiberationSerif-Italic",
+   "BTKMER+LiberationSerif"
+  ]
+ },
+ "fig07_peak_decomp": {
+  "stem": "fig07_peak_decomp",
+  "size_in": [
+   6.5,
+   3.0
+  ],
+  "pdf_fonts": [
+   "FSMVFA+NotoSerifCJKsc-Regular",
+   "GVSLOT+LiberationSerif-Italic",
+   "DOHMND+LiberationSerif"
+  ]
+ },
+ "fig08_reporting_policy": {
+  "stem": "fig08_reporting_policy",
+  "size_in": [
+   5.0,
+   3.2
+  ],
+  "pdf_fonts": [
+   "GENGCB+NotoSerifCJKsc-Regular",
+   "CMDEGX+LiberationSerif-Italic",
+   "CNWAMD+LiberationSerif"
+  ]
+ },
+ "fig09_mx_forest": {
+  "stem": "fig09_mx_forest",
+  "size_in": [
+   6.5,
+   5.2
+  ],
+  "pdf_fonts": [
+   "XABICQ+NotoSerifCJKsc-Bold",
+   "GPUUKH+NotoSerifCJKsc-Regular",
+   "CTMGED+LiberationSerif-Bold",
+   "DTDUUB+LiberationSerif-Italic",
+   "CYZKVZ+LiberationSerif"
+  ]
+ },
+ "fig10_denominator_noise": {
+  "stem": "fig10_denominator_noise",
+  "size_in": [
+   6.5,
+   3.0
+  ],
+  "pdf_fonts": [
+   "TADVOH+NotoSerifCJKsc-Regular",
+   "FTCKCQ+LiberationSerif-Italic",
+   "BYLDCO+LiberationSerif"
+  ]
+ }
+}

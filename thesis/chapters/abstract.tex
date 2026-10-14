@@ -1,0 +1,27 @@
+\chapter*{摘要}
+\addcontentsline{toc}{chapter}{摘要}
+
+疫情监测通常默认报告病例越多，对传播水平的估计越准确。本文研究这一判断在什么条件下成立，以及规模收益的边界在哪里。
+
+本文在负二项传播与二项报告的单代模型下区分两个估计目标。若目标是当期再生数，估计量 $C_t/(\rho n)$ 是极大似然估计，在任意有限规模下达到 Cram\'er--Rao 下界，并且是一致最小方差无偏估计，误差随规模趋于零。若目标是跨期平均再生数，估计量的方差分解为环境项 $v_R$ 与规模项 $A/m$ 之和，扩大规模只能消除后者，环境方差构成规模无法突破的底板。规模项等于环境项时的预计报告规模 $\mx=A/v_R$ 称为交叉点，它把环境底板折算成病例数。按文献中的住院监测情景参数，交叉点为每期 21.3--49.2 例报告。由方差结构可以得到三类设计结论。总报告量固定时期数越多越好，环境的正自相关会使常用的有效期数近似高估环境项。存在每期固定成本时，最优单期规模是交叉点与成本比乘积的平方根。判断当期增长时，基于负二项分布的精确检验可以控制水平，稳定检出 15\% 的增长约需示例交叉点十倍的规模。更新过程仿真表明，单代公式在时间序列中只能作为参照曲线。
+
+实证部分使用美国 51 个辖区截至 2026 年 9 月的州级流感住院周报，以更新分母下的周增长比构造单步预测损失。流行初期，相对均方误差随实际规模下降并趋于常数。仿射拟合的截距为 0.0991，斜率为 2.243，1,500 次按州聚类重抽的斜率全部为正，经验交叉点为 22.6 例/周。拟合系数都是情景隐含值的三倍以上，只能检验误差形状，不能作为结构参数的估计。分母中的二项报告噪声按滞后权重平方和抬高斜率而不改变截距，可解释斜率水平的一半左右，本文给出这一抬高的一阶推导并用模拟核对。达峰期以初期基准预测时，88.9\% 的损失来自基准偏移；自愿填报期周增长比的标准差扩张 192\%，稳健离散度基本不变。工具变量、事前基准、时变基准以及 FluSight 集成预测和欧洲 COVID-19 两组外部数据下，规模项都为正，经验交叉点在 10.6--124.7 之间变化，只宜作量级参考。全国汇总序列的损失约为州级截距的三分之一，说明空间汇总能降低环境底板。
+
+研究表明，监测设计应先明确估计目标：预警类问题需要尽可能大的规模，趋势类问题在规模达到交叉点量级后，应把资源转向增加观测期数、汇总辖区和更新基准模型。
+
+\vspace{1em}
+\noindent\heiti 关键词：\normalfont 病例规模；再生数；估计目标；环境随机性；交叉点；流感住院监测
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Epidemic surveillance often assumes that more reported cases always yield more precise estimates of transmission. This thesis asks when that assumption holds and where the returns to case-count scale end.
+
+Under a single-generation model with negative-binomial offspring and binomial reporting, two estimation targets are distinguished. For the current reproduction number, the estimator $C_t/(\rho n)$ is the maximum-likelihood estimator, attains the Cram\'er--Rao bound at every finite scale, and is the uniformly minimum-variance unbiased estimator, so its error vanishes as scale grows. For the average reproduction number across periods, the variance splits into an environmental term $v_R$ and a scale term $A/m$; scale removes only the latter, and environmental variance sets a floor. The crossover scale $\mx=A/v_R$, at which the two terms are equal, expresses this floor as a case count; under literature-based scenarios for hospital surveillance it lies between 21.3 and 49.2 reported cases per period. The variance structure yields three design results. With a fixed total, more periods are better, and positive autocorrelation makes the usual effective-sample-size approximation overstate the environmental term. With a fixed cost per period, the optimal per-period scale is the square root of the crossover scale times the cost ratio. An exact negative-binomial test controls size when detecting growth, although detecting a 15\% increase reliably needs about ten times the crossover scale of the worked example. Renewal-process simulations show that the single-generation formula serves only as a reference curve in time series.
+
+The empirical analysis uses weekly state-level influenza hospitalization reports from 51 United States jurisdictions through September 2026 and builds one-step forecast losses from weekly growth ratios with a renewal denominator. In the early epidemic phase the relative mean squared error falls with realized scale and levels off. The affine fit has intercept 0.0991 and slope 2.243, all 1,500 state-cluster bootstrap slopes are positive, and the empirical crossover is 22.6 cases per week. Both coefficients exceed the scenario values by a factor of more than three, so the fit tests the shape of the error curve rather than structural parameters. Binomial reporting noise in the denominator raises the slope in proportion to the sum of squared lag weights while leaving the intercept unchanged, accounting for about half of the slope; a first-order derivation is given and checked by simulation. Near the peak, 88.9\% of the loss under the early-phase baseline comes from baseline shift, and during voluntary reporting the standard deviation of growth ratios expands by 192\% while robust dispersion stays nearly constant. The scale term remains positive under instrumental variables, ex-ante and time-varying baselines, the FluSight ensemble and European COVID-19 data, whereas the empirical crossover ranges from 10.6 to 124.7 and should be read only as an order of magnitude. The loss of the national aggregate is about one third of the state-level intercept, indicating that spatial pooling lowers the environmental floor.
+
+Surveillance design should therefore begin with the estimation target. Early warning benefits from as much scale as possible; once trend estimation reaches the crossover scale, resources are better spent on more periods, pooling across jurisdictions and updating baseline models.
+
+\vspace{1em}
+\noindent\textbf{Keywords:}\ \sloppy case-count scale; reproduction number; estimation target; environmental stochasticity; crossover scale; influenza hospitalization surveillance

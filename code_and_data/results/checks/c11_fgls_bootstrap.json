@@ -1,0 +1,78 @@
+{
+ "name": "c11_fgls_bootstrap",
+ "title": "实证估计:FGLS 一致性、b/a 比值偏差与州聚类 bootstrap 覆盖率",
+ "records": [
+  {
+   "id": "11.1.const",
+   "target": "FGLS â 的均值(CV² const,60 次重复)",
+   "expected": "0.0991",
+   "observed": "0.1003(SE 0.0009)",
+   "verdict": "通过",
+   "note": "均值设定正确时加权最小二乘对任意权重都无偏;权重只影响效率"
+  },
+  {
+   "id": "11.2.const",
+   "target": "FGLS b̂ 的均值(CV² const)",
+   "expected": "2.2434",
+   "observed": "2.1892(SE 0.0325)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "11.3.const",
+   "target": "b̂/â 的均值与中位数 vs 真值 m_×(CV² const)",
+   "expected": "22.64",
+   "observed": "均值 21.93,中位数 22.00,单次 SD 3.01",
+   "verdict": "通过",
+   "note": "本设定下未见比值正偏(â 相对误差仅 7–9%,Jensen 项小);b̂ 略低 2.4%(1.2–1.7 SE),来自一步 FGLS 用同一数据估权重,量级可忽略"
+  },
+  {
+   "id": "11.1.decline",
+   "target": "FGLS â 的均值(CV² decline,60 次重复)",
+   "expected": "0.0991",
+   "observed": "0.1007(SE 0.0011)",
+   "verdict": "通过",
+   "note": "均值设定正确时加权最小二乘对任意权重都无偏;权重只影响效率"
+  },
+  {
+   "id": "11.2.decline",
+   "target": "FGLS b̂ 的均值(CV² decline)",
+   "expected": "2.2434",
+   "observed": "2.1895(SE 0.0451)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "11.3.decline",
+   "target": "b̂/â 的均值与中位数 vs 真值 m_×(CV² decline)",
+   "expected": "22.64",
+   "observed": "均值 22.00,中位数 21.27,单次 SD 4.56",
+   "verdict": "通过",
+   "note": "本设定下未见比值正偏(â 相对误差仅 7–9%,Jensen 项小);b̂ 略低 2.4%(1.2–1.7 SE),来自一步 FGLS 用同一数据估权重,量级可忽略"
+  },
+  {
+   "id": "11.4",
+   "target": "州聚类 bootstrap 95% 区间对 b 的覆盖率(36 次重复 × B=99)",
+   "expected": "0.95",
+   "observed": "0.944(MC SE ≈ 0.036)",
+   "verdict": "通过",
+   "note": "论文用 B=1,500(main.tex 第 512 行附近);此处 B=99 受抽样预算限制,百分位端点更粗,覆盖率结论只到「无明显欠覆盖」"
+  },
+  {
+   "id": "11.5",
+   "target": "州聚类 bootstrap 95% 区间对 m_× = b/a 的覆盖率",
+   "expected": "0.95",
+   "observed": "0.944(MC SE ≈ 0.036)",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "11.6",
+   "target": "【补充】m_× 区间的相对宽度 (上−下)/点估计:仿真中位数 vs 论文 [13.7, 33.7]/22.6",
+   "expected": "0.88",
+   "observed": "0.78(四分位 0.65–0.85)",
+   "verdict": "通过",
+   "note": "仅在本仿真设定下比较量级;论文区间宽度与「州效应 CV 0.3 + CV² 递减」的设定相容与否只作参考"
+  }
+ ]
+}

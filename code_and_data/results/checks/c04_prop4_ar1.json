@@ -1,0 +1,150 @@
+{
+ "name": "c04_prop4_ar1",
+ "title": "命题 4:预算权衡、AR(1) 有效期数与可行期数集合",
+ "records": [
+  {
+   "id": "4.1",
+   "target": "全方差 + 预算 B=Tm 给出 v_R/T + A/B(式 eq:var_budget_indep)",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.2",
+   "target": "∂/∂T (v_R/T + A/B) = -v_R/T² < 0",
+   "expected": "-v_R/T**2",
+   "observed": "-v_R/T**2",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.3",
+   "target": "Σ_{s=1}^{T-1}(T-s)r^s = rT/(1-r) - r(1-r^T)/(1-r)²(T=1..40 逐个符号核对)",
+   "expected": "恒等",
+   "observed": "恒等",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.4",
+   "target": "Tv_R + 2v_RΣ = v_R T[(1+r)/(1-r) - 2r(1-r^T)/(T(1-r)²)](附录第 751 行)",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.5",
+   "target": "sympy 直接求和与闭式的差(r≠1 分支)",
+   "expected": "0",
+   "observed": "Piecewise((nan, Eq(r, 1)), (0, True))",
+   "verdict": "通过",
+   "note": "Piecewise 中 r=1 分支为闭式的可去奇点,与 0≤r<1 无关"
+  },
+  {
+   "id": "4.6",
+   "target": "T_eff 近似对环境项的偏差方向",
+   "expected": "论文未说明方向",
+   "observed": "所有 (T,r) 下近似均高估环境项",
+   "verdict": "偏差",
+   "note": "高估比例 = 2r(1-r^T)/(T(1-r)(1+r)-2r(1-r^T));r=0.8,T=26 时 +20.5%,r=0.8,T=10 时 +65.8%(见日志表)"
+  },
+  {
+   "id": "4.7",
+   "target": "近似高估比例的闭式",
+   "expected": "0",
+   "observed": "0",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.8",
+   "target": "「T ≫ 1/(1-r)」条件下的实际误差(T=26 周、r=0.8,T(1-r)=5.2)",
+   "expected": "可良好近似",
+   "observed": "高估 20.5%",
+   "verdict": "偏差",
+   "note": "满足 T>1/(1-r)=5 并不足以「良好近似」,建议正文给误差界或直接用精确闭式"
+  },
+  {
+   "id": "4.9",
+   "target": "【补充】AR(1) 精确环境项 Var(R̄_T)/v_R 关于 T 严格递减(r∈[0,0.98],T=1..300)",
+   "expected": "递减",
+   "observed": "递减",
+   "verdict": "通过",
+   "note": "命题 4(i) 的单调性结论在 AR(1) 下仍成立"
+  },
+  {
+   "id": "4.10",
+   "target": "B=30, ρ=0.25(B/ρ=120)时可行期数 = 120 的正因子",
+   "expected": "[1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60, 120]",
+   "observed": "[1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24, 30, 40, 60, 120]",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.11",
+   "target": "B=30, ρ=0.7(B/ρ 非整数)时可行集为空",
+   "expected": "[]",
+   "observed": "[]",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.12",
+   "target": "T ≤ ⌊B/ρ⌋ 只是必要条件:T=7 ≤ 120 但不可行",
+   "expected": "7 ∉ 𝒯",
+   "observed": "7 ∉ 𝒯",
+   "verdict": "通过",
+   "note": ""
+  },
+  {
+   "id": "4.mc.T10.r0.0",
+   "target": "MC Var(R̄_T)(T=10,m=26.0,r=0.0,reps=20000)",
+   "expected": "精确 0.01217;T_eff 近似 0.01217",
+   "observed": "0.01217(对精确 z=0.00;对近似 -0.0%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  },
+  {
+   "id": "4.mc.T10.r0.5",
+   "target": "MC Var(R̄_T)(T=10,m=26.0,r=0.5,reps=20000)",
+   "expected": "精确 0.01857;T_eff 近似 0.02017",
+   "observed": "0.01913(对精确 z=2.92;对近似 +5.4%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  },
+  {
+   "id": "4.mc.T10.r0.8",
+   "target": "MC Var(R̄_T)(T=10,m=26.0,r=0.8,reps=20000)",
+   "expected": "精确 0.02988;T_eff 近似 0.04417",
+   "observed": "0.02998(对精确 z=0.33;对近似 +47.3%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  },
+  {
+   "id": "4.mc.T26.r0.0",
+   "target": "MC Var(R̄_T)(T=26,m=10.0,r=0.0,reps=7692)",
+   "expected": "精确 0.00970;T_eff 近似 0.00970",
+   "observed": "0.00994(对精确 z=1.49;对近似 -2.4%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  },
+  {
+   "id": "4.mc.T26.r0.5",
+   "target": "MC Var(R̄_T)(T=26,m=10.0,r=0.5,reps=7692)",
+   "expected": "精确 0.01254;T_eff 近似 0.01278",
+   "observed": "0.01214(对精确 z=-2.09;对近似 +5.3%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  },
+  {
+   "id": "4.mc.T26.r0.8",
+   "target": "MC Var(R̄_T)(T=26,m=10.0,r=0.8,reps=7692)",
+   "expected": "精确 0.01965;T_eff 近似 0.02201",
+   "observed": "0.01895(对精确 z=-2.31;对近似 +16.2%)",
+   "verdict": "通过",
+   "note": "精确闭式与 MC 吻合;近似的偏差列在实测括号里"
+  }
+ ]
+}
