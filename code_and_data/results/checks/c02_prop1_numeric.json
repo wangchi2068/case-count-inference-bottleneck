@@ -6,7 +6,7 @@
    "id": "2.a.5",
    "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=5,k=0.35,ρ=0.25,R=1.15)",
    "expected": "≈0(数值误差级)",
-   "observed": "6.13e-16",
+   "observed": "6.88e-16",
    "verdict": "通过",
    "note": ""
   },
@@ -14,7 +14,7 @@
    "id": "2.a.30",
    "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=30,k=0.1,ρ=0.5,R=1.5)",
    "expected": "≈0(数值误差级)",
-   "observed": "5.24e-15",
+   "observed": "5.30e-15",
    "verdict": "通过",
    "note": ""
   },
@@ -22,7 +22,7 @@
    "id": "2.a.60",
    "target": "卷积+抽稀 pmf vs NB(nk,p*) 总变差距离 (n=60,k=2.0,ρ=0.8,R=0.8)",
    "expected": "≈0(数值误差级)",
-   "observed": "4.15e-15",
+   "observed": "5.38e-15",
    "verdict": "通过",
    "note": ""
   },
