@@ -37,7 +37,11 @@
 % 数学用 OpenType 的 Latin Modern Math:外观同默认 CM,但每个数学字形都有 Unicode 映射,
 % 文本层可被 figqa 解析(cmex 的大号定界符在文本层里是控制字符)。
 \usepackage{unicode-math}
-\setmathfont{Latin Modern Math}
+\IfFontExistsTF{Latin Modern Math}{
+  \setmathfont{Latin Modern Math}
+}{
+  \setmathfont{Cambria Math}
+}
 % 估计量的帽子用 pict2e 画成矢量折线,不占文字框,避免组合重音与字母在文本层被判为重叠。
 \usepackage{pict2e}
 \newcommand{\hatmark}{{\setlength{\unitlength}{0.1em}\linethickness{0.045em}%
